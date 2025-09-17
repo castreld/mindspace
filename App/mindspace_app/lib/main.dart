@@ -355,36 +355,466 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
+              // Penutup keseluruhan section 3
               child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 65),
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
 
-                    child: Column(
+                  // Start of column 1 FaQ title
+                  Padding(
+                    padding: EdgeInsets.only(top: 70),
+                      child: Text(
+                      "Frequently Asked Questions",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 244, 179, 51),
+                        fontSize: 33,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  // End of column 1
+
+                  // Start of column 2 FaQ title
+                  Text(
+                    "Beberapa orang mengajukan pertanyaan ini",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 27,
+                    ),
+                  ),
+                  // End of column 2
+
+                  // Start of column 3 the questions
+                  Padding(
+                    padding: EdgeInsets.only(top: 70),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          "Frequently Asked Questions",
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 244, 179, 51),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35,
+                        
+                        // Start of Question 1
+                        Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.black,
+                                size: 35,
+                              ),
+
+                              Text(
+                                " Aman ga sih?",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25
+                                ),
+                              ),
+
+                              SizedBox(width: 170,)
+                            ],
                           ),
                         ),
+                        // End of Question 1
 
-                        Text(
-                          "Beberapa orang mengajukan pertanyaan ini",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 30,
+                        // Start of Question 2
+                        Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.black,
+                                size: 35,
+                              ),
+
+                              Text(
+                                " Apa Manfaatnya?",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25
+                                ),
+                              ),
+
+                              SizedBox(width: 150,)
+                            ],
                           ),
-                        )
+                        ),
+                        // End of Question 2
+
+                        // Start of Question 3
+                        Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.black,
+                                size: 35,
+                              ),
+
+                              Text(
+                                " Buka 24 Jam gak?",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25
+                                ),
+                              ),
+
+                              SizedBox(width: 150,)
+                            ],
+                          ),
+                        ),
+                        // End of Question 3
+
+                        // Start of Question 4
+                        Padding(
+                          padding: EdgeInsets.only(left: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.black,
+                                size: 35,
+                              ),
+
+                              Text(
+                                " Jadwal bisa dibatalkan?",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // End of Question 4
+
                       ],
-                    ),
+                    )
+                  ),
+                  // End of column 3 bos
+
+                  // Start of column 4 the answers to your life questions wow 😲😲
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                      // Start of answer 1
+                      Padding(
+                        padding: EdgeInsets.only(right: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: 265),
+
+                            Text(
+                              "Mindspace tentunya\naman, karena semua\nterapis sudah kami\nuji terlebih dahulu.",
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: Colors.black
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // End of answer 1
+
+                      // Start of answer 2
+                      Padding(
+                        padding: EdgeInsets.only(right: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(width: 150),
+
+                            Text(
+                              "Mindspace memberikan wadah\nuntuk pengguna kami merasa\nlebih baik, tentunya dengan\nterapis kami yang profesional.",
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: Colors.black
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // End of answer 2
+
+                      // Start of answer 3
+                      Padding(
+                        padding: EdgeInsets.only(right: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: 65),
+
+                            Text(
+                              "Tentunya Mindspace buka\nselama 24 jam tergantung\njadwal dari Psikolog ya",
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: Colors.black
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      // End of answer 3
+
+                      // Start of answer 4
+                      Padding(
+                        padding: EdgeInsets.only(right: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: 125),
+
+                            Text(
+                              "Tentunya bisa dong,\nmaksimal dalam kurun\nwaktu kurang dari 24 Jam.",
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: Colors.black
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      // End of answer 4
+
+                    ],
                   )
+                  // End of column 4 man
                 ],
               ),
-
+              
             )
+          ),
+          
+          SliverToBoxAdapter(
+            child: Container(
+              height: 360,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 101, 58, 80)
+              ),
+
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        "Ikuti Kami",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 30),
+
+                      Text(
+                        "@mindspace.smkn1cmi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "Mindspace SMKN 1 Cimahi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "LinkedIn",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        "Ikuti Kami",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 30),
+
+                      Text(
+                        "@mindspace.smkn1cmi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "Mindspace SMKN 1 Cimahi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "LinkedIn",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        "Ikuti Kami",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 30),
+
+                      Text(
+                        "@mindspace.smkn1cmi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "Mindspace SMKN 1 Cimahi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "LinkedIn",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Text(
+                        "Ikuti Kami",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 30),
+
+                      Text(
+                        "@mindspace.smkn1cmi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "Mindspace SMKN 1 Cimahi",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+
+                      SizedBox(height: 10),
+
+                      Text(
+                        "LinkedIn",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                ],
+              )
+
+            ),
           ),
 
         ],
