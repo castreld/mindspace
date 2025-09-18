@@ -1,7 +1,21 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+
+import 'widgets/custom_app_bar.dart';
+import 'widgets/footer.dart';
+import 'register.dart';
 
 void main() {
   runApp(const MyApp());
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
 class MyApp extends StatelessWidget {
@@ -11,12 +25,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mindspace',
+      routes: {
+        '/': (context) => const HomePage(),
+        '/register': (context) => const RegisterForm()
+      },
+      initialRoute: '/',
+      scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
     );
   }
 }
@@ -26,797 +45,374 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        backgroundColor: const Color(0xFF5B3F5B),
-        elevation: 0,
-        title: const Text(
-          'Mindspace',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              // HOME LOGIC HERE
-            },
-            child: const Text('Home', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          const SizedBox(width: 10),
-          TextButton(
-            onPressed: () {
-              // TERAPIS LOGIC HEREEEE
-            },
-            child: const Text('Terapis', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          const SizedBox(width: 10),
-          TextButton(
-            onPressed: () {
-              // JADWAL LOGIC HERE BOSS
-            },
-            child: const Text('Jadwal', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          const SizedBox(width: 10),
-          TextButton(
-            onPressed: () {
-              // KONTAK LOGIC HERE BOSS
-            },
-            child: const Text('Kontak', style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          const SizedBox(width: 10),
-
-          ElevatedButton(
-            onPressed: () {
-              // REGISTER LOGIC HERE BOSSSS
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFC89E25),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text(
-              'Daftar', 
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
-          const SizedBox(width: 10),
-
-          ElevatedButton(
-            onPressed: () {
-              // LOGIN LOGIC HERE BOSS
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE9B335),
-              foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-            ),
-            child: const Text(
-              'Masuk',
-              style: TextStyle(
-                fontSize: 20
-              ),
-            ),
-          ),
-          const SizedBox(width: 20),
+      // The drawer requires a key on mobile to be opened programmatically.
+      key: GlobalKey<ScaffoldState>(),
+      // Here is our clean, reusable AppBar
+      appBar: const CustomAppBar(),
+      drawer: const _AppDrawer(),
+      body: const CustomScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        slivers: [
+          HeroSection(),
+          ServicesSection(),
+          FaqSection(),
+          // Here is our clean, reusable Footer
+          if (kIsWeb) FooterSection(),
         ],
       ),
+    );
+  }
+}
 
-      body: CustomScrollView(
-        slivers: [
+// Widgets specific to the HomePage can remain here.
+class _AppDrawer extends StatelessWidget {
+  const _AppDrawer();
 
-          SliverToBoxAdapter(
-            child: Container(
-              height: screenHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 255, 247, 209), Color.fromARGB(255, 243, 229, 245)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  stops: [0.0, 0.3]
-                ),
-              ),
-
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-
-                  Padding(
-                    padding: const EdgeInsets.only(left: 180, bottom: 100),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      
-                      children: <Widget>[
-                        const Text(
-                          "Selamat Datang\ndi Mindspace",
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontSize: 70, 
-                            color: Color.fromARGB(255, 244, 179, 51),
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-
-
-                        const Text(
-                          "“Your Safe Place To Be Heard”",
-                          style: TextStyle(
-                            fontSize: 32,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    )
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(right: 180, bottom: 100),
-                    child: Image(
-                      image: AssetImage('assets/illustration1.png'),
-                      width: 600,
-                      height: 600,
-                    ),
-                  )
-                ],
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF5B3F5B),
+            ),
+            child: Text(
+              'Mindspace',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
+          _DrawerItem('Home', Icons.home, () {}),
+          _DrawerItem('Terapis', Icons.people, () {}),
+          _DrawerItem('Jadwal', Icons.calendar_today, () {}),
+          _DrawerItem('Kontak', Icons.contact_phone, () {}),
+        ],
+      ),
+    );
+  }
+}
 
-          SliverToBoxAdapter(
-            child: Container(
-              height: 500,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 255, 247, 209), Color.fromARGB(255, 243, 229, 245)],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  stops: [0.0, 0.9]
+class _DrawerItem extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _DrawerItem(this.title, this.icon, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
+      onTap: onTap,
+    );
+  }
+}
+
+// Other sections used only by the HomePage
+class HeroSection extends StatelessWidget {
+  const HeroSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final bool isSmallScreen = screenSize.width < 1200;
+
+    final children = [
+      Expanded(
+        flex: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: isSmallScreen
+                ? CrossAxisAlignment.center
+                : CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                "Selamat Datang\ndi Mindspace",
+                textAlign:
+                    isSmallScreen ? TextAlign.center : TextAlign.left,
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 48 : 70,
+                  color: const Color.fromARGB(255, 244, 179, 51),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-
-                  Padding(
-                    padding: EdgeInsets.only(left: 140),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-
-                      children: <Widget>[
-
-                        Container(
-                          width: 400,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(12),
-                            child: Image(
-                            image: AssetImage('assets/stock2.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                          ),
-                        ),
-
-                        Text(
-                          "Psikolog Kesehatan Mental",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        Text(
-                          "Membantu mengatasi masalah\nemosional, perilaku, dan mental",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ), 
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.only(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-
-                      children: <Widget>[
-
-                        Container(
-                          width: 400,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(12),
-                            child: Image(
-                            image: AssetImage('assets/stock1.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                          ),
-                        ),
-
-                        Text(
-                          "Psikolog Rehabilitasi",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        Text(
-                          "Membantu mengatasi masalah\nemosional, perilaku, dan mental",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ), 
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.only(right: 140),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-
-                      children: <Widget>[
-
-                        Container(
-                          width: 400,
-                          height: 250,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 3,
-                            ),
-                            borderRadius: BorderRadius.circular(12)
-                          ),
-
-                          child: ClipRRect(
-                            borderRadius: BorderRadiusGeometry.circular(12),
-                            child: Image(
-                            image: AssetImage('assets/stock2.jpg'),
-                            fit: BoxFit.cover,
-                          ),
-                          ),
-                        ),
-
-                        Text(
-                          "Psikolog Interpersonal",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        Text(
-                          "Membantu mengatasi masalah\nemosional, perilaku, dan mental",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ), 
-                  )
-
-                ],
-              ),
-
-            ),
-          ),
-
-          SliverToBoxAdapter(
-            child: Container(
-              height: 600,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color.fromARGB(255, 255, 247, 209), Color.fromARGB(255, 243, 229, 245)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+              const SizedBox(height: 20),
+              Text(
+                "“Your Safe Place To Be Heard”",
+                textAlign:
+                    isSmallScreen ? TextAlign.center : TextAlign.left,
+                style: TextStyle(
+                  fontSize: isSmallScreen ? 24 : 32,
+                  color: Colors.black,
                 ),
               ),
-
-              // Penutup keseluruhan section 3
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-
-                  // Start of column 1 FaQ title
-                  Padding(
-                    padding: EdgeInsets.only(top: 70),
-                      child: Text(
-                      "Frequently Asked Questions",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 244, 179, 51),
-                        fontSize: 33,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  // End of column 1
-
-                  // Start of column 2 FaQ title
-                  Text(
-                    "Beberapa orang mengajukan pertanyaan ini",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 27,
-                    ),
-                  ),
-                  // End of column 2
-
-                  // Start of column 3 the questions
-                  Padding(
-                    padding: EdgeInsets.only(top: 70),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        
-                        // Start of Question 1
-                        Padding(
-                          padding: EdgeInsets.only(left: 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.black,
-                                size: 35,
-                              ),
-
-                              Text(
-                                " Aman ga sih?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25
-                                ),
-                              ),
-
-                              SizedBox(width: 170,)
-                            ],
-                          ),
-                        ),
-                        // End of Question 1
-
-                        // Start of Question 2
-                        Padding(
-                          padding: EdgeInsets.only(left: 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.black,
-                                size: 35,
-                              ),
-
-                              Text(
-                                " Apa Manfaatnya?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25
-                                ),
-                              ),
-
-                              SizedBox(width: 150,)
-                            ],
-                          ),
-                        ),
-                        // End of Question 2
-
-                        // Start of Question 3
-                        Padding(
-                          padding: EdgeInsets.only(left: 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.black,
-                                size: 35,
-                              ),
-
-                              Text(
-                                " Buka 24 Jam gak?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25
-                                ),
-                              ),
-
-                              SizedBox(width: 150,)
-                            ],
-                          ),
-                        ),
-                        // End of Question 3
-
-                        // Start of Question 4
-                        Padding(
-                          padding: EdgeInsets.only(left: 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.black,
-                                size: 35,
-                              ),
-
-                              Text(
-                                " Jadwal bisa dibatalkan?",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // End of Question 4
-
-                      ],
-                    )
-                  ),
-                  // End of column 3 bos
-
-                  // Start of column 4 the answers to your life questions wow 😲😲
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      
-                      // Start of answer 1
-                      Padding(
-                        padding: EdgeInsets.only(right: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: 265),
-
-                            Text(
-                              "Mindspace tentunya\naman, karena semua\nterapis sudah kami\nuji terlebih dahulu.",
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: Colors.black
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // End of answer 1
-
-                      // Start of answer 2
-                      Padding(
-                        padding: EdgeInsets.only(right: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(width: 150),
-
-                            Text(
-                              "Mindspace memberikan wadah\nuntuk pengguna kami merasa\nlebih baik, tentunya dengan\nterapis kami yang profesional.",
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: Colors.black
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // End of answer 2
-
-                      // Start of answer 3
-                      Padding(
-                        padding: EdgeInsets.only(right: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: 65),
-
-                            Text(
-                              "Tentunya Mindspace buka\nselama 24 jam tergantung\njadwal dari Psikolog ya",
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: Colors.black
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                      // End of answer 3
-
-                      // Start of answer 4
-                      Padding(
-                        padding: EdgeInsets.only(right: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: 125),
-
-                            Text(
-                              "Tentunya bisa dong,\nmaksimal dalam kurun\nwaktu kurang dari 24 Jam.",
-                              style: TextStyle(
-                                fontSize: 23,
-                                color: Colors.black
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                      // End of answer 4
-
-                    ],
-                  )
-                  // End of column 4 man
-                ],
-              ),
-              
-            )
+            ],
           ),
-          
-          SliverToBoxAdapter(
-            child: Container(
-              height: 360,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 101, 58, 80)
+        ),
+      ),
+      Expanded(
+        flex: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Image.asset(
+            'assets/illustration1.png',
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    ];
+
+    return SliverToBoxAdapter(
+      child: Container(
+        height: screenSize.height,
+        width: screenSize.width,
+        padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 255, 247, 209),
+              Color.fromARGB(255, 243, 229, 245)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.3],
+          ),
+        ),
+        child: isSmallScreen
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center, children: children)
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center, children: children),
+      ),
+    );
+  }
+}
+
+class ServicesSection extends StatelessWidget {
+  const ServicesSection({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 255, 247, 209),
+              Color.fromARGB(255, 243, 229, 245)
+            ],
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            stops: [0.0, 0.9],
+          ),
+        ),
+        child: const Wrap(
+          spacing: 40,
+          runSpacing: 40,
+          alignment: WrapAlignment.center,
+          children: [
+            ServiceCard(
+              imagePath: 'assets/stock2.jpg',
+              title: "Psikolog Kesehatan Mental",
+              description:
+                  "Membantu mengatasi masalah\nemosional, perilaku, dan mental",
+            ),
+            ServiceCard(
+              imagePath: 'assets/stock1.jpg',
+              title: "Psikolog Rehabilitasi",
+              description:
+                  "Membantu proses pemulihan\ndan adaptasi kembali",
+            ),
+            ServiceCard(
+              imagePath: 'assets/stock2.jpg',
+              title: "Psikolog Interpersonal",
+              description:
+                  "Membantu meningkatkan kualitas\nhubungan dengan orang lain",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ServiceCard extends StatelessWidget {
+  final String imagePath;
+  final String title;
+  final String description;
+
+  const ServiceCard({
+    super.key,
+    required this.imagePath,
+    required this.title,
+    required this.description,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 400,
+      child: Column(
+        children: [
+          Container(
+            height: 250,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black, width: 3),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(9),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                width: double.infinity,
               ),
-
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        "Ikuti Kami",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 30),
-
-                      Text(
-                        "@mindspace.smkn1cmi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "Mindspace SMKN 1 Cimahi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "LinkedIn",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        "Ikuti Kami",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 30),
-
-                      Text(
-                        "@mindspace.smkn1cmi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "Mindspace SMKN 1 Cimahi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "LinkedIn",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        "Ikuti Kami",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 30),
-
-                      Text(
-                        "@mindspace.smkn1cmi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "Mindspace SMKN 1 Cimahi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "LinkedIn",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Text(
-                        "Ikuti Kami",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 30),
-
-                      Text(
-                        "@mindspace.smkn1cmi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "Mindspace SMKN 1 Cimahi",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Text(
-                        "LinkedIn",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                ],
-              )
-
             ),
           ),
+          const SizedBox(height: 15),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 30,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            description,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 23, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+class FaqSection extends StatelessWidget {
+  const FaqSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 255, 247, 209),
+              Color.fromARGB(255, 243, 229, 245)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Column(
+          children: [
+            const Text(
+              "Frequently Asked Questions",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color.fromARGB(255, 244, 179, 51),
+                fontSize: 33,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Beberapa orang mengajukan pertanyaan ini",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.black, fontSize: 27),
+            ),
+            const SizedBox(height: 70),
+            const Wrap(
+              spacing: 60,
+              runSpacing: 40,
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                FaqItem(
+                  question: "Aman ga sih?",
+                  answer:
+                      "Mindspace tentunya aman, karena semua terapis sudah kami uji terlebih dahulu.",
+                ),
+                FaqItem(
+                  question: "Apa Manfaatnya?",
+                  answer:
+                      "Mindspace memberikan wadah untuk pengguna kami merasa lebih baik, tentunya dengan terapis kami yang profesional.",
+                ),
+                FaqItem(
+                  question: "Buka 24 Jam gak?",
+                  answer:
+                      "Tentunya Mindspace buka selama 24 jam tergantung jadwal dari Psikolog ya.",
+                ),
+                FaqItem(
+                  question: "Jadwal bisa dibatalkan?",
+                  answer:
+                      "Tentunya bisa dong, maksimal dalam kurun waktu kurang dari 24 Jam.",
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FaqItem extends StatelessWidget {
+  final String question;
+  final String answer;
+
+  const FaqItem({
+    super.key,
+    required this.question,
+    required this.answer,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 400,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline, color: Colors.black, size: 35),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  question,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.only(left: 45),
+            child: Text(
+              answer,
+              style: const TextStyle(fontSize: 23, color: Colors.black),
+            ),
+          ),
         ],
       ),
     );
