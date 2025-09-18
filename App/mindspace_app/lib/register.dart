@@ -16,19 +16,15 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
-    // This Scaffold is the root of your registration page.
     return Scaffold(
-      // Use the reusable AppBar, giving it a specific title for this page.
       appBar: const CustomAppBar(
         
       ),
-      // The body contains the content unique to this page.
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: FormSection(), // This is where you will build your form.
+            child: FormSection(),
           ),
-          // Use the reusable Footer at the bottom.
           if (kIsWeb) const FooterSection(),
         ],
       ),
@@ -36,7 +32,6 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 }
 
-/// A widget that contains the actual registration form fields.
 class FormSection extends StatefulWidget {
   const FormSection({super.key});
 
@@ -47,18 +42,59 @@ class FormSection extends StatefulWidget {
 class _FormSectionState extends State<FormSection> {
   @override
   Widget build(BuildContext context) {
-    // TODO: Build your actual registration form here with TextFormField, etc.
-    // For now, it's a placeholder.
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-      // Set a minimum height to ensure it fills some space, especially on desktop.
-      constraints: BoxConstraints(
-        minHeight: MediaQuery.of(context).size.height - 200, // Screen height minus AppBar and Footer
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color.fromARGB(255, 255, 247, 209),
+            Color.fromARGB(255, 243, 229, 245),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-      child: const Center(
-        child: Text(
-          'Registration form fields will go here.',
-          style: TextStyle(fontSize: 22),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height - 200,
+      ),
+      child: Center(
+        child: Container(
+          width: 500,
+          padding: const EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.0),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.15),
+                spreadRadius: 2,
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Buat Akun',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 24),
+
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Nama Lengkap',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+              ),
+            ],
+          )
+
         ),
       ),
     );

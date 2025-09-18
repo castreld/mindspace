@@ -313,7 +313,7 @@ class FaqSection extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 255, 247, 209),
-              Color.fromARGB(255, 243, 229, 245)
+              Color.fromARGB(255, 243, 229, 245),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
