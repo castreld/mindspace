@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:mindspace_app/login.dart';
+import 'package:mindspace_app/routes.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
 import 'register.dart';
@@ -26,8 +27,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mindspace',
       routes: {
-        '/': (context) => const HomePage(),
-        '/register': (context) => const RegisterForm()
+        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.register: (context) => const RegisterForm(),
+        AppRoutes.login: (context) => const LoginForm(),
       },
       initialRoute: '/',
       scrollBehavior: MyCustomScrollBehavior(),

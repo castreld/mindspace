@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -39,7 +40,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/register');
+            Navigator.pushNamed(context, AppRoutes.register);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFC89E25),
@@ -53,7 +54,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () {
-            // LOGIN LOGIC DI SINI BOSSSSS
+            Navigator.pushNamed(context, AppRoutes.login);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFE9B335),
@@ -85,7 +86,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: <Widget>[
         _AppBarTextButton('Home', () {
-          Navigator.pushNamed(context, '/');
+          Navigator.pushNamed(context, AppRoutes.home);
         }),
         _AppBarTextButton('Psikolog', () {
           // TERAPIS DI SINI
@@ -99,7 +100,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/register');
+            Navigator.pushNamed(context, AppRoutes.register);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFC89E25),
@@ -113,7 +114,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () {
-            // ANOTHER LOGIN LOGIC HERE
+            Navigator.pushNamed(context, AppRoutes.login);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFE9B335),
