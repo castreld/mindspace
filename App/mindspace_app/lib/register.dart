@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:mindspace_app/routes.dart';
 
 import 'widgets/custom_app_bar.dart';
@@ -41,11 +44,112 @@ class FormSection extends StatefulWidget {
 
 class _FormSectionState extends State<FormSection> {
 
-  TextEditingController _dateController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  final _usernameController   = TextEditingController();
+  final _fullNameController   = TextEditingController();
+  final _birthDateController  = TextEditingController();
+  final _emailController      = TextEditingController();
+  final _phoneController      = TextEditingController();
+  final _passwordController   = TextEditingController();
+  
+  String? _sexDropdownValue; 
+  String? _categoryDropdownController;
   static const List<String> flyer = ['yes', 'no'];
-  String flyerOption = flyer[0];
-  String? _sexDropdownValue, _categoryDropdownController;
+  String flyerOption = 'yes';
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _fullNameController.dispose();
+    _birthDateController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _register() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
+
+    final Map<String, dynamic> data = {
+      'username': _usernameController.text,
+      'full_name': _fullNameController.text,
+      'email': _emailController.text,
+      'phone_number': _phoneController.text,
+      'password': _passwordController.text,
+      'birth_date': _birthDateController.text,
+      'gender': _sexDropdownValue,
+      'category': _categoryDropdownController,
+      'flyer': flyerOption,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8000/api/register'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Daftar Berhasil!'))
+        );
+      } else {
+        print('Validation Errors: ${response.body}');
+        
+        final errorData = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${errorData['message'] ?? 'Unknown error'}')),
+          );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to connect to the server: $e')),
+        );
+    } finally {
+      setState(() {
+          _isLoading = false;
+        });
+    }
+  }
+
+  Future<void> _selectDate() async {
+    DateTime? _picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (_picked != null){
+      setState(() {
+        _birthDateController.text = _picked.toString().split(" ")[0];
+      });
+    }
+  }
+
+  void sexDropdownCallback(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        _sexDropdownValue = selectedValue;
+      });
+    }
+  }
+
+  void categoryDropdownCallback(String? selectedValue) {
+    if (selectedValue is String) {
+      setState(() {
+        _categoryDropdownController = selectedValue;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +185,10 @@ class _FormSectionState extends State<FormSection> {
               ),
             ],
           ),
-          child: Column(
+          
+          child: Form(
+            key: _formKey,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -93,34 +200,55 @@ class _FormSectionState extends State<FormSection> {
               const SizedBox(height: 24),
 
               TextFormField(
+                controller: _usernameController,
                 decoration: const InputDecoration(
                   labelText: 'Username',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.alternate_email),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan username anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
               TextFormField(
+                controller: _fullNameController,
                 decoration: const InputDecoration(
                   labelText: 'Nama Lengkap',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person_4_outlined),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan nama lengkap anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
               TextFormField(
+                controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'E-Mail',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan e-mail anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
               
               TextFormField(
-                controller: _dateController,
+                controller: _birthDateController,
                 decoration: const InputDecoration(
                   labelText: 'Tanggal Lahir',
                   filled: true,
@@ -128,6 +256,12 @@ class _FormSectionState extends State<FormSection> {
                   prefixIcon: Icon(Icons.calendar_month_outlined),
                   focusedBorder: OutlineInputBorder()
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan tanggal lahir anda!';
+                  }
+                  return null;
+                },
                 readOnly: true,
                 onTap: _selectDate,
               ),
@@ -147,10 +281,17 @@ class _FormSectionState extends State<FormSection> {
                   DropdownMenuItem(value: 'wanita', child: Text("Wanita")),
                 ],
                 onChanged: sexDropdownCallback,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong pilih jenis kelamin anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
               TextFormField(
+                controller: _phoneController,
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
@@ -160,6 +301,12 @@ class _FormSectionState extends State<FormSection> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.phone_android_outlined),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan nomor telepon anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
@@ -178,10 +325,17 @@ class _FormSectionState extends State<FormSection> {
                   DropdownMenuItem(value: 'Dosen / Tenaga Kependidikan Unpad', child: Text("Dosen / Tenaga Kependidikan Unpad")),
                 ],
                 onChanged: categoryDropdownCallback,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong pilih kategori anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
               TextFormField(
+                controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: 'Password',
@@ -198,6 +352,12 @@ class _FormSectionState extends State<FormSection> {
                     },
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tolong masukan password anda!';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 15),
 
@@ -231,6 +391,7 @@ class _FormSectionState extends State<FormSection> {
                           flyerOption = value.toString();
                         });
                       }
+                      
                     ),
                   ),
                 ],
@@ -252,7 +413,7 @@ class _FormSectionState extends State<FormSection> {
               ),
 
               ElevatedButton(
-                onPressed: () {},
+                onPressed: _isLoading ? null : _register,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFC89E25),
                   foregroundColor: Colors.white,
@@ -262,43 +423,14 @@ class _FormSectionState extends State<FormSection> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Text("Daftar!"),
+                child: _isLoading ? const CircularProgressIndicator(color: Colors.white,) : const Text("Daftar!"),
               )
             ],
           ),
+          ),
+
         ),
       ),
     );
-  }
-
-  Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2100),
-    );
-
-    if (_picked != null){
-      setState(() {
-        _dateController.text = _picked.toString().split(" ")[0];
-      });
-    }
-  }
-
-  void sexDropdownCallback(String? selectedValue) {
-    if (selectedValue is String) {
-      setState(() {
-        _sexDropdownValue = selectedValue;
-      });
-    }
-  }
-
-  void categoryDropdownCallback(String? selectedValue) {
-    if (selectedValue is String) {
-      setState(() {
-        _categoryDropdownController = selectedValue;
-      });
-    }
   }
 }
