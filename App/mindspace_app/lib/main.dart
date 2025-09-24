@@ -1,11 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:mindspace_app/login.dart';
+import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/routes.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
-import 'register.dart';
+import 'auth/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -48,26 +49,27 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // The drawer requires a key on mobile to be opened programmatically.
       key: GlobalKey<ScaffoldState>(),
-      // Here is our clean, reusable AppBar
       appBar: const CustomAppBar(),
       drawer: const _AppDrawer(),
-      body: const CustomScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        slivers: [
-          HeroSection(),
-          ServicesSection(),
-          FaqSection(),
-          // Here is our clean, reusable Footer
-          if (kIsWeb) FooterSection(),
+      body: Stack(
+        children: [
+          const AnimatedGradientBackground(),
+          const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              HeroSection(),
+              ServicesSection(),
+              FaqSection(),
+              if (kIsWeb) FooterSection(),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-// Widgets specific to the HomePage can remain here.
 class _AppDrawer extends StatelessWidget {
   const _AppDrawer();
 
@@ -117,7 +119,6 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
-// Other sections used only by the HomePage
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
 
@@ -178,17 +179,6 @@ class HeroSection extends StatelessWidget {
         height: screenSize.height,
         width: screenSize.width,
         padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 255, 247, 209),
-              Color.fromARGB(255, 243, 229, 245)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            stops: [0.0, 0.3],
-          ),
-        ),
         child: isSmallScreen
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center, children: children)
@@ -207,17 +197,6 @@ class ServicesSection extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 255, 247, 209),
-              Color.fromARGB(255, 243, 229, 245)
-            ],
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            stops: [0.0, 0.9],
-          ),
-        ),
         child: const Wrap(
           spacing: 40,
           runSpacing: 40,
@@ -311,16 +290,6 @@ class FaqSection extends StatelessWidget {
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 20),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 255, 247, 209),
-              Color.fromARGB(255, 243, 229, 245),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
         child: Column(
           children: [
             const Text(

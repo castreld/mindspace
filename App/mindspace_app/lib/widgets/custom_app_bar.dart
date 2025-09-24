@@ -91,9 +91,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         _AppBarTextButton('Psikolog', () {
           // TERAPIS DI SINI
         }),
-        _AppBarTextButton('Jadwal', () {
-          // JADWAL DI SINI
-        }),
         _AppBarTextButton('Kontak', () {
           // KONTAK DI SINIIIIII
         }),

@@ -4,10 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/routes.dart';
 
-import 'widgets/custom_app_bar.dart';
-import 'widgets/footer.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/footer.dart';
 
 class RegisterForm extends StatefulWidget {
   const RegisterForm({super.key});
@@ -23,14 +24,20 @@ class _RegisterFormState extends State<RegisterForm> {
       appBar: const CustomAppBar(
         
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: FormSection(),
-          ),
-          if (kIsWeb) const FooterSection(),
+      body: Stack(
+        children: [
+          const AnimatedGradientBackground(),
+          const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: FormSection(),
+              ),
+              if (kIsWeb) FooterSection(),
+            ],
+          )
         ],
-      ),
+      )
     );
   }
 }
@@ -154,17 +161,6 @@ class _FormSectionState extends State<FormSection> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color.fromARGB(255, 255, 247, 209),
-            Color.fromARGB(255, 243, 229, 245),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          stops: [0.0, 0.6]
-        ),
-      ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       constraints: BoxConstraints(
         minHeight: MediaQuery.of(context).size.height - 200,

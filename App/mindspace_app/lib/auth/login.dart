@@ -1,9 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/routes.dart';
-
-import 'widgets/custom_app_bar.dart';
-import 'widgets/footer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../user/dashboard.dart'; 
+import '../models/user.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/footer.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -13,6 +17,7 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,14 +25,20 @@ class _LoginFormState extends State<LoginForm> {
 
 
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: FormSection(),
-          ),
-          if (kIsWeb) const FooterSection(),
+      body: Stack(
+        children: [
+          const AnimatedGradientBackground(),
+          const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: FormSection(),
+              ),
+              if (kIsWeb) FooterSection(),
+            ],
+          )
         ],
-      ),
+      )
     );
   }
 }
@@ -40,20 +51,81 @@ class FormSection extends StatefulWidget {
 }
 
 class _FormSectionState extends State<FormSection> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _loginUser() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // !! IMPORTANT: Replace with your actual API URL
+    final url = Uri.parse('http://127.0.0.1:8000/api/login');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+        body: json.encode({
+          'email': _emailController.text,
+          'password': _passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final user = User.fromJson(responseData['user']);
+
+        // Navigate to Dashboard on success
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainDashboard(user: user),
+            ),
+          );
+        }
+      } else {
+        // Handle login errors (e.g., wrong password)
+        final errorData = json.decode(response.body);
+        _showErrorSnackbar(errorData['message'] ?? 'Login failed. Please try again.');
+      }
+    } catch (e) {
+      // Handle network or other errors
+      _showErrorSnackbar('An error occurred. Please check your connection.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    if(mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final double? containerHeight = !kIsWeb ? screenSize.height : null;
+
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color.fromARGB(255, 255, 247, 209),
-            Color.fromARGB(255, 243, 229, 245),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          stops: [0.0, 0.6]
-        ),
-      ),
+      height: containerHeight,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       constraints: BoxConstraints(
         minHeight: MediaQuery.of(context).size.height - 200,
@@ -74,7 +146,9 @@ class _FormSectionState extends State<FormSection> {
               ),
             ],
           ),
-          child: Column(
+          child: Form(
+            key: _formKey,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -86,6 +160,7 @@ class _FormSectionState extends State<FormSection> {
               const SizedBox(height: 24),
 
               TextFormField(
+                controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'E-Mail',
                   border: OutlineInputBorder(),
@@ -95,6 +170,7 @@ class _FormSectionState extends State<FormSection> {
               const SizedBox(height: 15),
 
               TextFormField(
+                controller: _passwordController,
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
@@ -120,7 +196,7 @@ class _FormSectionState extends State<FormSection> {
               const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed: () {},
+                onPressed: _isLoading ? null : _loginUser,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFC89E25),
                   foregroundColor: Colors.white,
@@ -130,9 +206,10 @@ class _FormSectionState extends State<FormSection> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: const Text("Daftar!"),
+                child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text("Masuk"),
               )
             ],
+          ),
           ),
         ),
       ),
