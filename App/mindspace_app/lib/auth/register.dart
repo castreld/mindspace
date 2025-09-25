@@ -99,7 +99,7 @@ class _FormSectionState extends State<FormSection> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/register'),
+        Uri.parse('http://127.0.0.1:8000/api/activity-history'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(data),
       );

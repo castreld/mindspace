@@ -19,10 +19,10 @@ class _AnimatedGradientBackgroundDarkState extends State<AnimatedGradientBackgro
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10), // Increased duration for a slower, more soothing flow
+      duration: const Duration(seconds: 10), 
     );
 
-    // This animation controls the 'top-left' part of the gradient
+    
     _topAlignmentAnimation = TweenSequence<Alignment>([
       TweenSequenceItem<Alignment>(
         tween: AlignmentTween(begin: Alignment.topLeft, end: Alignment.topRight),
@@ -42,7 +42,7 @@ class _AnimatedGradientBackgroundDarkState extends State<AnimatedGradientBackgro
       ),
     ]).animate(_controller);
 
-    // This animation controls the 'bottom-right' part of the gradient
+    
     _bottomAlignmentAnimation = TweenSequence<Alignment>([
       TweenSequenceItem<Alignment>(
         tween: AlignmentTween(begin: Alignment.bottomRight, end: Alignment.bottomLeft),
@@ -62,7 +62,7 @@ class _AnimatedGradientBackgroundDarkState extends State<AnimatedGradientBackgro
       ),
     ]).animate(_controller);
 
-    // This will make the animation go back and forth smoothly
+    
     _controller.repeat(reverse: true);
   }
 

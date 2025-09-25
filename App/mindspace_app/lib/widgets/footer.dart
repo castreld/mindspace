@@ -83,7 +83,7 @@ class FooterColumn extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: TextButton(
               onPressed: () {
-                // TODO: Handle link tap
+                
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,

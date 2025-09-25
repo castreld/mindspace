@@ -66,7 +66,7 @@ class _FormSectionState extends State<FormSection> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/login');
+    final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
 
     try {
       final response = await http.post(

@@ -54,7 +54,6 @@ class User extends Authenticatable
         ];
     }
 
-    // In app/Models/User.php
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class);

@@ -152,13 +152,13 @@ class MainMenu extends StatefulWidget {
   State<MainMenu> createState() => _MainMenuState();
 }
 
-// ✨ FIXED: Removed duplicate methods from this class
+
 class _MainMenuState extends State<MainMenu> {
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/logout');
+    final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
 
     try {
       await http.post(
@@ -229,7 +229,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 }
 
-// The rest of your dashboard widgets remain the same
+
 class LandingDashboard extends StatefulWidget {
   final User user;
   final String token;
@@ -265,7 +265,6 @@ class LandingDashboardState extends State<LandingDashboard> {
       if (mounted) {
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
-          // Adjust this logic to handle a list of activities if needed
           final latestActivity = (data['data'] as List).firstOrNull;
           if (latestActivity != null) {
              setState(() {
