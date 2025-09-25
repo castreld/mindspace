@@ -3,12 +3,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/auth/login.dart';
+import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:mindspace_app/services/auth_service.dart'; 
+import 'package:mindspace_app/user/dashboard.dart'; 
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
 import 'auth/register.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthService().init();
   runApp(const MyApp());
 }
 
@@ -25,14 +30,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
+
     return MaterialApp(
       title: 'Mindspace',
       routes: {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.register: (context) => const RegisterForm(),
         AppRoutes.login: (context) => const LoginForm(),
+
+        AppRoutes.dashboard: (context) => MainDashboard(
+              user: authService.currentUser!,
+              token: authService.token!,
+            ),
       },
-      initialRoute: '/',
+      initialRoute: authService.isLoggedIn ? AppRoutes.dashboard : AppRoutes.home,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),
@@ -43,14 +55,35 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  User? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _user = AuthService().currentUser;
+  }
+
+  Future<void> _logout() async {
+    await AuthService().clearSession();
+    setState(() {
+      _user = null;
+    });
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: GlobalKey<ScaffoldState>(),
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(user: _user, onLogout: _logout),
       drawer: const _AppDrawer(),
       body: Stack(
         children: [

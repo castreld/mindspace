@@ -21,9 +21,9 @@ class _RegisterFormState extends State<RegisterForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        
-      ),
+      key: GlobalKey<ScaffoldState>(),
+      appBar: const CustomAppBar(),
+      drawer: const _AppDrawer(),
       body: Stack(
         children: [
           const AnimatedGradientBackground(),
@@ -427,6 +427,57 @@ class _FormSectionState extends State<FormSection> {
 
         ),
       ),
+    );
+  }
+}
+
+class _AppDrawer extends StatelessWidget {
+  const _AppDrawer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF5B3F5B),
+            ),
+            child: Text(
+              'Mindspace',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          _DrawerItem('Home', Icons.home, () {
+            Navigator.pushNamed(context, '/');
+          }),
+          _DrawerItem('Terapis', Icons.people, () {}),
+          _DrawerItem('Jadwal', Icons.calendar_today, () {}),
+          _DrawerItem('Kontak', Icons.contact_phone, () {}),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _DrawerItem(this.title, this.icon, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
+      onTap: onTap,
     );
   }
 }

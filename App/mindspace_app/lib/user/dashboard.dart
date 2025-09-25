@@ -1,29 +1,43 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/animated_background_dark.dart';
 import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 import '../models/user.dart';
+import 'package:mindspace_app/services/auth_service.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class MainDashboard extends StatefulWidget {
   final User user;
-  const MainDashboard({super.key, required this.user});
+  final String token;
+  const MainDashboard({super.key, required this.user, required this.token});
 
   @override
   State<MainDashboard> createState() => _MainDashboardState();
 }
 
 class _MainDashboardState extends State<MainDashboard> {
+  Future<void> _logout() async {
+
+    await AuthService().clearSession();
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, AppRoutes.home, (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: CustomAppBar(user: widget.user, onLogout: _logout),
       body: Stack(
         children: [
-          const AnimatedGradientBackground(),
+          const AnimatedGradientBackgroundDark(),
           CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
@@ -35,6 +49,7 @@ class _MainDashboardState extends State<MainDashboard> {
                       SizedBox(
                         width: 260,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ProfileOverview(user: widget.user),
                             const SizedBox(height: 24),
@@ -44,14 +59,15 @@ class _MainDashboardState extends State<MainDashboard> {
                       ),
                       const SizedBox(width: 24),
                       Expanded(
-                        child: LandingDashboard(user: widget.user),
+                        child: LandingDashboard(
+                            user: widget.user, token: widget.token),
                       ),
                     ],
                   ),
                 ),
               ),
               const SliverFillRemaining(hasScrollBody: false),
-              if (kIsWeb) FooterSection(),
+              if (kIsWeb) const FooterSection(),
             ],
           ),
         ],
@@ -73,8 +89,11 @@ class _ProfileOverviewState extends State<ProfileOverview> {
   Widget build(BuildContext context) {
     return Card(
       color: const Color(0xFFFFF8F0),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(12)),
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.2),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -82,23 +101,31 @@ class _ProfileOverviewState extends State<ProfileOverview> {
             const CircleAvatar(
               radius: 40,
               backgroundColor: Colors.grey,
-              child: Icon(Icons.person, size: 50, color: Colors.white,),
+              child: Icon(
+                Icons.person,
+                size: 50,
+                color: Colors.white,
+              ),
             ),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             Text(
               widget.user.username,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4,),
+            const SizedBox(
+              height: 4,
+            ),
             Text(
               widget.user.email,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
             ),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             ElevatedButton(
-              onPressed: () {
-                
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE0E0E0),
                 foregroundColor: Colors.black,
@@ -112,7 +139,7 @@ class _ProfileOverviewState extends State<ProfileOverview> {
               ),
             ),
           ],
-        ), 
+        ),
       ),
     );
   }
@@ -125,15 +152,41 @@ class MainMenu extends StatefulWidget {
   State<MainMenu> createState() => _MainMenuState();
 }
 
+// ✨ FIXED: Removed duplicate methods from this class
 class _MainMenuState extends State<MainMenu> {
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
 
-  Widget _buildMenuItem({required IconData icon, required String title}) {
+    final url = Uri.parse('http://127.0.0.1:8000/api/logout');
+
+    try {
+      await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+    } catch (e) {
+      print("Error during API logout: $e");
+    } finally {
+      await prefs.clear();
+      if (mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginForm()),
+          (Route<dynamic> route) => false,
+        );
+      }
+    }
+  }
+
+  Widget _buildMenuItem(
+      {required IconData icon, required String title, VoidCallback? onTap}) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       borderRadius: const BorderRadius.vertical(
-        top: Radius.circular(12),
-        bottom: Radius.circular(12)
-      ),
+          top: Radius.circular(12), bottom: Radius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
@@ -154,7 +207,8 @@ class _MainMenuState extends State<MainMenu> {
   Widget build(BuildContext context) {
     return Card(
       color: const Color(0xFFFFF8F0),
-      elevation: 2,
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -167,21 +221,83 @@ class _MainMenuState extends State<MainMenu> {
               icon: Icons.history_outlined, title: 'Riwayat Konseling'),
           _buildMenuItem(icon: Icons.message_outlined, title: 'Pesan'),
           _buildMenuItem(icon: Icons.settings_outlined, title: 'Pengaturan'),
+          const Divider(height: 1),
+          _buildMenuItem(icon: Icons.logout, title: 'Logout', onTap: _logout),
         ],
       ),
     );
   }
 }
 
+// The rest of your dashboard widgets remain the same
 class LandingDashboard extends StatefulWidget {
   final User user;
-  const LandingDashboard({super.key, required this.user});
+  final String token;
+  const LandingDashboard({super.key, required this.user, required this.token});
 
   @override
   State<LandingDashboard> createState() => LandingDashboardState();
 }
 
 class LandingDashboardState extends State<LandingDashboard> {
+  String _activityTitle = 'Loading Activity...';
+  String _activityDescription = '';
+  bool _isLoadingActivity = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRecentActivity();
+  }
+
+  Future<void> _fetchRecentActivity() async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${widget.token}',
+        },
+      );
+
+      if (mounted) {
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          // Adjust this logic to handle a list of activities if needed
+          final latestActivity = (data['data'] as List).firstOrNull;
+          if (latestActivity != null) {
+             setState(() {
+                _activityTitle = 'Recent ${latestActivity['activity_type']}';
+                _activityDescription = 'From IP: ${latestActivity['ip_address']}';
+                _isLoadingActivity = false;
+             });
+          } else {
+             setState(() {
+                _activityTitle = 'Welcome!';
+                _activityDescription = 'No recent activity found.';
+                _isLoadingActivity = false;
+             });
+          }
+        } else {
+          setState(() {
+            _activityTitle = 'Error';
+            _activityDescription = 'Could not load recent activity.';
+            _isLoadingActivity = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _activityTitle = 'Error';
+          _activityDescription = 'Could not connect to the server.';
+          _isLoadingActivity = false;
+        });
+      }
+    }
+  }
 
   Widget _buildSummaryCard({
     required IconData icon,
@@ -192,7 +308,8 @@ class LandingDashboardState extends State<LandingDashboard> {
   }) {
     return Card(
       color: const Color(0xFFFFF8F0),
-      elevation: 2,
+      elevation: 4,
+      shadowColor: Colors.black.withOpacity(0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -201,9 +318,12 @@ class LandingDashboardState extends State<LandingDashboard> {
           children: [
             Icon(icon, size: 32, color: Colors.black87),
             const SizedBox(height: 12),
-            Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
-            Text(subtitle, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+            Text(subtitle,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600])),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -224,37 +344,6 @@ class LandingDashboardState extends State<LandingDashboard> {
       ),
     );
   }
-  
-  Widget _buildPsychologistCard({
-    required String name,
-    required String specialty,
-  }) {
-    return Card(
-      color: const Color(0xFFFFF8F0),
-      elevation: 1.5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          children: [
-            const CircleAvatar(
-              radius: 24,
-              backgroundColor: Color(0xFFF9A825),
-              child: Text('RS', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(specialty, style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -263,19 +352,35 @@ class LandingDashboardState extends State<LandingDashboard> {
       children: [
         Card(
           color: const Color(0xFFFFF8F0),
-          elevation: 2,
+          elevation: 4,
+          shadowColor: Colors.black.withOpacity(0.2),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-            child: Text(
-              'Selamat Datang, ${widget.user.username}\nIni adalah dashboard layanan konsaling MINDSPACE. Didalam halaman ini anda bisa menggunakan beberapa fitur yang disediakan oleh kami',
-              style: const TextStyle(fontSize: 16, height: 1.5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Selamat Datang, ${widget.user.username}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Ini adalah dashboard layanan konsaling MINDSPACE. Didalam halaman ini anda bisa menggunakan beberapa fitur yang disediakan oleh kami',
+                  style: TextStyle(
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
         const SizedBox(height: 24),
-
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -311,76 +416,28 @@ class LandingDashboardState extends State<LandingDashboard> {
           ],
         ),
         const SizedBox(height: 24),
-        
         Card(
           color: const Color(0xFFFFF8F0),
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: const ListTile(
-            title: Text('Aktivitas Terbaru', style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('Pendaftaran Akun\nAnda telah berhasil mendaftar dan membuat akun'),
-            isThreeLine: true,
-          ),
+          elevation: 4,
+          shadowColor: Colors.black.withOpacity(0.2),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: _isLoadingActivity
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : ListTile(
+                  title: Text(_activityTitle,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(_activityDescription),
+                  isThreeLine: true,
+                ),
         ),
         const SizedBox(height: 24),
-        
       ],
     );
-  }
-}
-
-class ScheduleDashboard extends StatefulWidget {
-  const ScheduleDashboard({super.key});
-
-  @override
-  State<ScheduleDashboard> createState() => _ScheduleDashboardState();
-}
-
-class _ScheduleDashboardState extends State<ScheduleDashboard> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class HistoryDashboard extends StatefulWidget {
-  const HistoryDashboard({super.key});
-
-  @override
-  State<HistoryDashboard> createState() => _HistoryDashboardState();
-}
-
-class _HistoryDashboardState extends State<HistoryDashboard> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class MessageDashboard extends StatefulWidget {
-  const MessageDashboard({super.key});
-
-  @override
-  State<MessageDashboard> createState() => _MessageDashboardState();
-}
-
-class _MessageDashboardState extends State<MessageDashboard> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-
-class SettingsDashboard extends StatefulWidget {
-  const SettingsDashboard({super.key});
-
-  @override
-  State<SettingsDashboard> createState() => _SettingsDashboardState();
-}
-
-class _SettingsDashboardState extends State<SettingsDashboard> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }

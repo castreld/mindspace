@@ -8,14 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule; 
-use Symfony\Contracts\Service\Attribute\Required;// Important for validating enums
+use Illuminate\Validation\Rule;
+use Illuminate\Auth\Events\Login; // Import the Login event
+use Illuminate\Auth\Events\Logout; // Import the Logout event
 
 class AuthController extends Controller
 {
-    /**
-     * Handle a user registration request.
-     */
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -47,6 +46,8 @@ class AuthController extends Controller
             'role' => 'klien',
         ]);
 
+        event(new Login(auth()->guard('web'), $user, false));
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -57,7 +58,8 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function login(request $request) {
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -75,6 +77,8 @@ class AuthController extends Controller
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
+        event(new Login(auth()->guard('web'), $user, $request->boolean('remember')));
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -82,6 +86,19 @@ class AuthController extends Controller
            'access_token' => $token,
            'token_type' => 'Bearer',
            'user' => $user,
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+
+        event(new Logout(auth()->guard('web'), $user));
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
         ]);
     }
 }
