@@ -99,7 +99,7 @@ class _FormSectionState extends State<FormSection> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/activity-history'),
+        Uri.parse('http://127.0.0.1:8000/api/register'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(data),
       );
@@ -108,6 +108,9 @@ class _FormSectionState extends State<FormSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Daftar Berhasil!'))
         );
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Navigator.pushReplacementNamed(context, '/login');
+        });
       } else {
         print('Validation Errors: ${response.body}');
         

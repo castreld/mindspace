@@ -51,6 +51,10 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'full_name' => 'encrypted',
+            'email' => 'encrypted',
+            'birth_date' => 'encrypted',
+            'phone_number' => 'encrypted',
         ];
     }
 

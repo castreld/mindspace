@@ -52,10 +52,11 @@ class FormSection extends StatefulWidget {
 
 class _FormSectionState extends State<FormSection> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _rememberMe = false;
+  bool _obscurePassword = true;
 
   
   Future<void> _loginUser() async {
@@ -66,7 +67,7 @@ class _FormSectionState extends State<FormSection> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
+    final url = Uri.parse('http://127.0.0.1:8000/api/login');
 
     try {
       final response = await http.post(
@@ -76,8 +77,9 @@ class _FormSectionState extends State<FormSection> {
           'Accept': 'application/json'
         },
         body: json.encode({
-          'email': _emailController.text,
+          'username': _usernameController.text,
           'password': _passwordController.text,
+          'remember': _rememberMe,
         }),
       );
 
@@ -86,7 +88,6 @@ class _FormSectionState extends State<FormSection> {
         final user = User.fromJson(responseData['user']);
         final token = responseData['access_token'];
 
-        
         await AuthService().saveSession(user, token);
 
         if (mounted) {
@@ -160,23 +161,35 @@ class _FormSectionState extends State<FormSection> {
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
-                  controller: _emailController,
+                  controller: _usernameController,
                   decoration: const InputDecoration(
-                    labelText: 'E-Mail',
+                    labelText: 'Username',
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email_outlined),
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
                 ),
                 const SizedBox(height: 15),
                 TextFormField(
                   controller: _passwordController,
-                  obscureText: true, 
-                  decoration: const InputDecoration(
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.key_outlined),
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.key_outlined),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                 ),
+                // The 'remember me' checkbox only sends the value to the backend.
+                // To persist sessions locally, you must also store and reuse the token in AuthService.
                 CheckboxListTile(
                   title: const Text("Ingat saya"),
                   value: _rememberMe,

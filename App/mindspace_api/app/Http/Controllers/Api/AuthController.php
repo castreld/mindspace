@@ -22,7 +22,7 @@ class AuthController extends Controller
             'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'birth_date' => 'required|date',
+            'birth_date' => 'required|string',
             'gender' => ['required', Rule::in(['pria', 'wanita'])],
             'phone_number' => 'required|string|max:15',
             'flyer' => ['required', Rule::in(['yes', 'no'])],
@@ -61,7 +61,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => 'required|string|email',
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
@@ -69,13 +69,13 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('username', 'password'))) {
             return response()->json([
                 'message' => 'Invalid login details'
             ], 401);
         }
 
-        $user = User::where('email', $request['email'])->firstOrFail();
+        $user = User::where('username', $request['username'])->firstOrFail();
 
         event(new Login(auth()->guard('web'), $user, $request->boolean('remember')));
 
