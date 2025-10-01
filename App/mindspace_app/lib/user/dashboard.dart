@@ -6,7 +6,11 @@ import '../models/user.dart';
 import 'package:mindspace_app/animated_background_dark.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/user/dashboard/landing_dashboard.dart';
+import 'package:mindspace_app/user/dashboard/schedule_dashboard.dart';
 import 'package:mindspace_app/services/auth_service.dart';
+
+// ✨ NEW: An enum to represent the dashboard sections for better readability.
+enum DashboardSection { dashboard, schedule, history, messages, settings }
 
 class MainDashboard extends StatefulWidget {
   final User user;
@@ -18,11 +22,35 @@ class MainDashboard extends StatefulWidget {
 }
 
 class _MainDashboardState extends State<MainDashboard> {
+  // ✨ CHANGED: State is now managed by the enum.
+  DashboardSection _selectedSection = DashboardSection.dashboard;
+
   Future<void> _logout() async {
     await AuthService().clearSession();
     if (mounted) {
       Navigator.pushNamedAndRemoveUntil(
           context, AppRoutes.home, (route) => false);
+    }
+  }
+
+  // ✨ UPDATED: This function now handles all sections.
+  Widget _getSectionWidget() {
+    switch (_selectedSection) {
+      case DashboardSection.dashboard:
+        return LandingDashboard(user: widget.user, token: widget.token);
+      case DashboardSection.schedule:
+        return const ScheduleDashboard();
+      case DashboardSection.history:
+        // TODO: Create and return your HistoryDashboard widget here
+        return const Center(child: Text('Riwayat Konseling Section', style: TextStyle(color: Colors.white)));
+      case DashboardSection.messages:
+        // TODO: Create and return your MessageDashboard widget here
+        return const Center(child: Text('Pesan Section', style: TextStyle(color: Colors.white)));
+      case DashboardSection.settings:
+        // TODO: Create and return your SettingsDashboard widget here
+        return const Center(child: Text('Pengaturan Section', style: TextStyle(color: Colors.white)));
+      default:
+        return LandingDashboard(user: widget.user, token: widget.token);
     }
   }
 
@@ -48,15 +76,22 @@ class _MainDashboardState extends State<MainDashboard> {
                           children: [
                             ProfileOverview(user: widget.user),
                             const SizedBox(height: 24),
-                            // ✨ MODIFIED: We now pass the logout function to the MainMenu
-                            MainMenu(onLogout: _logout),
+                            MainMenu(
+                              onLogout: _logout,
+                              selectedSection: _selectedSection,
+                              // ✨ CHANGED: The callback now passes the enum.
+                              onSectionSelected: (DashboardSection section) {
+                                setState(() {
+                                  _selectedSection = section;
+                                });
+                              },
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 24),
                       Expanded(
-                        child: LandingDashboard(
-                            user: widget.user, token: widget.token),
+                        child: _getSectionWidget(),
                       ),
                     ],
                   ),
@@ -78,7 +113,6 @@ class ProfileOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // This widget remains the same...
     return Card(
       color: const Color(0xFFFFF8F0),
       elevation: 4,
@@ -125,26 +159,47 @@ class ProfileOverview extends StatelessWidget {
   }
 }
 
-// ✨ MODIFIED: MainMenu is now simpler
 class MainMenu extends StatelessWidget {
   final VoidCallback onLogout;
-  const MainMenu({super.key, required this.onLogout});
+  // ✨ CHANGED: Properties now use the enum for type safety.
+  final DashboardSection selectedSection;
+  final ValueChanged<DashboardSection> onSectionSelected;
 
-  Widget _buildMenuItem(
-      {required IconData icon, required String title, VoidCallback? onTap}) {
+  const MainMenu({
+    super.key,
+    required this.onLogout,
+    required this.selectedSection,
+    required this.onSectionSelected,
+  });
+
+  Widget _buildMenuItem({
+    required IconData icon,
+    required String title,
+    required DashboardSection section,
+    required bool isSelected,
+  }) {
     return InkWell(
-      onTap: onTap,
-      borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(12), bottom: Radius.circular(12)),
-      child: Padding(
+      onTap: () => onSectionSelected(section),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        decoration: isSelected
+            ? BoxDecoration(
+                color: const Color(0xFFF9EBC8),
+                borderRadius: BorderRadius.circular(8),
+              )
+            : null,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: Colors.grey[700]),
+            Icon(icon, color: isSelected ? const Color(0xFFC89E25) : Colors.grey[700]),
             const SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: isSelected ? const Color(0xFFC89E25) : Colors.black,
+              ),
             ),
           ],
         ),
@@ -163,16 +218,53 @@ class MainMenu extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildMenuItem(icon: Icons.dashboard_outlined, title: 'Dashboard'),
           _buildMenuItem(
-              icon: Icons.calendar_today_outlined, title: 'Jadwal Konseling'),
+            icon: Icons.dashboard_outlined,
+            title: 'Dashboard',
+            section: DashboardSection.dashboard,
+            isSelected: selectedSection == DashboardSection.dashboard,
+          ),
           _buildMenuItem(
-              icon: Icons.history_outlined, title: 'Riwayat Konseling'),
-          _buildMenuItem(icon: Icons.message_outlined, title: 'Pesan'),
-          _buildMenuItem(icon: Icons.settings_outlined, title: 'Pengaturan'),
+            icon: Icons.calendar_today_outlined,
+            title: 'Jadwal Konseling',
+            section: DashboardSection.schedule,
+            isSelected: selectedSection == DashboardSection.schedule,
+          ),
+          _buildMenuItem(
+            icon: Icons.history_outlined,
+            title: 'Riwayat Konseling',
+            section: DashboardSection.history,
+            isSelected: selectedSection == DashboardSection.history,
+          ),
+          _buildMenuItem(
+            icon: Icons.message_outlined,
+            title: 'Pesan',
+            section: DashboardSection.messages,
+            isSelected: selectedSection == DashboardSection.messages,
+          ),
+          _buildMenuItem(
+            icon: Icons.settings_outlined,
+            title: 'Pengaturan',
+            section: DashboardSection.settings,
+            isSelected: selectedSection == DashboardSection.settings,
+          ),
           const Divider(height: 1),
-          _buildMenuItem(
-              icon: Icons.logout, title: 'Logout', onTap: onLogout),
+          InkWell(
+            onTap: onLogout,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Icon(Icons.logout, color: Colors.grey[700]),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Logout',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

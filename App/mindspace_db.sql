@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Sep 25, 2025 at 06:10 AM
+-- Generation Time: Oct 01, 2025 at 01:01 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -42,23 +42,15 @@ CREATE TABLE `activity_logs` (
 --
 
 INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES
-(1, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 02:13:04', '2025-09-24 02:13:04'),
-(2, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:24:13', '2025-09-24 19:24:13'),
-(3, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:28:42', '2025-09-24 19:28:42'),
-(4, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:30:17', '2025-09-24 19:30:17'),
-(5, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:30:57', '2025-09-24 19:30:57'),
-(6, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:31:30', '2025-09-24 19:31:30'),
-(7, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:34:07', '2025-09-24 19:34:07'),
-(8, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:34:49', '2025-09-24 19:34:49'),
-(9, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 19:35:53', '2025-09-24 19:35:53'),
-(10, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:19:37', '2025-09-24 22:19:37'),
-(11, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:19:37', '2025-09-24 22:19:37'),
-(12, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:35:40', '2025-09-24 22:35:40'),
-(13, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:35:40', '2025-09-24 22:35:40'),
-(14, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:36:02', '2025-09-24 22:36:02'),
-(15, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-24 22:36:02', '2025-09-24 22:36:02'),
-(16, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-24 22:36:28', '2025-09-24 22:36:28'),
-(17, 2, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-24 22:36:28', '2025-09-24 22:36:28');
+(24, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:31:14', '2025-09-28 20:31:14'),
+(25, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:44:14', '2025-09-28 20:44:14'),
+(26, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:44:14', '2025-09-28 20:44:14'),
+(27, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-28 22:26:40', '2025-09-28 22:26:40'),
+(28, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-28 22:26:40', '2025-09-28 22:26:40'),
+(29, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-29 01:46:53', '2025-09-29 01:46:53'),
+(30, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-29 01:46:53', '2025-09-29 01:46:53'),
+(31, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-30 17:59:33', '2025-09-30 17:59:33'),
+(32, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-30 17:59:33', '2025-09-30 17:59:33');
 
 -- --------------------------------------------------------
 
@@ -164,7 +156,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (9, '2025_09_22_060015_create_sessions_table', 2),
 (10, '2025_09_22_080147_create_personal_access_tokens_table', 3),
 (11, '2025_09_22_080516_change_phone_number_to_string_in_users_table', 4),
-(12, '2025_09_24_090450_create_activity_logs_table', 5);
+(12, '2025_09_24_090450_create_activity_logs_table', 5),
+(13, '2025_09_29_000001_change_birth_date_to_text_in_users_table', 6),
+(14, '2025_09_29_000002_change_phone_number_to_text_in_users_table', 7);
 
 -- --------------------------------------------------------
 
@@ -213,7 +207,14 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (21, 'App\\Models\\User', 2, 'auth_token', 'c34aa22dd1e82f2154d54b3d9a6626ae7e9bc387c8fcc6b05916c619268143f7', '[\"*\"]', '2025-09-24 22:19:37', NULL, '2025-09-24 22:19:37', '2025-09-24 22:19:37'),
 (22, 'App\\Models\\User', 2, 'auth_token', '9764ba2634d686767a0c13cc661d5c211028839f7fd28f07ea77b6ba4c2ac293', '[\"*\"]', NULL, NULL, '2025-09-24 22:35:40', '2025-09-24 22:35:40'),
 (23, 'App\\Models\\User', 2, 'auth_token', 'a28e77904683c9062c36b5b59e9f43a6e1327e67c7ef96841453761d807b629e', '[\"*\"]', NULL, NULL, '2025-09-24 22:36:02', '2025-09-24 22:36:02'),
-(24, 'App\\Models\\User', 2, 'auth_token', 'f94601be4848efedf1e9a85c52700bdfe2c7a2aae6f682d54223ab6995613534', '[\"*\"]', NULL, NULL, '2025-09-24 22:36:28', '2025-09-24 22:36:28');
+(24, 'App\\Models\\User', 2, 'auth_token', 'f94601be4848efedf1e9a85c52700bdfe2c7a2aae6f682d54223ab6995613534', '[\"*\"]', NULL, NULL, '2025-09-24 22:36:28', '2025-09-24 22:36:28'),
+(25, 'App\\Models\\User', 2, 'auth_token', '12bbac0178a0fae9ea83b26008f9704133f0ae036f7023544c3839cff4f592b3', '[\"*\"]', '2025-09-24 23:14:27', NULL, '2025-09-24 23:14:18', '2025-09-24 23:14:27'),
+(26, 'App\\Models\\User', 3, 'auth_token', 'bb8c3ee42dc52f4ca6838a0268e8a75ca611c71015e198614f2133229041b207', '[\"*\"]', NULL, NULL, '2025-09-24 23:16:09', '2025-09-24 23:16:09'),
+(28, 'App\\Models\\User', 4, 'auth_token', 'edb96ae03b04e5dd9e01eebfe4506789ae5b5999e5096b4c879ac6473802a503', '[\"*\"]', NULL, NULL, '2025-09-28 20:31:14', '2025-09-28 20:31:14'),
+(29, 'App\\Models\\User', 4, 'auth_token', 'd845985564f085068c4665c74f551dd5226e809a3a847d9318a16343efa5c05a', '[\"*\"]', '2025-09-28 20:46:58', NULL, '2025-09-28 20:44:14', '2025-09-28 20:46:58'),
+(30, 'App\\Models\\User', 4, 'auth_token', '7d9c760f3be22ad8c8d6e7711af3d52cb256f22a9738c33916030329d6cd1685', '[\"*\"]', '2025-09-29 00:26:22', NULL, '2025-09-28 22:26:40', '2025-09-29 00:26:22'),
+(31, 'App\\Models\\User', 4, 'auth_token', '2042b7f3095742ac582be144dfaccd552e00374ec20af927d7256cfa9f066ee6', '[\"*\"]', '2025-09-29 01:46:54', NULL, '2025-09-29 01:46:53', '2025-09-29 01:46:54'),
+(32, 'App\\Models\\User', 4, 'auth_token', '6cb983c16942ef30f3eac73f778e3851e44b377a4110743120298ed2cf18ac0a', '[\"*\"]', '2025-09-30 17:59:34', NULL, '2025-09-30 17:59:33', '2025-09-30 17:59:34');
 
 -- --------------------------------------------------------
 
@@ -303,9 +304,9 @@ CREATE TABLE `users` (
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `birth_date` date NOT NULL,
+  `birth_date` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `gender` enum('pria','wanita') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone_number` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone_number` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `flyer` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `category` enum('Umum','Mahasiswa Aktif Unpad','Dosen / Tenaga Kependidikan Unpad') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Umum',
@@ -318,8 +319,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `email_verified_at`, `created_at`, `updated_at`, `birth_date`, `gender`, `phone_number`, `password`, `flyer`, `category`, `role`, `remember_token`) VALUES
-(1, 'castreld', 'Firaas Raihansyah Rizqullah', 'hulukotak@gmail.com', NULL, '2025-09-22 01:05:45', '2025-09-22 01:05:45', '2008-01-10', 'pria', '082130304142', '$2y$12$jx74iMjwz3CeK2VBjGExVOKcBXsV0vIWPqNFIa4fP02rvPSviTcKi', 'yes', 'Mahasiswa Aktif Unpad', 'klien', NULL),
-(2, 'usertesting', 'User Testing', 'usertesting@gmail.com', NULL, '2025-09-23 21:12:45', '2025-09-23 21:12:45', '1990-09-12', 'pria', '081234567890', '$2y$12$0sGyf3j0cOvTBTQdve3Ilepp.q1VjTz4LE2iu6H4trg/fNTGmFVmq', 'no', 'Umum', 'klien', NULL);
+(4, 'castreld', 'eyJpdiI6IkMzNmVWK1hDc0ZhQmtLLzc1NFF6THc9PSIsInZhbHVlIjoiTnMwcXppZ2NGMHZkTDRNN0UrQTdVaHU0ZGEzeEhIMU51clc4OEt0VGlvMD0iLCJtYWMiOiI1OTQ4ZGNiOTU0YjM3OTg1NWQ4ZmZiYjk4MWIwMjI2MmE2OTUyZTU2NGFiZjg3NzQ3MWYyOTQ2ZDA4MzI4NDVlIiwidGFnIjoiIn0=', 'eyJpdiI6ImE2V2FQVENlT3Z2QUpYY0h5cThOd3c9PSIsInZhbHVlIjoiRDMyUmNZcEtsa0hUbkhDRWJIUGpRNDREUS9WS21ZamtVZ3lxTUx3bXY0TT0iLCJtYWMiOiI3ZTE5NjBmNmVkZmZkNzFhMzQ0OWJjNjNjNjJhMjRiYjM4YmQ5MjM3ZmE5ZDdmZDcwNTA4NzZlZjU5YzBmODlmIiwidGFnIjoiIn0=', NULL, '2025-09-28 20:31:14', '2025-09-28 20:31:14', 'eyJpdiI6IlpnM24zZDBYcXRXWTZHcERTVnZCQlE9PSIsInZhbHVlIjoibXBGc2o1K1kxWWJDeGhkbi9aZURiZz09IiwibWFjIjoiNjQwOTJiM2M3MjM5NTY5MmI2MmY3Mzk5ZGEwZDJmNWExODc4Zjg4N2M5MDFiYTJlNTU1NjVlZTM3MWQ0MmIxYSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6Iktud3pjR3FwVkdlT2RVd2RIb2Q2YkE9PSIsInZhbHVlIjoiMHhLenZTUndWcFZkWmp2Y3NlWXIxUT09IiwibWFjIjoiMGQyNGEwOGQ4ZmQwZGE2YzFiY2IzZTk4NmE5MzYyNTJmNGNiNWUzMmVhMjBjNmMzNzhiZDZjY2U4YjBmMzE1ZiIsInRhZyI6IiJ9', '$2y$12$Wcp5uBmtojk4EnE6BEZDA.8MUghpMz2oLX6jg/h2czmirfIR4nLlC', 'yes', 'Umum', 'klien', NULL);
 
 --
 -- Indexes for dumped tables
@@ -432,7 +432,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `appointments`
@@ -456,13 +456,13 @@ ALTER TABLE `chat_messages`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -486,7 +486,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
