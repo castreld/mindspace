@@ -5,8 +5,8 @@ import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
-import 'package:mindspace_app/services/auth_service.dart'; 
-import 'package:mindspace_app/user/dashboard.dart'; 
+import 'package:mindspace_app/services/auth_service.dart';
+import 'package:mindspace_app/user/dashboard.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
 import 'auth/register.dart';
@@ -20,9 +20,9 @@ Future<void> main() async {
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
 }
 
 class MyApp extends StatelessWidget {
@@ -40,11 +40,13 @@ class MyApp extends StatelessWidget {
         AppRoutes.login: (context) => const LoginForm(),
 
         AppRoutes.dashboard: (context) => MainDashboard(
-              user: authService.currentUser!,
-              token: authService.token!,
-            ),
+          user: authService.currentUser!,
+          token: authService.token!,
+        ),
       },
-      initialRoute: authService.isLoggedIn ? AppRoutes.dashboard : AppRoutes.home,
+      initialRoute: authService.isLoggedIn
+          ? AppRoutes.dashboard
+          : AppRoutes.home,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),
@@ -76,7 +78,11 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _user = null;
     });
-    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRoutes.home,
+      (route) => false,
+    );
   }
 
   @override
@@ -113,9 +119,7 @@ class _AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           const DrawerHeader(
-            decoration: BoxDecoration(
-              color: Color(0xFF5B3F5B),
-            ),
+            decoration: BoxDecoration(color: Color(0xFF5B3F5B)),
             child: Text(
               'Mindspace',
               style: TextStyle(
@@ -173,8 +177,7 @@ class HeroSection extends StatelessWidget {
             children: <Widget>[
               Text(
                 "Selamat Datang\ndi Mindspace",
-                textAlign:
-                    isSmallScreen ? TextAlign.center : TextAlign.left,
+                textAlign: isSmallScreen ? TextAlign.center : TextAlign.left,
                 style: TextStyle(
                   fontSize: isSmallScreen ? 48 : 70,
                   color: const Color.fromARGB(255, 244, 179, 51),
@@ -184,8 +187,7 @@ class HeroSection extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 "“Your Safe Place To Be Heard”",
-                textAlign:
-                    isSmallScreen ? TextAlign.center : TextAlign.left,
+                textAlign: isSmallScreen ? TextAlign.center : TextAlign.left,
                 style: TextStyle(
                   fontSize: isSmallScreen ? 24 : 32,
                   color: Colors.black,
@@ -199,10 +201,7 @@ class HeroSection extends StatelessWidget {
         flex: 3,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Image.asset(
-            'assets/illustration1.png',
-            fit: BoxFit.contain,
-          ),
+          child: Image.asset('assets/illustration1.png', fit: BoxFit.contain),
         ),
       ),
     ];
@@ -214,9 +213,13 @@ class HeroSection extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.05),
         child: isSmallScreen
             ? Column(
-                mainAxisAlignment: MainAxisAlignment.center, children: children)
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: children,
+              )
             : Row(
-                mainAxisAlignment: MainAxisAlignment.center, children: children),
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: children,
+              ),
       ),
     );
   }
@@ -224,7 +227,7 @@ class HeroSection extends StatelessWidget {
 
 class ServicesSection extends StatelessWidget {
   const ServicesSection({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
@@ -244,8 +247,7 @@ class ServicesSection extends StatelessWidget {
             ServiceCard(
               imagePath: 'assets/stock1.jpg',
               title: "Psikolog Rehabilitasi",
-              description:
-                  "Membantu proses pemulihan\ndan adaptasi kembali",
+              description: "Membantu proses pemulihan\ndan adaptasi kembali",
             ),
             ServiceCard(
               imagePath: 'assets/stock2.jpg',
@@ -271,7 +273,7 @@ class ServiceCard extends StatelessWidget {
     required this.title,
     required this.description,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -340,7 +342,7 @@ class FaqSection extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.black, fontSize: 27),
             ),
-            const SizedBox(height: 70),
+            const SizedBox(height: 100),
             const Wrap(
               spacing: 60,
               runSpacing: 40,
@@ -380,11 +382,7 @@ class FaqItem extends StatelessWidget {
   final String question;
   final String answer;
 
-  const FaqItem({
-    super.key,
-    required this.question,
-    required this.answer,
-  });
+  const FaqItem({super.key, required this.question, required this.answer});
 
   @override
   Widget build(BuildContext context) {
@@ -403,7 +401,7 @@ class FaqItem extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
-                    fontSize: 25,
+                    fontSize: 20,
                   ),
                 ),
               ),
@@ -414,7 +412,7 @@ class FaqItem extends StatelessWidget {
             padding: const EdgeInsets.only(left: 45),
             child: Text(
               answer,
-              style: const TextStyle(fontSize: 23, color: Colors.black),
+              style: const TextStyle(fontSize: 20, color: Colors.black),
             ),
           ),
         ],
