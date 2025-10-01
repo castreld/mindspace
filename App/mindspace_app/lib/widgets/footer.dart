@@ -10,7 +10,7 @@ class FooterSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
         color: const Color.fromARGB(255, 101, 58, 80),
         child: const Wrap(
-          spacing: 80,
+          spacing: 200,
           runSpacing: 40,
           alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.start,
@@ -58,11 +58,7 @@ class FooterColumn extends StatelessWidget {
   final String title;
   final Map<String, String> links;
 
-  const FooterColumn({
-    super.key,
-    required this.title,
-    required this.links,
-  });
+  const FooterColumn({super.key, required this.title, required this.links});
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +68,7 @@ class FooterColumn extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
-            fontSize: 28,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -83,7 +79,7 @@ class FooterColumn extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: TextButton(
               onPressed: () {
-                
+                // TODO: Handle link tap
               },
               style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
@@ -91,11 +87,11 @@ class FooterColumn extends StatelessWidget {
               ),
               child: Text(
                 entry.key,
-                style: const TextStyle(fontSize: 22, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
