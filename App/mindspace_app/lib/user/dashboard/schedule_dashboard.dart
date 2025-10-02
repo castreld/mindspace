@@ -183,7 +183,6 @@ class _ScheduleDashboardState extends State<ScheduleDashboard> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // LEFT SECTION (TABLE)
         Flexible(
           flex: 7,
           child: Card(
@@ -285,7 +284,6 @@ class _ScheduleDashboardState extends State<ScheduleDashboard> {
                 color: const Color(0xFFF44336),
               ),
               const SizedBox(height: 24),
-              // ## Replaced carousel with a simple placeholder
               const AdPlaceholderImage(),
             ],
           ),
@@ -295,7 +293,6 @@ class _ScheduleDashboardState extends State<ScheduleDashboard> {
   }
 }
 
-// ## New widget for the static ad image
 class AdPlaceholderImage extends StatelessWidget {
   const AdPlaceholderImage({super.key});
 
@@ -307,10 +304,7 @@ class AdPlaceholderImage extends StatelessWidget {
       shadowColor: Colors.black.withOpacity(0.1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
-      child: Image.network(
-        'https://placehold.co/600x320/E8D5C4/604970?text=Your+Ad+Here',
-        fit: BoxFit.cover,
-      ),
+      child: Image.asset('assets/placeholder.png', fit: BoxFit.cover,),
     );
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/user/dashboard/history_dashboard.dart';
+import 'package:mindspace_app/user/dashboard/message_dashboard.dart';
+import 'package:mindspace_app/user/dashboard/settings_dashboard.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 import '../models/user.dart';
@@ -9,7 +12,6 @@ import 'package:mindspace_app/user/dashboard/landing_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/schedule_dashboard.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 
-// ✨ NEW: An enum to represent the dashboard sections for better readability.
 enum DashboardSection { dashboard, schedule, history, messages, settings }
 
 class MainDashboard extends StatefulWidget {
@@ -22,8 +24,14 @@ class MainDashboard extends StatefulWidget {
 }
 
 class _MainDashboardState extends State<MainDashboard> {
-  // ✨ CHANGED: State is now managed by the enum.
   DashboardSection _selectedSection = DashboardSection.dashboard;
+  late User _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.user;
+  }
 
   Future<void> _logout() async {
     await AuthService().clearSession();
@@ -33,7 +41,6 @@ class _MainDashboardState extends State<MainDashboard> {
     }
   }
 
-  // ✨ UPDATED: This function now handles all sections.
   Widget _getSectionWidget() {
     switch (_selectedSection) {
       case DashboardSection.dashboard:
@@ -41,14 +48,27 @@ class _MainDashboardState extends State<MainDashboard> {
       case DashboardSection.schedule:
         return const ScheduleDashboard();
       case DashboardSection.history:
-        // TODO: Create and return your HistoryDashboard widget here
-        return const Center(child: Text('Riwayat Konseling Section', style: TextStyle(color: Colors.white)));
+        return const HistoryDashboard();
       case DashboardSection.messages:
-        // TODO: Create and return your MessageDashboard widget here
-        return const Center(child: Text('Pesan Section', style: TextStyle(color: Colors.white)));
+      final screenHeight = MediaQuery.of(context).size.height;
+      final appBarHeight = AppBar().preferredSize.height; 
+      final availableHeight = screenHeight - appBarHeight - 100;
+
+      return SizedBox(
+        height: availableHeight,
+        child: const MessageDashboard(),
+      );
       case DashboardSection.settings:
-        // TODO: Create and return your SettingsDashboard widget here
-        return const Center(child: Text('Pengaturan Section', style: TextStyle(color: Colors.white)));
+        return SettingsDashboard(
+          user: _currentUser,
+          token: widget.token,
+          onProfileUpdated: (updatedUser) {
+            setState(() {
+              _currentUser = updatedUser;
+            });
+            AuthService().saveSession(updatedUser, widget.token);
+          },
+        );
       default:
         return LandingDashboard(user: widget.user, token: widget.token);
     }
@@ -74,12 +94,11 @@ class _MainDashboardState extends State<MainDashboard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            ProfileOverview(user: widget.user),
+                            ProfileOverview(user: _currentUser),
                             const SizedBox(height: 24),
                             MainMenu(
                               onLogout: _logout,
                               selectedSection: _selectedSection,
-                              // ✨ CHANGED: The callback now passes the enum.
                               onSectionSelected: (DashboardSection section) {
                                 setState(() {
                                   _selectedSection = section;
@@ -161,7 +180,6 @@ class ProfileOverview extends StatelessWidget {
 
 class MainMenu extends StatelessWidget {
   final VoidCallback onLogout;
-  // ✨ CHANGED: Properties now use the enum for type safety.
   final DashboardSection selectedSection;
   final ValueChanged<DashboardSection> onSectionSelected;
 
