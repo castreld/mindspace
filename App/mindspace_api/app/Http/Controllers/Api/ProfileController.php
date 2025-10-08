@@ -15,6 +15,7 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $validatedData = $request->validate([
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'username' => [
                 'required',
                 'string',
@@ -34,6 +35,14 @@ class ProfileController extends Controller
             'gender' => ['required', Rule::in(['pria', 'wanita'])],
             'flyer' => ['required', Rule::in(['yes', 'no'])],
         ]);
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            $filename = time() . '_' . $user->id . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/profilepictures', $filename);
+            $validatedData['profile_picture'] = 'storage/profilepictures/' . $filename;
+        }
 
         $user->update($validatedData);
 

@@ -33,6 +33,10 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
+        $defaultProfilePicture = $request->gender === 'pria' 
+            ? 'storage/profilepictures/man_placeholder.png'
+            : 'storage/profilepictures/woman_placeholder.png';
+
         $user = User::create([
             'username' => $request->username,
             'full_name' => $request->full_name,
@@ -44,9 +48,10 @@ class AuthController extends Controller
             'flyer' => $request->flyer,
             'category' => $request->category,
             'role' => 'klien',
+            'profile_picture' => $defaultProfilePicture,
         ]);
 
-        event(new Login(auth()->guard('web'), $user, false));
+        event(new Login('web', $user, false));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -77,7 +82,7 @@ class AuthController extends Controller
 
         $user = User::where('username', $request['username'])->firstOrFail();
 
-        event(new Login(auth()->guard('web'), $user, $request->boolean('remember')));
+        event(new Login('web', $user, $request->boolean('remember')));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -93,7 +98,7 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        event(new Logout(auth()->guard('web'), $user));
+        event(new Logout('web', $user));
 
         $request->user()->currentAccessToken()->delete();
 

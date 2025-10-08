@@ -94,7 +94,14 @@ class _MainDashboardState extends State<MainDashboard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            ProfileOverview(user: _currentUser),
+                            ProfileOverview(
+                              user: _currentUser,
+                              onEditProfilePressed: () {
+                                setState(() {
+                                  _selectedSection = DashboardSection.settings;
+                                });
+                              },
+                            ),
                             const SizedBox(height: 24),
                             MainMenu(
                               onLogout: _logout,
@@ -128,7 +135,13 @@ class _MainDashboardState extends State<MainDashboard> {
 
 class ProfileOverview extends StatelessWidget {
   final User user;
-  const ProfileOverview({super.key, required this.user});
+  final VoidCallback onEditProfilePressed;
+
+  const ProfileOverview({
+    super.key, 
+    required this.user,
+    required this.onEditProfilePressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -143,10 +156,15 @@ class ProfileOverview extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 40,
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, size: 50, color: Colors.white),
+              backgroundColor: Colors.grey.shade300,
+              backgroundImage: user.profilePicture != null
+                  ? NetworkImage('http://127.0.0.1:8000/api/${user.profilePicture!}')
+                  : null,
+              child: user.profilePicture == null
+                  ? Icon(Icons.person, size: 50, color: Colors.grey.shade700)
+                  : null,
             ),
             const SizedBox(height: 16),
             Text(
@@ -160,7 +178,7 @@ class ProfileOverview extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: onEditProfilePressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE0E0E0),
                 foregroundColor: Colors.black,

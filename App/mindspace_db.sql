@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 01, 2025 at 01:01 AM
+-- Generation Time: Oct 05, 2025 at 11:04 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -36,21 +36,6 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `activity_logs`
---
-
-INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES
-(24, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:31:14', '2025-09-28 20:31:14'),
-(25, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:44:14', '2025-09-28 20:44:14'),
-(26, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-09-28 20:44:14', '2025-09-28 20:44:14'),
-(27, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-28 22:26:40', '2025-09-28 22:26:40'),
-(28, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-28 22:26:40', '2025-09-28 22:26:40'),
-(29, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-29 01:46:53', '2025-09-29 01:46:53'),
-(30, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-29 01:46:53', '2025-09-29 01:46:53'),
-(31, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-30 17:59:33', '2025-09-30 17:59:33'),
-(32, 4, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-09-30 17:59:33', '2025-09-30 17:59:33');
 
 -- --------------------------------------------------------
 
@@ -158,7 +143,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (11, '2025_09_22_080516_change_phone_number_to_string_in_users_table', 4),
 (12, '2025_09_24_090450_create_activity_logs_table', 5),
 (13, '2025_09_29_000001_change_birth_date_to_text_in_users_table', 6),
-(14, '2025_09_29_000002_change_phone_number_to_text_in_users_table', 7);
+(14, '2025_09_29_000002_change_phone_number_to_text_in_users_table', 7),
+(15, '2025_10_05_093146_add_profilepicture_column_to_users', 8);
 
 -- --------------------------------------------------------
 
@@ -210,11 +196,11 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (24, 'App\\Models\\User', 2, 'auth_token', 'f94601be4848efedf1e9a85c52700bdfe2c7a2aae6f682d54223ab6995613534', '[\"*\"]', NULL, NULL, '2025-09-24 22:36:28', '2025-09-24 22:36:28'),
 (25, 'App\\Models\\User', 2, 'auth_token', '12bbac0178a0fae9ea83b26008f9704133f0ae036f7023544c3839cff4f592b3', '[\"*\"]', '2025-09-24 23:14:27', NULL, '2025-09-24 23:14:18', '2025-09-24 23:14:27'),
 (26, 'App\\Models\\User', 3, 'auth_token', 'bb8c3ee42dc52f4ca6838a0268e8a75ca611c71015e198614f2133229041b207', '[\"*\"]', NULL, NULL, '2025-09-24 23:16:09', '2025-09-24 23:16:09'),
-(28, 'App\\Models\\User', 4, 'auth_token', 'edb96ae03b04e5dd9e01eebfe4506789ae5b5999e5096b4c879ac6473802a503', '[\"*\"]', NULL, NULL, '2025-09-28 20:31:14', '2025-09-28 20:31:14'),
-(29, 'App\\Models\\User', 4, 'auth_token', 'd845985564f085068c4665c74f551dd5226e809a3a847d9318a16343efa5c05a', '[\"*\"]', '2025-09-28 20:46:58', NULL, '2025-09-28 20:44:14', '2025-09-28 20:46:58'),
-(30, 'App\\Models\\User', 4, 'auth_token', '7d9c760f3be22ad8c8d6e7711af3d52cb256f22a9738c33916030329d6cd1685', '[\"*\"]', '2025-09-29 00:26:22', NULL, '2025-09-28 22:26:40', '2025-09-29 00:26:22'),
-(31, 'App\\Models\\User', 4, 'auth_token', '2042b7f3095742ac582be144dfaccd552e00374ec20af927d7256cfa9f066ee6', '[\"*\"]', '2025-09-29 01:46:54', NULL, '2025-09-29 01:46:53', '2025-09-29 01:46:54'),
-(32, 'App\\Models\\User', 4, 'auth_token', '6cb983c16942ef30f3eac73f778e3851e44b377a4110743120298ed2cf18ac0a', '[\"*\"]', '2025-09-30 17:59:34', NULL, '2025-09-30 17:59:33', '2025-09-30 17:59:34');
+(38, 'App\\Models\\User', 5, 'auth_token', 'e2d46ccbfa790f58c596fda8c567390df698c1836c1ea09762bd6de5cab96c29', '[\"*\"]', NULL, NULL, '2025-10-01 19:47:38', '2025-10-01 19:47:38'),
+(39, 'App\\Models\\User', 5, 'auth_token', 'fdcc4f7bbfb86fba607a4c7bb83b5ab7eec3777c936ab00473844f39266874c3', '[\"*\"]', '2025-10-01 19:56:09', NULL, '2025-10-01 19:47:47', '2025-10-01 19:56:09'),
+(40, 'App\\Models\\User', 6, 'auth_token', 'f19052c104fed4c648acbfadd998e8487817602e84142c87189020bbc912454e', '[\"*\"]', NULL, NULL, '2025-10-01 19:59:57', '2025-10-01 19:59:57'),
+(41, 'App\\Models\\User', 6, 'auth_token', 'e4c673477160654236c60a95d6bb7e4d0fb13233f9cf815cd239fddf64ca0efd', '[\"*\"]', '2025-10-01 20:10:02', NULL, '2025-10-01 20:00:10', '2025-10-01 20:10:02'),
+(42, 'App\\Models\\User', 5, 'auth_token', '2483e57bafde8844597b70c1e3fb97fa1a061b293659c4e3d519692458863045', '[\"*\"]', '2025-10-05 02:26:17', NULL, '2025-10-05 02:24:55', '2025-10-05 02:26:17');
 
 -- --------------------------------------------------------
 
@@ -247,13 +233,6 @@ CREATE TABLE `sessions` (
   `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `last_activity` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `sessions`
---
-
-INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('KZKjt1zdlIW1WvQ9i857zXyIzz32FpvRe1gI743j', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQ3NSa1ZsQjJTQmY5d2twQXNzUGU2Y2Ntbk9WVFlmQVFKaXhpWUV1WSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1758521337);
 
 -- --------------------------------------------------------
 
@@ -311,15 +290,9 @@ CREATE TABLE `users` (
   `flyer` enum('yes','no') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `category` enum('Umum','Mahasiswa Aktif Unpad','Dosen / Tenaga Kependidikan Unpad') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Umum',
   `role` enum('klien','psikolog','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'klien',
-  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profile_picture` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `email_verified_at`, `created_at`, `updated_at`, `birth_date`, `gender`, `phone_number`, `password`, `flyer`, `category`, `role`, `remember_token`) VALUES
-(4, 'castreld', 'eyJpdiI6IkMzNmVWK1hDc0ZhQmtLLzc1NFF6THc9PSIsInZhbHVlIjoiTnMwcXppZ2NGMHZkTDRNN0UrQTdVaHU0ZGEzeEhIMU51clc4OEt0VGlvMD0iLCJtYWMiOiI1OTQ4ZGNiOTU0YjM3OTg1NWQ4ZmZiYjk4MWIwMjI2MmE2OTUyZTU2NGFiZjg3NzQ3MWYyOTQ2ZDA4MzI4NDVlIiwidGFnIjoiIn0=', 'eyJpdiI6ImE2V2FQVENlT3Z2QUpYY0h5cThOd3c9PSIsInZhbHVlIjoiRDMyUmNZcEtsa0hUbkhDRWJIUGpRNDREUS9WS21ZamtVZ3lxTUx3bXY0TT0iLCJtYWMiOiI3ZTE5NjBmNmVkZmZkNzFhMzQ0OWJjNjNjNjJhMjRiYjM4YmQ5MjM3ZmE5ZDdmZDcwNTA4NzZlZjU5YzBmODlmIiwidGFnIjoiIn0=', NULL, '2025-09-28 20:31:14', '2025-09-28 20:31:14', 'eyJpdiI6IlpnM24zZDBYcXRXWTZHcERTVnZCQlE9PSIsInZhbHVlIjoibXBGc2o1K1kxWWJDeGhkbi9aZURiZz09IiwibWFjIjoiNjQwOTJiM2M3MjM5NTY5MmI2MmY3Mzk5ZGEwZDJmNWExODc4Zjg4N2M5MDFiYTJlNTU1NjVlZTM3MWQ0MmIxYSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6Iktud3pjR3FwVkdlT2RVd2RIb2Q2YkE9PSIsInZhbHVlIjoiMHhLenZTUndWcFZkWmp2Y3NlWXIxUT09IiwibWFjIjoiMGQyNGEwOGQ4ZmQwZGE2YzFiY2IzZTk4NmE5MzYyNTJmNGNiNWUzMmVhMjBjNmMzNzhiZDZjY2U4YjBmMzE1ZiIsInRhZyI6IiJ9', '$2y$12$Wcp5uBmtojk4EnE6BEZDA.8MUghpMz2oLX6jg/h2czmirfIR4nLlC', 'yes', 'Umum', 'klien', NULL);
 
 --
 -- Indexes for dumped tables
@@ -432,7 +405,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `appointments`
@@ -456,13 +429,13 @@ ALTER TABLE `chat_messages`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -486,7 +459,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables

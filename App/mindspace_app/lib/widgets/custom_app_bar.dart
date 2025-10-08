@@ -50,10 +50,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             CircleAvatar(
               backgroundColor: Colors.white.withOpacity(0.8),
-              child: Text(
+              backgroundImage: user!.profilePicture != null 
+                ? NetworkImage('http://127.0.0.1:8000/api/' + user!.profilePicture!)
+                : null,
+              child: user!.profilePicture == null ? Text(
                 user!.username.substring(0, 1).toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              ) : null,
             ),
             const SizedBox(width: 10),
             Text(

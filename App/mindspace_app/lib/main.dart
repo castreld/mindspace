@@ -6,6 +6,7 @@ import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
+import 'package:mindspace_app/therapist/register.dart';
 import 'package:mindspace_app/user/dashboard.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';

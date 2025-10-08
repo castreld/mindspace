@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mindspace_app/therapist/register.dart';
 import '../../models/user.dart';
 import '../../routes.dart';
 import '../../services/auth_service.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'dart:typed_data';
 
 class SettingsDashboard extends StatefulWidget {
   final User user;
@@ -30,9 +34,12 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _birthDateController;
-
   late String _genderValue;
   late bool _flyerPreference;
+
+  Uint8List? _imageBytes;
+  String? _imageName;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -40,10 +47,10 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     _fullNameController = TextEditingController(text: widget.user.fullName);
     _usernameController = TextEditingController(text: widget.user.username);
     _emailController = TextEditingController(text: widget.user.email);
-    _phoneController = TextEditingController(text: "081234567890"); 
-    _birthDateController = TextEditingController(text: "1995-05-20");
-    _genderValue = "pria";
-    _flyerPreference = true; 
+    _phoneController = TextEditingController(text: widget.user.phoneNumber ?? "");
+    _birthDateController = TextEditingController(text: widget.user.birthDate ?? "");
+    _genderValue = widget.user.gender ?? "pria";
+    _flyerPreference = widget.user.flyer == 'yes';
   }
 
   @override
@@ -56,42 +63,69 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     super.dispose();
   }
 
-  Future<void> _saveProfile() async {
+  Future<void> _pickImage() async {
+    if (!_isEditing) return;
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _imageBytes = bytes;
+        _imageName = pickedFile.name;
+      });
+    }
+  }
+
+  Future<void> _updateProfile() async {
     setState(() { _isLoading = true; });
 
     final url = Uri.parse('http://127.0.0.1:8000/api/user/profile');
-    try {
-      final response = await http.put(
-        url,
-        headers: {
-          'Content-Type': 'application/json', 'Accept': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
-        },
-        body: jsonEncode({
-          'username': _usernameController.text,
-          'full_name': _fullNameController.text,
-          'email': _emailController.text,
-          'phone_number': _phoneController.text,
-          'birth_date': _birthDateController.text,
-          'gender': _genderValue,
-          'flyer': _flyerPreference ? 'yes' : 'no',
-        }),
+    var request = http.MultipartRequest('POST', url);
+    request.headers.addAll({
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${widget.token}',
+    });
+
+    request.fields['username'] = _usernameController.text;
+    request.fields['full_name'] = _fullNameController.text;
+    request.fields['email'] = _emailController.text;
+    request.fields['phone_number'] = _phoneController.text;
+    request.fields['birth_date'] = _birthDateController.text;
+    request.fields['gender'] = _genderValue;
+    request.fields['flyer'] = _flyerPreference ? 'yes' : 'no';
+
+    if (_imageBytes != null && _imageName != null) {
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'profile_picture',
+          _imageBytes!,
+          filename: _imageName,
+        )
       );
+    }
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
       if (mounted) {
         if (response.statusCode == 200) {
           final responseData = jsonDecode(response.body);
           final updatedUser = User.fromJson(responseData['user']);
-
+          
           widget.onProfileUpdated(updatedUser);
 
-          setState(() { _isEditing = false; });
+          setState(() {
+            _isEditing = false;
+            _imageBytes = null;
+            _imageName = null;
+          });
           
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profil berhasil diperbarui!')),
           );
         } else {
-          final error = jsonDecode(response.body)['message'];
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $error')));
+          final error = jsonDecode(response.body);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${error['message'] ?? error}')));
         }
       }
     } catch (e) {
@@ -252,6 +286,8 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
           _buildSecuritySection(),
           const SizedBox(height: 24),
           _buildPreferencesSection(),
+          const SizedBox(height: 24),
+          _buildPsychologistCard(),
         ],
       ),
     );
@@ -267,6 +303,43 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Stack(
+                children: [
+                  // --- CHANGED FOR WEB ---
+                  // Use MemoryImage to display the selected image from bytes
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey.shade200,
+                    backgroundImage: _imageBytes != null
+                        ? MemoryImage(_imageBytes!)
+                        : (widget.user.profilePicture != null
+                            ? NetworkImage('http://127.0.0.1:8000/api/${widget.user.profilePicture!}')
+                            : null) as ImageProvider?,
+                    child: _imageBytes == null && widget.user.profilePicture == null
+                        ? Icon(Icons.person, size: 60, color: Colors.grey.shade800)
+                        : null,
+                  ),
+                  if (_isEditing)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(width: 2, color: Colors.white)
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                          onPressed: _pickImage,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -278,7 +351,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                   label: Text(_isEditing ? 'Simpan' : 'Edit Profil'),
                   onPressed: _isLoading ? null : () {
                     if (_isEditing) {
-                      _saveProfile();
+                      _updateProfile();
                     } else {
                       setState(() { _isEditing = true; });
                     }
@@ -391,6 +464,56 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         prefixIcon: Icon(icon),
         border: const OutlineInputBorder(),
         disabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      ),
+    );
+  }
+
+  Widget _buildPsychologistCard() {
+    return Card(
+      color: const Color(0xFFFFF8F0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Tertarik menjadi psikolog?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Bergabunglah dengan tim profesional kami dan bantu lebih banyak orang menemukan kedamaian batin mereka.',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFF653A50)),
+                  foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TherapistForm(
+                          user: widget.user,
+                          token: widget.token,
+                        ),
+                      ),
+                    );
+                },
+                child: const Text('Daftar di sini!'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
