@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 05, 2025 at 11:04 AM
+-- Generation Time: Oct 08, 2025 at 02:02 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -36,6 +36,51 @@ CREATE TABLE `activity_logs` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `activity_logs`
+--
+
+INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES
+(54, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 05:12:46', '2025-10-05 05:12:46'),
+(55, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 05:12:55', '2025-10-05 05:12:55'),
+(56, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 05:12:55', '2025-10-05 05:12:55'),
+(57, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 07:20:28', '2025-10-05 07:20:28'),
+(58, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 07:20:28', '2025-10-05 07:20:28'),
+(59, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 07:33:35', '2025-10-05 07:33:35'),
+(60, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 07:33:35', '2025-10-05 07:33:35'),
+(61, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 21:36:56', '2025-10-05 21:36:56'),
+(62, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-05 21:36:56', '2025-10-05 21:36:56'),
+(63, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:05:33', '2025-10-06 00:05:33'),
+(64, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:05:33', '2025-10-06 00:05:33'),
+(65, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:33:44', '2025-10-06 00:33:44'),
+(66, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:33:44', '2025-10-06 00:33:44'),
+(67, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-10-06 00:34:04', '2025-10-06 00:34:04'),
+(68, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36', '2025-10-06 00:34:04', '2025-10-06 00:34:04'),
+(69, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:47:17', '2025-10-06 00:47:17'),
+(70, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:47:17', '2025-10-06 00:47:17'),
+(71, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:52:18', '2025-10-06 00:52:18'),
+(72, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:52:18', '2025-10-06 00:52:18'),
+(73, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:55:11', '2025-10-06 00:55:11'),
+(74, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 00:55:11', '2025-10-06 00:55:11'),
+(75, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 01:06:03', '2025-10-06 01:06:03'),
+(76, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 01:06:03', '2025-10-06 01:06:03'),
+(77, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 04:26:31', '2025-10-06 04:26:31'),
+(78, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 04:26:31', '2025-10-06 04:26:31'),
+(79, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 05:15:48', '2025-10-06 05:15:48'),
+(80, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 05:15:48', '2025-10-06 05:15:48'),
+(81, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 05:20:22', '2025-10-06 05:20:22'),
+(82, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36', '2025-10-06 05:20:22', '2025-10-06 05:20:22'),
+(83, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 17:27:31', '2025-10-07 17:27:31'),
+(84, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 17:27:31', '2025-10-07 17:27:31'),
+(85, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:20:22', '2025-10-07 18:20:22'),
+(86, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:20:22', '2025-10-07 18:20:22'),
+(87, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:28:59', '2025-10-07 18:28:59'),
+(88, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:28:59', '2025-10-07 18:28:59'),
+(89, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:42:17', '2025-10-07 18:42:17'),
+(90, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:42:17', '2025-10-07 18:42:17'),
+(91, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:50:54', '2025-10-07 18:50:54'),
+(92, 8, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-07 18:50:54', '2025-10-07 18:50:54');
 
 -- --------------------------------------------------------
 
@@ -144,7 +189,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (12, '2025_09_24_090450_create_activity_logs_table', 5),
 (13, '2025_09_29_000001_change_birth_date_to_text_in_users_table', 6),
 (14, '2025_09_29_000002_change_phone_number_to_text_in_users_table', 7),
-(15, '2025_10_05_093146_add_profilepicture_column_to_users', 8);
+(15, '2025_10_05_093146_add_profilepicture_column_to_users', 8),
+(16, '2025_10_05_120139_decrypt_email_column_in_users_table', 9),
+(17, '2025_10_08_010918_create_therapist_profiles_table', 10);
 
 -- --------------------------------------------------------
 
@@ -200,7 +247,27 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (39, 'App\\Models\\User', 5, 'auth_token', 'fdcc4f7bbfb86fba607a4c7bb83b5ab7eec3777c936ab00473844f39266874c3', '[\"*\"]', '2025-10-01 19:56:09', NULL, '2025-10-01 19:47:47', '2025-10-01 19:56:09'),
 (40, 'App\\Models\\User', 6, 'auth_token', 'f19052c104fed4c648acbfadd998e8487817602e84142c87189020bbc912454e', '[\"*\"]', NULL, NULL, '2025-10-01 19:59:57', '2025-10-01 19:59:57'),
 (41, 'App\\Models\\User', 6, 'auth_token', 'e4c673477160654236c60a95d6bb7e4d0fb13233f9cf815cd239fddf64ca0efd', '[\"*\"]', '2025-10-01 20:10:02', NULL, '2025-10-01 20:00:10', '2025-10-01 20:10:02'),
-(42, 'App\\Models\\User', 5, 'auth_token', '2483e57bafde8844597b70c1e3fb97fa1a061b293659c4e3d519692458863045', '[\"*\"]', '2025-10-05 02:26:17', NULL, '2025-10-05 02:24:55', '2025-10-05 02:26:17');
+(42, 'App\\Models\\User', 5, 'auth_token', '2483e57bafde8844597b70c1e3fb97fa1a061b293659c4e3d519692458863045', '[\"*\"]', '2025-10-05 02:26:17', NULL, '2025-10-05 02:24:55', '2025-10-05 02:26:17'),
+(45, 'App\\Models\\User', 8, 'auth_token', 'e1f96ebf8e067884e1d228fa5c28e1799863745c280d561fb526a3ef45670f35', '[\"*\"]', NULL, NULL, '2025-10-05 05:12:46', '2025-10-05 05:12:46'),
+(46, 'App\\Models\\User', 8, 'auth_token', '5b359a71852e2d6511b8e62cc365f999472b28306b2f008c268cc7e97cc7258e', '[\"*\"]', '2025-10-05 07:15:40', NULL, '2025-10-05 05:12:55', '2025-10-05 07:15:40'),
+(47, 'App\\Models\\User', 8, 'auth_token', '90156bc91656c5ce91fe8e515068d641bd8b6de27304516c6798066734cbf579', '[\"*\"]', '2025-10-05 07:20:29', NULL, '2025-10-05 07:20:28', '2025-10-05 07:20:29'),
+(48, 'App\\Models\\User', 8, 'auth_token', 'bbac554bd1b77b06a56da2b8753ab2f9137957fe6fdb846408796ccdc9c69cb2', '[\"*\"]', '2025-10-05 07:35:15', NULL, '2025-10-05 07:33:35', '2025-10-05 07:35:15'),
+(49, 'App\\Models\\User', 8, 'auth_token', '1dfdc71a36011fb224eb98f0eae291c00c147984fc1448b04252ec0d16ce0824', '[\"*\"]', '2025-10-05 21:38:47', NULL, '2025-10-05 21:36:56', '2025-10-05 21:38:47'),
+(50, 'App\\Models\\User', 8, 'auth_token', 'e790d53b8df903e7c5f360326be68a6177fcc636cdc8cddeae6c6764bf4e4834', '[\"*\"]', '2025-10-06 00:05:33', NULL, '2025-10-06 00:05:33', '2025-10-06 00:05:33'),
+(51, 'App\\Models\\User', 8, 'auth_token', '0764f8f7aa17cc70a7e2bb7eaef0bd6e31e0f0ea897672ec4d3698141b1b0e7a', '[\"*\"]', '2025-10-06 00:33:44', NULL, '2025-10-06 00:33:44', '2025-10-06 00:33:44'),
+(52, 'App\\Models\\User', 8, 'auth_token', 'fd6d2d087cbe69cd60e255624102db4b01fec4b7593ad056801d8d9b767da460', '[\"*\"]', '2025-10-06 00:44:05', NULL, '2025-10-06 00:34:04', '2025-10-06 00:44:05'),
+(53, 'App\\Models\\User', 8, 'auth_token', 'f955a9749883ad31de2c85fd303cc5fc98ad2029d5bd1c32645e29404945e125', '[\"*\"]', '2025-10-06 00:52:01', NULL, '2025-10-06 00:47:17', '2025-10-06 00:52:01'),
+(54, 'App\\Models\\User', 8, 'auth_token', '5434c415fb01720017a169c07a882a4487e17b9dd1dcf80430a79eae7541834b', '[\"*\"]', '2025-10-06 00:52:22', NULL, '2025-10-06 00:52:18', '2025-10-06 00:52:22'),
+(55, 'App\\Models\\User', 8, 'auth_token', '5049f76e2865d03dce250c5b42a5a2ccc4f7063decfee4ce50f9abecb825ca02', '[\"*\"]', '2025-10-06 00:55:16', NULL, '2025-10-06 00:55:11', '2025-10-06 00:55:16'),
+(56, 'App\\Models\\User', 8, 'auth_token', '84d8ddac376847c044005bc77b5899483d32c622cc6b519a87adeef1456e5ac1', '[\"*\"]', '2025-10-06 01:06:04', NULL, '2025-10-06 01:06:03', '2025-10-06 01:06:04'),
+(57, 'App\\Models\\User', 8, 'auth_token', '9abec4eaf970760a5a69ea9beee0fd96521f9097ceceb3d2c6b40b10a54e3755', '[\"*\"]', '2025-10-06 05:15:22', NULL, '2025-10-06 04:26:31', '2025-10-06 05:15:22'),
+(58, 'App\\Models\\User', 8, 'auth_token', '4cf16ee5be73673e10918cc81001511c0254761ccf6a555fc17b20bf113ac05e', '[\"*\"]', '2025-10-06 05:20:01', NULL, '2025-10-06 05:15:48', '2025-10-06 05:20:01'),
+(59, 'App\\Models\\User', 8, 'auth_token', '4f7259340b5b8469eaa0abb9d405b9bce3f88d83c61d89c491ec511abb4decfe', '[\"*\"]', '2025-10-06 07:20:16', NULL, '2025-10-06 05:20:22', '2025-10-06 07:20:16'),
+(60, 'App\\Models\\User', 8, 'auth_token', 'd758a1d44e289ebf91dc4bfbcf5d981e5d59d26c8d6b06d2d12d7fc31d839097', '[\"*\"]', '2025-10-07 17:27:32', NULL, '2025-10-07 17:27:31', '2025-10-07 17:27:32'),
+(61, 'App\\Models\\User', 8, 'auth_token', '34ec041e11c5818b45fe415fd5d7e70a3004c85ebfdfff830e5961a21d8ee0ff', '[\"*\"]', '2025-10-07 18:20:23', NULL, '2025-10-07 18:20:22', '2025-10-07 18:20:23'),
+(62, 'App\\Models\\User', 8, 'auth_token', '7834cd53cd86eeb4dff64de2791c331f15d2db7afde181112e3543cf2c665a96', '[\"*\"]', '2025-10-07 18:29:51', NULL, '2025-10-07 18:28:59', '2025-10-07 18:29:51'),
+(63, 'App\\Models\\User', 8, 'auth_token', 'd085f51acf96461c038a6a388f3cb1d9ede8de363c0a30841493e4588ca4bc00', '[\"*\"]', '2025-10-07 18:43:16', NULL, '2025-10-07 18:42:17', '2025-10-07 18:43:16'),
+(64, 'App\\Models\\User', 8, 'auth_token', '215fd8ca35491b63af3fa45d81568bf6ccbdb428749326620f0296afee4d1e4d', '[\"*\"]', '2025-10-07 18:58:25', NULL, '2025-10-07 18:50:54', '2025-10-07 18:58:25');
 
 -- --------------------------------------------------------
 
@@ -243,14 +310,22 @@ CREATE TABLE `sessions` (
 CREATE TABLE `therapist_profiles` (
   `id` bigint UNSIGNED NOT NULL,
   `user_id` bigint UNSIGNED NOT NULL,
-  `specialization` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `bio` text COLLATE utf8mb4_unicode_ci,
-  `experience_years` tinyint UNSIGNED NOT NULL DEFAULT '0',
-  `hourly_rate` decimal(8,2) DEFAULT NULL,
-  `profile_picture_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `profile_picture_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `education_history` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hourly_rate` int UNSIGNED NOT NULL,
+  `experience_years` tinyint UNSIGNED NOT NULL,
+  `specializations` json NOT NULL,
+  `problem_areas` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `therapist_profiles`
+--
+
+INSERT INTO `therapist_profiles` (`id`, `user_id`, `profile_picture_path`, `education_history`, `hourly_rate`, `experience_years`, `specializations`, `problem_areas`, `created_at`, `updated_at`) VALUES
+(2, 8, 'storage/therapist_pictures/YH7OjqK5OOOF7naooPZGRfzjuizLvZA1CI2oBUJa.png', 'S1 Psikolog Unpad', 200000, 6, '[\"Klinis Dewasa\", \"Klinis Anak dan Remaja\"]', 'Kecemasan', '2025-10-07 18:43:16', '2025-10-07 18:43:16');
 
 -- --------------------------------------------------------
 
@@ -293,6 +368,13 @@ CREATE TABLE `users` (
   `remember_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `profile_picture` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `email_verified_at`, `created_at`, `updated_at`, `birth_date`, `gender`, `phone_number`, `password`, `flyer`, `category`, `role`, `remember_token`, `profile_picture`) VALUES
+(8, 'castreld', 'eyJpdiI6ImpleUtMM2RoY1hoeGVaWVZ0eGdvakE9PSIsInZhbHVlIjoiM2owVFNHa0dEeG1MRFg5Zm5YN0VvSkZMKzVIMjdZZ0hndGFkMTlQRDZaaz0iLCJtYWMiOiI1NTI0YTlhMjhlMDQzM2M5YjI3Mzk0Mjg0NjBlM2JkMTVjMDYzODllYWYzZjRjZGU4OTE5ZWUyOTcyZjA2ZDFkIiwidGFnIjoiIn0=', 'hulukotak@gmail.com', NULL, '2025-10-05 05:12:46', '2025-10-07 18:58:20', 'eyJpdiI6IjhUSm80Yi9LaG9zMmdzWlMwclBhT1E9PSIsInZhbHVlIjoiSDIyQjgydmxkK29sQ210SEdQQzdEQT09IiwibWFjIjoiYmQ2NzgzNWZjNGZiNzJkNmQxYTY0N2ViODk3YWM4ZjIxMGYwNjdmOTZiMmM1MTk0ZTY0OTQ4ZGM0ZTZiYjYyMyIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6ImxrZWw0SDlwVlA4cnQ3UlJhdzhlc0E9PSIsInZhbHVlIjoiZXVJbWE0K0FBd3NzNW81YUNQMGRFdz09IiwibWFjIjoiYjA2N2RmNzI2NzE2MjE4OTExNzZjNmVlZGJmYWIwZWYzOGM4ZDVhZjJmNTFkYjUxZWZiOWQ2ZDI4M2E3NDQxNCIsInRhZyI6IiJ9', '$2y$12$AELMm.mBHhlqfyKabyMlOuDMWRIqvIDCdL1LNhuJy2WdIkijPol4O', 'no', 'Umum', 'klien', NULL, 'storage/profilepictures/1759888700_8.png');
 
 --
 -- Indexes for dumped tables
@@ -379,7 +461,7 @@ ALTER TABLE `sessions`
 --
 ALTER TABLE `therapist_profiles`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `therapist_profiles_user_id_foreign` (`user_id`);
+  ADD UNIQUE KEY `therapist_profiles_user_id_unique` (`user_id`);
 
 --
 -- Indexes for table `transactions`
@@ -405,7 +487,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT for table `appointments`
@@ -429,13 +511,13 @@ ALTER TABLE `chat_messages`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `reviews`
@@ -447,7 +529,7 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `therapist_profiles`
 --
 ALTER TABLE `therapist_profiles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transactions`
@@ -459,7 +541,7 @@ ALTER TABLE `transactions`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
