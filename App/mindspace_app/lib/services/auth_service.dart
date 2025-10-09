@@ -1,11 +1,8 @@
-
-
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 
 class AuthService {
-  
   static final AuthService _instance = AuthService._internal();
   factory AuthService() {
     return _instance;
@@ -19,7 +16,6 @@ class AuthService {
   String? get token => _token;
   bool get isLoggedIn => _currentUser != null;
 
-  
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final userString = prefs.getString('user');
@@ -31,7 +27,6 @@ class AuthService {
     }
   }
 
-  
   Future<void> saveSession(User user, String token) async {
     final prefs = await SharedPreferences.getInstance();
     _currentUser = user;
@@ -40,11 +35,15 @@ class AuthService {
     await prefs.setString('auth_token', token);
   }
 
-  
   Future<void> clearSession() async {
     final prefs = await SharedPreferences.getInstance();
     _currentUser = null;
     _token = null;
     await prefs.clear();
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
   }
 }

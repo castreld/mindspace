@@ -4,4 +4,5 @@ class AppRoutes {
   static const login = "/login";
   static const dashboard = "/dashboard";
   static const therapist_register = "/therapist_register";
+  static const String adminDashboard = '/admin/dashboard';
 }

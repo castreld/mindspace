@@ -1,12 +1,9 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final User? user;
-  
   final VoidCallback? onLogout;
 
   const CustomAppBar({super.key, this.user, this.onLogout});
@@ -24,58 +21,82 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  
   Widget _buildUserProfileDropdown(BuildContext context) {
-    return PopupMenuButton<String>(
-      onSelected: (value) {
-        if (value == 'dashboard') {
-          Navigator.pushNamed(context, AppRoutes.dashboard);
-        } else if (value == 'logout') {
-          
-          final scaffoldMessenger = ScaffoldMessenger.of(context);
-          
-          onLogout?.call();
-          scaffoldMessenger.showSnackBar(
-            const SnackBar(
-              content: Text('You have been logged out.'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      },
-      
-      child: Padding(
-        padding: const EdgeInsets.only(right: 15.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.8),
-              backgroundImage: user!.profilePicture != null 
-                ? NetworkImage('http://127.0.0.1:8000/api/' + user!.profilePicture!)
+  return PopupMenuButton<String>(
+    onSelected: (value) {
+      if (value == 'dashboard') {
+        // This button now always goes to the standard user dashboard
+        Navigator.pushNamed(context, AppRoutes.dashboard);
+      } else if (value == 'admin_dashboard') {
+        // The new button navigates to the admin dashboard
+        // FIX: We now pass the user data as arguments to prevent the crash
+        Navigator.pushNamed(
+          context,
+          AppRoutes.adminDashboard,
+          arguments: {'user': user, 'token': ''}, // Pass user, token can be empty if not needed
+        );
+      } else if (value == 'logout') {
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
+        onLogout?.call();
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('You have been logged out.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    },
+    child: Padding(
+      padding: const EdgeInsets.only(right: 15.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.white.withOpacity(0.8),
+            backgroundImage: user!.profilePicture != null
+                ? NetworkImage('http://127.0.0.1:8000/api/${user!.profilePicture!}')
                 : null,
-              child: user!.profilePicture == null ? Text(
-                user!.username.substring(0, 1).toUpperCase(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ) : null,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              user!.username,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
-            const Icon(Icons.arrow_drop_down, color: Colors.white),
-          ],
-        ),
+            child: user!.profilePicture == null
+                ? Text(
+                    user!.username.substring(0, 1).toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  )
+                : null,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            user!.username,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          const Icon(Icons.arrow_drop_down, color: Colors.white),
+        ],
       ),
-      
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+    ),
+    // --- MODIFIED LOGIC: Show different items based on user role ---
+    itemBuilder: (BuildContext context) {
+      List<PopupMenuEntry<String>> menuItems = [
         const PopupMenuItem<String>(
           value: 'dashboard',
           child: ListTile(
-            leading: Icon(Icons.dashboard),
+            leading: Icon(Icons.dashboard_outlined),
             title: Text('Dashboard'),
           ),
         ),
+      ];
+
+      // If the user is an admin, add the admin dashboard button
+      if (user != null && user!.role == 'admin') {
+        menuItems.add(
+          const PopupMenuItem<String>(
+            value: 'admin_dashboard',
+            child: ListTile(
+              leading: Icon(Icons.admin_panel_settings_outlined),
+              title: Text('Admin Dashboard'),
+            ),
+          ),
+        );
+      }
+
+      menuItems.addAll([
         const PopupMenuDivider(),
         const PopupMenuItem<String>(
           value: 'logout',
@@ -84,11 +105,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             title: Text('Log out', style: TextStyle(color: Colors.red)),
           ),
         ),
-      ],
-    );
-  }
+      ]);
 
-  
+      return menuItems;
+    },
+  );
+}
+
   Widget _buildAuthButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 15.0),
@@ -114,7 +137,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  
   PreferredSizeWidget _buildMobileAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 80,

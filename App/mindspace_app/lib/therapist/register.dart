@@ -66,20 +66,26 @@ class FormSection extends StatefulWidget {
 class _FormSectionState extends State<FormSection> {
   final _formKey = GlobalKey<FormState>();
 
-  
   final _educationalHistoryController = TextEditingController();
   final _hourlyRateController = TextEditingController();
   final _experienceController = TextEditingController();
   final _problemAreasController = TextEditingController();
 
-  
   final Map<String, bool> _specializations = {
     'Klinis Dewasa': false,
     'Klinis Anak dan Remaja': false,
     'Klinis Pendidikan': false,
   };
 
-  
+  final Map<String, List<Map<String, TimeOfDay>>> _availabilities = {
+    'Monday': [],
+    'Tuesday': [],
+    'Wednesday': [],
+    'Thursday': [],
+    'Friday': [],
+    'Saturday': [],
+    'Sunday': [],
+  };
   
   Uint8List? _imageBytes;
   String? _imageName;
@@ -96,6 +102,51 @@ class _FormSectionState extends State<FormSection> {
     super.dispose();
   }
 
+  Future<void> _addOrEditTimeSlot(String day, {int? editIndex}) async {
+    final Map<String, TimeOfDay>? existingSlot =
+        editIndex != null ? _availabilities[day]![editIndex] : null;
+
+    final TimeOfDay? startTime = await showTimePicker(
+      context: context,
+      initialTime: existingSlot?['start'] ?? const TimeOfDay(hour: 9, minute: 0),
+      helpText: 'Select Start Time',
+    );
+
+    if (startTime == null || !mounted) return;
+
+    final TimeOfDay? endTime = await showTimePicker(
+      context: context,
+      initialTime: existingSlot?['end'] ??
+          TimeOfDay(hour: startTime.hour + 1, minute: startTime.minute),
+      helpText: 'Select End Time',
+    );
+
+    if (endTime == null) return;
+
+    // Basic validation
+    final startMinutes = startTime.hour * 60 + startTime.minute;
+    final endMinutes = endTime.hour * 60 + endTime.minute;
+
+    if (startMinutes >= endMinutes) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('End time must be after start time.'),
+              backgroundColor: Colors.red),
+        );
+      }
+      return;
+    }
+
+    setState(() {
+      final newSlot = {'start': startTime, 'end': endTime};
+      if (editIndex != null) {
+        _availabilities[day]![editIndex] = newSlot;
+      } else {
+        _availabilities[day]!.add(newSlot);
+      }
+    });
+  }
   
   Future<void> _pickImage() async {
     final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
@@ -112,7 +163,8 @@ class _FormSectionState extends State<FormSection> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate() || _imageBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields and select a picture.')),
+        const SnackBar(
+            content: Text('Please fill all fields and select a picture.')),
       );
       return;
     }
@@ -138,15 +190,23 @@ class _FormSectionState extends State<FormSection> {
     for (int i = 0; i < selectedSpecializations.length; i++) {
       request.fields['specializations[$i]'] = selectedSpecializations[i];
     }
-    
+
+    List<Map<String, dynamic>> availabilityPayload = [];
+    final dayMapping = {'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7};
+    _availabilities.forEach((day, slots) {
+      for (var slot in slots) {
+        availabilityPayload.add({
+          'day_of_week': dayMapping[day],
+          'start_time': '${slot['start']!.hour.toString().padLeft(2, '0')}:${slot['start']!.minute.toString().padLeft(2, '0')}',
+          'end_time': '${slot['end']!.hour.toString().padLeft(2, '0')}:${slot['end']!.minute.toString().padLeft(2, '0')}',
+        });
+      }
+    });
+
+    request.fields['availabilities'] = jsonEncode(availabilityPayload);
     
     request.files.add(
-      http.MultipartFile.fromBytes(
-        'profile_picture',
-        _imageBytes!,
-        filename: _imageName,
-      )
-    );
+        http.MultipartFile.fromBytes('profile_picture', _imageBytes!, filename: _imageName));
 
     try {
       final streamedResponse = await request.send();
@@ -157,7 +217,8 @@ class _FormSectionState extends State<FormSection> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(responseData['message'] ?? 'An error occurred.'),
-            backgroundColor: response.statusCode == 201 ? Colors.green : Colors.red,
+            backgroundColor:
+                response.statusCode == 201 ? Colors.green : Colors.red,
           ),
         );
         if (response.statusCode == 201) {
@@ -173,6 +234,70 @@ class _FormSectionState extends State<FormSection> {
     } finally {
       if (mounted) { setState(() { _isLoading = false; }); }
     }
+  }
+
+  Widget _buildAvailabilitySection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Jadwal Tersedia Mingguan',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 8),
+        ..._availabilities.keys.map((day) {
+          return Card(
+            elevation: 1,
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline, color: Color(0xFF5B3F5B)),
+                        tooltip: 'Add Time Slot for $day',
+                        onPressed: () => _addOrEditTimeSlot(day),
+                      ),
+                    ],
+                  ),
+                  if (_availabilities[day]!.isNotEmpty) ...[
+                    const Divider(),
+                    ..._availabilities[day]!.asMap().entries.map((entry) {
+                      int idx = entry.key;
+                      Map<String, TimeOfDay> slot = entry.value;
+                      return ListTile(
+                        dense: true,
+                        title: Text('${slot['start']!.format(context)} - ${slot['end']!.format(context)}'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, size: 20),
+                              onPressed: () => _addOrEditTimeSlot(day, editIndex: idx),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline, size: 20, color: Colors.red),
+                              onPressed: () => setState(() => _availabilities[day]!.removeAt(idx)),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ] else
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Text('Tidak ada jadwal tersedia.', style: TextStyle(color: Colors.grey)),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }),
+      ],
+    );
   }
 
   @override
@@ -204,11 +329,7 @@ class _FormSectionState extends State<FormSection> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Daftar Sebagai Psikolog',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+                const Text('Daftar Sebagai Psikolog', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 24),
 
                 
@@ -286,8 +407,8 @@ class _FormSectionState extends State<FormSection> {
                   ),
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
-                const SizedBox(height: 24),
 
+                const SizedBox(height: 24),
                 const Text('Spesialisasi (bisa pilih lebih dari satu)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 ..._specializations.keys.map((String key) {
@@ -295,9 +416,7 @@ class _FormSectionState extends State<FormSection> {
                     title: Text(key),
                     value: _specializations[key],
                     onChanged: (bool? value) {
-                      setState(() {
-                        _specializations[key] = value!;
-                      });
+                      setState(() { _specializations[key] = value!; });
                     },
                   );
                 }).toList(),
@@ -313,6 +432,13 @@ class _FormSectionState extends State<FormSection> {
                   ),
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
+                
+                const SizedBox(height: 24),
+                const Divider(), // --- ADD DIVIDER ---
+                const SizedBox(height: 24),
+                
+                _buildAvailabilitySection(),
+
                 const SizedBox(height: 24),
 
                 ElevatedButton(

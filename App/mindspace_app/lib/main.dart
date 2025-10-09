@@ -7,10 +7,12 @@ import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/therapist/register.dart';
+import 'package:mindspace_app/admin/dashboard_adminn.dart';
 import 'package:mindspace_app/user/dashboard.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
 import 'auth/register.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.register: (context) => const RegisterForm(),
         AppRoutes.login: (context) => const LoginForm(),
-
+        AppRoutes.adminDashboard: (context) => const DashboardAdminPage(), 
         AppRoutes.dashboard: (context) => MainDashboard(
           user: authService.currentUser!,
           token: authService.token!,

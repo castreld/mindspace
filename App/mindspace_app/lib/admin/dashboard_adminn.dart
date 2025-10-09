@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/models/user.dart';
+import 'package:mindspace_app/services/auth_service.dart';
+import 'package:mindspace_app/routes.dart'; 
 import 'navbar_admin.dart';
 import 'admin_sidebar.dart';
 import 'kelola_psikolog.dart';
@@ -13,14 +16,23 @@ class DashboardAdminPage extends StatefulWidget {
 class _DashboardAdminPageState extends State<DashboardAdminPage> {
   String _selectedMenu = "Dashboard Utama";
 
+  Future<void> _logout() async {
+    await AuthService().clearSession();
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final User user = args['user'];
+
     return Scaffold(
-      appBar: const NavbarAdmin(), // Navbar di atas
+      appBar: NavbarAdmin(user: user, onLogout: _logout),
       backgroundColor: Colors.grey[100],
       body: Row(
         children: [
-          // Sidebar di kiri
           SidebarAdmin(
             onMenuSelected: (menu) {
               setState(() => _selectedMenu = menu);
@@ -28,18 +40,15 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
             selectedMenu: _selectedMenu,
           ),
 
-          // Konten utama di kanan
           Expanded(
             child: Container(
               color: const Color(0xFFF8FAFF),
               padding: const EdgeInsets.all(16),
-              child: _buildPageContent(), // tampilkan halaman sesuai menu
+              child: _buildPageContent(),
             ),
           ),
         ],
       ),
-      // Footer sementara dihapus
-      // bottomNavigationBar: const FooterAdmin(),
     );
   }
 

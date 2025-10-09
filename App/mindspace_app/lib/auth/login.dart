@@ -91,13 +91,16 @@ class _FormSectionState extends State<FormSection> {
         await AuthService().saveSession(user, token);
 
         if (mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.dashboard, (route) => false);
+          if (user.role == 'admin') {
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.adminDashboard, 
+                (route) => false,
+                arguments: {'user': user, 'token': token},);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.dashboard, (route) => false);
+          }
         }
-      } else {
-        final errorData = json.decode(response.body);
-        _showErrorSnackbar(
-            errorData['message'] ?? 'Login failed. Please try again.');
       }
     } catch (e) {
       _showErrorSnackbar('An error occurred. Please check your connection.');
