@@ -1,10 +1,8 @@
-// lib/admin/kelola_psikolog.dart
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:mindspace_app/models/therapist_application.dart';
-import 'package:mindspace_app/services/auth_service.dart'; // For getting the token
+import 'package:mindspace_app/services/auth_service.dart';
 import 'application_detail_dialog.dart';
 
 class KelolaPsikologPage extends StatefulWidget {
@@ -113,11 +111,8 @@ class _KelolaPsikologPageState extends State<KelolaPsikologPage> {
                                   Text(app.user.email, style: const TextStyle(color: Colors.grey, fontSize: 13)),
                                 ]),
                               ),
-                              // Specialization
                               Expanded(flex: 2, child: Text(app.profile.specializations.join(', '))),
-                              // Experience
                               Expanded(flex: 2, child: Text('${app.profile.experienceYears} Tahun')),
-                              // Status
                               Expanded(
                                 flex: 2,
                                 child: Container(
@@ -131,7 +126,6 @@ class _KelolaPsikologPageState extends State<KelolaPsikologPage> {
                                         fontWeight: FontWeight.bold))),
                                 ),
                               ),
-                              // Actions
                               Row(
                                 children: [
                                   if (status == "Pending") ...[

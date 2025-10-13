@@ -6,6 +6,7 @@ import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
+import 'package:mindspace_app/therapist.dart';
 import 'package:mindspace_app/therapist/register.dart';
 import 'package:mindspace_app/admin/dashboard_adminn.dart';
 import 'package:mindspace_app/user/dashboard.dart';
@@ -37,19 +38,43 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Mindspace',
-      routes: {
-        AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.register: (context) => const RegisterForm(),
-        AppRoutes.login: (context) => const LoginForm(),
-        AppRoutes.adminDashboard: (context) => const DashboardAdminPage(), 
-        AppRoutes.dashboard: (context) => MainDashboard(
-          user: authService.currentUser!,
-          token: authService.token!,
-        ),
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case AppRoutes.home:
+            return MaterialPageRoute(builder: (_) => const HomePage());
+          case AppRoutes.register:
+            return MaterialPageRoute(builder: (_) => const RegisterForm());
+          case AppRoutes.login:
+            return MaterialPageRoute(builder: (_) => const LoginForm());
+          case AppRoutes.dashboard:
+            return MaterialPageRoute(
+              builder: (_) => MainDashboard(
+                user: authService.currentUser!,
+                token: authService.token!,
+              ),
+            );
+          case AppRoutes.therapistPage:
+            if (authService.isLoggedIn) {
+              return MaterialPageRoute(
+                builder: (_) => TherapistPage(
+                  user: authService.currentUser!,
+                  token: authService.token!,
+                ),
+              );
+            } else {
+              return MaterialPageRoute(
+                builder: (_) => const LoginForm(),
+              );
+            }
+          case AppRoutes.adminDashboard:
+            return MaterialPageRoute(
+              builder: (_) => const DashboardAdminPage(),
+            );
+          default:
+            return MaterialPageRoute(builder: (_) => const HomePage());
+        }
       },
-      initialRoute: authService.isLoggedIn
-          ? AppRoutes.dashboard
-          : AppRoutes.home,
+      initialRoute: authService.isLoggedIn ? AppRoutes.dashboard : AppRoutes.home,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),

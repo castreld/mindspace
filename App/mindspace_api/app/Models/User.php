@@ -50,7 +50,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'full_name' => 'encrypted',
             'birth_date' => 'encrypted',
             'phone_number' => 'encrypted',
         ];
@@ -66,11 +65,13 @@ class User extends Authenticatable
         return $this->hasMany(TherapistAvailability::class);
     }
 
-    /**
-     * Get the therapist profile associated with the user.
-     */
     public function therapistProfile()
     {
         return $this->hasOne(TherapistProfile::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'therapist_id', 'id');
     }
 }

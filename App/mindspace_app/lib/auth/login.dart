@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:mindspace_app/services/auth_service.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart'; 
-
 import '../user/dashboard.dart';
 import '../models/user.dart';
 import '../widgets/custom_app_bar.dart';
@@ -92,10 +91,7 @@ class _FormSectionState extends State<FormSection> {
 
         if (mounted) {
           if (user.role == 'admin') {
-            Navigator.pushNamedAndRemoveUntil(
-                context, AppRoutes.adminDashboard, 
-                (route) => false,
-                arguments: {'user': user, 'token': token},);
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.adminDashboard, (route) => false);
           } else {
             Navigator.pushNamedAndRemoveUntil(
                 context, AppRoutes.dashboard, (route) => false);

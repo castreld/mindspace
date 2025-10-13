@@ -10,10 +10,12 @@ use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\TherapistApplicationController;
 use App\Http\Controllers\Admin\TherapistManagementController;
 use App\Http\Controllers\Psikolog\AvailabilityController;
-
+use App\Http\Controllers\Api\TherapistController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/therapists', [TherapistController::class, 'index']);
 
 Route::get('/{path}', [ImageController::class, 'show'])->where('path', 'storage/.*');
 

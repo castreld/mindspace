@@ -15,6 +15,7 @@ class DashboardAdminPage extends StatefulWidget {
 
 class _DashboardAdminPageState extends State<DashboardAdminPage> {
   String _selectedMenu = "Dashboard Utama";
+  final User user = AuthService().currentUser!;
 
   Future<void> _logout() async {
     await AuthService().clearSession();
@@ -25,8 +26,6 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
-    final User user = args['user'];
 
     return Scaffold(
       appBar: NavbarAdmin(user: user, onLogout: _logout),

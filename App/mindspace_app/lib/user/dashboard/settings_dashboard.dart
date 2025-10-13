@@ -540,9 +540,187 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     );
   }
 
-  // Dialogs for password change and account deletion
-  void _showChangePasswordDialog() { /* ... implementation ... */ }
-  void _showDeleteAccountDialog() { /* ... implementation ... */ }
-  Future<void> _updatePasswordApiCall(String current, String newP, String confirm) async { /* ... */ }
-  Future<void> _deleteAccountApiCall(String password) async { /* ... */ }
+  void _showChangePasswordDialog() {
+    final _formKey = GlobalKey<FormState>();
+    final _currentPasswordController = TextEditingController();
+    final _newPasswordController = TextEditingController();
+    final _confirmPasswordController = TextEditingController();
+    bool _isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Change Password'),
+              content: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: _currentPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(labelText: 'Current Password'),
+                      validator: (value) => value!.isEmpty ? 'This field is required' : null,
+                    ),
+                    TextFormField(
+                      controller: _newPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(labelText: 'New Password'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'This field is required';
+                        if (value.length < 8) return 'Password must be at least 8 characters';
+                        return null;
+                      },
+                    ),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(labelText: 'Confirm New Password'),
+                      validator: (value) {
+                        if (value != _newPasswordController.text) return 'Passwords do not match';
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : () async {
+                    if (_formKey.currentState!.validate()) {
+                      setState(() => _isLoading = true);
+                      await _updatePasswordApiCall(
+                        _currentPasswordController.text,
+                        _newPasswordController.text,
+                        _confirmPasswordController.text
+                      );
+                      setState(() => _isLoading = false);
+                    }
+                  },
+                  child: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Change'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountDialog() {
+    final _passwordController = TextEditingController();
+    final messenger = ScaffoldMessenger.of(context);
+    bool _isLoading = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Delete Account'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('This action is irreversible. Please enter your password to confirm.'),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: _isLoading ? null : () async {
+                    if (_passwordController.text.isEmpty) {
+                      messenger.showSnackBar(const SnackBar(content: Text('Password is required'), backgroundColor: Colors.orange));
+                      return;
+                    }
+                    setState(() => _isLoading = true);
+                    await _deleteAccountApiCall(_passwordController.text);
+                    setState(() => _isLoading = false);
+                  },
+                  child: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Delete'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+  Future<void> _updatePasswordApiCall(String current, String newP, String confirm) async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/user/password');
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${widget.token}',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'current_password': current,
+          'new_password': newP,
+          'new_password_confirmation': confirm,
+        }),
+      );
+      
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.green));
+        navigator.pop();
+      } else {
+        messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.red));
+      }
+
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('An error occurred: $e')));
+    }
+  }
+  
+  Future<void> _deleteAccountApiCall(String password) async {
+    final url = Uri.parse('http://127.0.0.1:8000/api/user');
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${widget.token}',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'current_password': password}),
+      );
+      
+      final responseData = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.green));
+
+        await AuthService().clearSession();
+        navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+
+      } else {
+        messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.red));
+      }
+
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text('An error occurred: $e')));
+    }
+  }
 }

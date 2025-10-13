@@ -25,16 +25,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   return PopupMenuButton<String>(
     onSelected: (value) {
       if (value == 'dashboard') {
-        // This button now always goes to the standard user dashboard
         Navigator.pushNamed(context, AppRoutes.dashboard);
       } else if (value == 'admin_dashboard') {
-        // The new button navigates to the admin dashboard
-        // FIX: We now pass the user data as arguments to prevent the crash
-        Navigator.pushNamed(
-          context,
-          AppRoutes.adminDashboard,
-          arguments: {'user': user, 'token': ''}, // Pass user, token can be empty if not needed
-        );
+        Navigator.pushNamed(context, AppRoutes.adminDashboard);
       } else if (value == 'logout') {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
         onLogout?.call();
@@ -71,7 +64,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
     ),
-    // --- MODIFIED LOGIC: Show different items based on user role ---
     itemBuilder: (BuildContext context) {
       List<PopupMenuEntry<String>> menuItems = [
         const PopupMenuItem<String>(
@@ -83,7 +75,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ];
 
-      // If the user is an admin, add the admin dashboard button
       if (user != null && user!.role == 'admin') {
         menuItems.add(
           const PopupMenuItem<String>(
@@ -149,10 +140,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
-      actions: [
+      actions: <Widget>[
+        _AppBarTextButton(
+            'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
+        _AppBarTextButton(
+            'Psikolog', () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
+        _AppBarTextButton('Kontak', () {}),
+        const SizedBox(width: 20),
         user != null
             ? _buildUserProfileDropdown(context)
-            : _buildAuthButtons(context)
+            : _buildAuthButtons(context),
       ],
     );
   }
@@ -168,7 +165,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: <Widget>[
         _AppBarTextButton(
             'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
-        _AppBarTextButton('Psikolog', () {}),
+        _AppBarTextButton('Psikolog', () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
         _AppBarTextButton('Kontak', () {}),
         const SizedBox(width: 20),
         user != null

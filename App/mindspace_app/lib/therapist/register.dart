@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/models/user.dart';
-
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 
