@@ -4,6 +4,7 @@ import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:http/http.dart' as http;
 import 'package:mindspace_app/services/auth_service.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart'; 
 import '../user/dashboard.dart';
@@ -82,24 +83,24 @@ class _FormSectionState extends State<FormSection> {
         }),
       );
 
+      if (!mounted) return;
+
+      final responseData = json.decode(response.body);
       if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
         final user = User.fromJson(responseData['user']);
         final token = responseData['access_token'];
 
-        await AuthService().saveSession(user, token);
+        await context.read<AuthService>().saveSession(user, token);
+        
+        String route = user.role == 'admin' ? AppRoutes.adminDashboard : AppRoutes.dashboard;
+        Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
 
-        if (mounted) {
-          if (user.role == 'admin') {
-            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.adminDashboard, (route) => false);
-          } else {
-            Navigator.pushNamedAndRemoveUntil(
-                context, AppRoutes.dashboard, (route) => false);
-          }
-        }
+      } else {
+        _showErrorSnackbar(
+            responseData['message'] ?? 'Login gagal, periksa kembali detail Anda.');
       }
     } catch (e) {
-      _showErrorSnackbar('An error occurred. Please check your connection.');
+      _showErrorSnackbar('Terjadi kesalahan. Mohon periksa koneksi Anda.');
     } finally {
       if (mounted) {
         setState(() {

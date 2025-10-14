@@ -79,4 +79,27 @@ class TherapistController extends Controller
 
         return response()->json($therapists);
     }
+
+    public function show(User $user)
+    {
+        
+        if ($user->role !== 'psikolog' || !$user->therapistProfile) {
+            return response()->json(['message' => 'Therapist not found.'], 404);
+        }
+
+        
+        $user->load(
+            'therapistProfile', 
+            'availabilities',   
+            'reviews'           
+        );
+
+        
+        $averageRating = $user->reviews()->avg('rating');
+
+        
+        $user->average_rating = number_format($averageRating ?? 0.0, 1);
+
+        return response()->json($user);
+    }
 }

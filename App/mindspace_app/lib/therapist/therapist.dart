@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/models/user.dart';
+import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/widgets/custom_app_bar.dart';
 import 'package:mindspace_app/widgets/footer.dart';
+import 'package:provider/provider.dart';
+import 'package:mindspace_app/services/auth_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -61,28 +64,32 @@ class Therapist {
 }
 
 class TherapistPage extends StatefulWidget {
-  final User user;
-  final String token;
-  const TherapistPage({super.key, required this.user, required this.token});
+  const TherapistPage({super.key});
 
   @override
   State<TherapistPage> createState() => _TherapistPageState();
 }
 
 class _TherapistPageState extends State<TherapistPage> {
-  late User _currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentUser = widget.user;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+    final currentUser = authService.currentUser;
+
+    if (currentUser == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       key: GlobalKey<ScaffoldState>(),
-      appBar: CustomAppBar(user: _currentUser),
+      appBar: CustomAppBar(
+        user: currentUser,
+        onLogout: () {
+          context.read<AuthService>().clearSession();
+        },
+      ),
       drawer: const _AppDrawer(),
       body: Stack(
         children: [
@@ -115,14 +122,11 @@ class _TherapistSectionState extends State<TherapistSection> {
   bool _isLoading = true;
   String? _error;
 
-  
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _minPriceController = TextEditingController();
   final TextEditingController _maxPriceController = TextEditingController();
-
   
   final Map<String, dynamic> _filters = {};
-  
   
   Timer? _debounce;
 
@@ -130,7 +134,6 @@ class _TherapistSectionState extends State<TherapistSection> {
   void initState() {
     super.initState();
     _fetchTherapists();
-    
     
     _searchController.addListener(_onSearchChanged);
     _minPriceController.addListener(_onPriceChanged);
@@ -146,7 +149,6 @@ class _TherapistSectionState extends State<TherapistSection> {
     super.dispose();
   }
 
-  
   Future<void> _fetchTherapists() async {
     setState(() {
       _isLoading = true;
@@ -470,53 +472,63 @@ class TherapistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 150,
-      margin: const EdgeInsets.only(right: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              
-              child: therapist.imageUrl != null
-                  ? Image.network(
-                      therapist.imageUrl!, 
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.person, color: Colors.grey),
-                        );
-                      },
-                    )
-                  : Container( 
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.person, color: Colors.grey),
-                    ),
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.therapistDetail,
+          arguments: therapist.id,
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child:  Container(
+        width: 150,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                
+                child: therapist.imageUrl != null
+                    ? Image.network(
+                        therapist.imageUrl!, 
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.person, color: Colors.grey),
+                          );
+                        },
+                      )
+                    : Container( 
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.person, color: Colors.grey),
+                      ),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            therapist.name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Row(
-            children: [
-              const Icon(Icons.star, color: Colors.amber, size: 16),
-              const SizedBox(width: 4),
-              Text(therapist.rating.toStringAsFixed(1)), 
-            ],
-          )
-        ],
+            const SizedBox(height: 8),
+            Text(
+              therapist.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Colors.amber, size: 16),
+                const SizedBox(width: 4),
+                Text(therapist.rating.toStringAsFixed(1)), 
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

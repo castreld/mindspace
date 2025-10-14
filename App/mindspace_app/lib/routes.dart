@@ -6,4 +6,5 @@ class AppRoutes {
   static const therapist_register = "/therapist_register";
   static const String adminDashboard = '/admin/dashboard';
   static const therapistPage = '/therapist';
+  static const therapistDetail = '/therapist/detail';
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,27 +7,47 @@ import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
-import 'package:mindspace_app/therapist.dart';
-import 'package:mindspace_app/therapist/register.dart';
+import 'package:mindspace_app/therapist/therapist.dart';
+import 'package:mindspace_app/therapist/therapist_detail.dart';
+import 'package:mindspace_app/therapist_dashboard/register.dart';
 import 'package:mindspace_app/admin/dashboard_adminn.dart';
 import 'package:mindspace_app/user/dashboard.dart';
+import 'package:provider/provider.dart';
 import 'widgets/custom_app_bar.dart';
 import 'widgets/footer.dart';
+import 'navigation.dart';
 import 'auth/register.dart';
 
-
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await AuthService().init();
-  runApp(const MyApp());
+  runZonedGuarded(() {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.dumpErrorToConsole(details);
+      debugPrint('==== FlutterError.onError captured ====', wrapWidth: 120);
+    };
+
+    AuthService().init();
+
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => AuthService(),
+        child: const MyApp(),
+      ),
+    );
+  }, (error, stack) {
+    debugPrint('==== runZonedGuarded caught error ====', wrapWidth: 120);
+    debugPrint(error.toString(), wrapWidth: 120);
+    debugPrint(stack.toString(), wrapWidth: 120);
+  });
 }
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
 class MyApp extends StatelessWidget {
@@ -34,54 +55,89 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = AuthService();
-
+    // Keep MaterialApp stable and only rebuild the home through `AuthGate`.
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'Mindspace',
+      home: const AuthGate(),
       onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case AppRoutes.home:
-            return MaterialPageRoute(builder: (_) => const HomePage());
-          case AppRoutes.register:
-            return MaterialPageRoute(builder: (_) => const RegisterForm());
-          case AppRoutes.login:
-            return MaterialPageRoute(builder: (_) => const LoginForm());
-          case AppRoutes.dashboard:
-            return MaterialPageRoute(
-              builder: (_) => MainDashboard(
-                user: authService.currentUser!,
-                token: authService.token!,
-              ),
-            );
-          case AppRoutes.therapistPage:
-            if (authService.isLoggedIn) {
-              return MaterialPageRoute(
-                builder: (_) => TherapistPage(
-                  user: authService.currentUser!,
-                  token: authService.token!,
-                ),
-              );
-            } else {
-              return MaterialPageRoute(
-                builder: (_) => const LoginForm(),
-              );
+            switch (settings.name) {
+              case AppRoutes.home:
+                return MaterialPageRoute(builder: (_) => const HomePage());
+              case AppRoutes.register:
+                return MaterialPageRoute(builder: (_) => const RegisterForm());
+              case AppRoutes.login:
+                return MaterialPageRoute(builder: (_) => const LoginForm());
+              case AppRoutes.dashboard:
+                return MaterialPageRoute(builder: (_) => const MainDashboard());
+              case AppRoutes.therapistPage:
+                if (AuthService().isLoggedIn) {
+                  return MaterialPageRoute(builder: (_) => const TherapistPage());
+                } else {
+                  return MaterialPageRoute(builder: (_) => const LoginForm());
+                }
+              case AppRoutes.adminDashboard:
+                return MaterialPageRoute(
+                    builder: (_) => const DashboardAdminPage());
+              case AppRoutes.therapistDetail:
+                final therapistId = settings.arguments as int;
+                return MaterialPageRoute(
+                  builder: (_) => TherapistDetailPage(therapistId: therapistId),
+                );
+              default:
+                return MaterialPageRoute(builder: (_) => const HomePage());
             }
-          case AppRoutes.adminDashboard:
-            return MaterialPageRoute(
-              builder: (_) => const DashboardAdminPage(),
-            );
-          default:
-            return MaterialPageRoute(builder: (_) => const HomePage());
-        }
       },
-      initialRoute: authService.isLoggedIn ? AppRoutes.dashboard : AppRoutes.home,
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),
+        colorScheme:
+            ColorScheme.fromSeed(seedColor: const Color(0xFF5B3F5B)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
     );
+  }
+}
+
+class AuthGate extends StatefulWidget {
+  const AuthGate({super.key});
+
+  @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  late final AuthService _auth;
+  late final VoidCallback _authExternalListener;
+  @override
+  void initState() {
+    super.initState();
+    // Register listener immediately so we don't miss notifications that may
+    // be scheduled in a post-frame callback by the AuthService.
+    _auth = context.read<AuthService>();
+    _authExternalListener = () {
+      final isLoggedIn = _auth.isLoggedIn;
+      debugPrint('AuthGate(external): received auth change, isLoggedIn=$isLoggedIn');
+      if (!isLoggedIn) {
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+      }
+    };
+    _auth.addListener(_authExternalListener);
+  }
+
+  @override
+  void dispose() {
+    try {
+      _auth.removeListener(_authExternalListener);
+    } catch (_) {}
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+    debugPrint('AuthGate.build: building, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
+    return authService.isLoggedIn ? const MainDashboard() : const HomePage();
   }
 }
 
@@ -93,31 +149,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  User? _user;
-
-  @override
-  void initState() {
-    super.initState();
-    _user = AuthService().currentUser;
-  }
-
-  Future<void> _logout() async {
-    await AuthService().clearSession();
-    setState(() {
-      _user = null;
-    });
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      AppRoutes.home,
-      (route) => false,
-    );
+  void _logout() {
+    debugPrint('HomePage._logout invoked');
+    context.read<AuthService>().clearSession();
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.watch<AuthService>().currentUser;
+
     return Scaffold(
       key: GlobalKey<ScaffoldState>(),
-      appBar: CustomAppBar(user: _user, onLogout: _logout),
+      appBar: CustomAppBar(user: currentUser, onLogout: _logout),
       drawer: const _AppDrawer(),
       body: Stack(
         children: [

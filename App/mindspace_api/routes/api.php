@@ -16,6 +16,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/therapists', [TherapistController::class, 'index']);
+Route::get('/therapists/{user}', [TherapistController::class, 'show']);
 
 Route::get('/{path}', [ImageController::class, 'show'])->where('path', 'storage/.*');
 

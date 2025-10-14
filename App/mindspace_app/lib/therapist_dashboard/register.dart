@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,43 +6,31 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/models/user.dart';
+import 'package:provider/provider.dart';
+import '../services/auth_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 
-class TherapistForm extends StatefulWidget {
-  final User user;
-  final String token;
-  const TherapistForm({super.key, required this.user, required this.token});
-
-  @override
-  State<TherapistForm> createState() => _TherapistFormState();
-}
-
-class _TherapistFormState extends State<TherapistForm> {
-  late User _currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentUser = widget.user;
-  }
+class TherapistForm extends StatelessWidget {
+  const TherapistForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: GlobalKey<ScaffoldState>(),
-      appBar: CustomAppBar(user: _currentUser),
+      appBar: CustomAppBar(
+        user: context.watch<AuthService>().currentUser,
+        onLogout: () => context.read<AuthService>().clearSession(),
+      ),
       drawer: const _AppDrawer(),
       body: Stack(
         children: [
           const AnimatedGradientBackground(),
-          CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
+          const CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
             slivers: [
-              SliverToBoxAdapter(
-                child: FormSection(user: _currentUser, token: widget.token),
-              ),
-              if (kIsWeb) const FooterSection(),
+              SliverToBoxAdapter(child: FormSection()),
+              if (kIsWeb) FooterSection(),
             ],
           )
         ],
@@ -53,9 +40,7 @@ class _TherapistFormState extends State<TherapistForm> {
 }
 
 class FormSection extends StatefulWidget {
-  final User user;
-  final String token;
-  const FormSection({super.key, required this.user, required this.token});
+  const FormSection({super.key});
 
   @override
   State<FormSection> createState() => _FormSectionState();
@@ -76,19 +61,13 @@ class _FormSectionState extends State<FormSection> {
   };
 
   final Map<String, List<Map<String, TimeOfDay>>> _availabilities = {
-    'Monday': [],
-    'Tuesday': [],
-    'Wednesday': [],
-    'Thursday': [],
-    'Friday': [],
-    'Saturday': [],
-    'Sunday': [],
+    'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [],
+    'Friday': [], 'Saturday': [], 'Sunday': [],
   };
-  
+
   Uint8List? _imageBytes;
   String? _imageName;
   final ImagePicker _picker = ImagePicker();
-
   bool _isLoading = false;
 
   @override
@@ -107,7 +86,7 @@ class _FormSectionState extends State<FormSection> {
     final TimeOfDay? startTime = await showTimePicker(
       context: context,
       initialTime: existingSlot?['start'] ?? const TimeOfDay(hour: 9, minute: 0),
-      helpText: 'Select Start Time',
+      helpText: 'Pilih Waktu Mulai',
     );
 
     if (startTime == null || !mounted) return;
@@ -116,12 +95,11 @@ class _FormSectionState extends State<FormSection> {
       context: context,
       initialTime: existingSlot?['end'] ??
           TimeOfDay(hour: startTime.hour + 1, minute: startTime.minute),
-      helpText: 'Select End Time',
+      helpText: 'Pilih Waktu Selesai',
     );
 
     if (endTime == null) return;
 
-    // Basic validation
     final startMinutes = startTime.hour * 60 + startTime.minute;
     final endMinutes = endTime.hour * 60 + endTime.minute;
 
@@ -129,7 +107,7 @@ class _FormSectionState extends State<FormSection> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('End time must be after start time.'),
+              content: Text('Waktu selesai harus setelah waktu mulai.'),
               backgroundColor: Colors.red),
         );
       }
@@ -145,9 +123,10 @@ class _FormSectionState extends State<FormSection> {
       }
     });
   }
-  
+
   Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    final XFile? pickedFile =
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       setState(() {
@@ -157,23 +136,30 @@ class _FormSectionState extends State<FormSection> {
     }
   }
 
-  
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate() || _imageBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please fill all fields and select a picture.')),
+            content: Text('Mohon isi semua kolom dan pilih gambar.')),
       );
       return;
     }
 
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
+
+    final token = context.read<AuthService>().token;
+    if (token == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
 
     final url = Uri.parse('http://127.0.0.1:8000/api/therapist-applications');
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Accept': 'application/json',
-      'Authorization': 'Bearer ${widget.token}',
+      'Authorization': 'Bearer $token',
     });
 
     request.fields['education_history'] = _educationalHistoryController.text;
@@ -190,21 +176,27 @@ class _FormSectionState extends State<FormSection> {
     }
 
     List<Map<String, dynamic>> availabilityPayload = [];
-    final dayMapping = {'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7};
+    final dayMapping = {
+      'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4,
+      'Friday': 5, 'Saturday': 6, 'Sunday': 7
+    };
     _availabilities.forEach((day, slots) {
       for (var slot in slots) {
         availabilityPayload.add({
           'day_of_week': dayMapping[day],
-          'start_time': '${slot['start']!.hour.toString().padLeft(2, '0')}:${slot['start']!.minute.toString().padLeft(2, '0')}',
-          'end_time': '${slot['end']!.hour.toString().padLeft(2, '0')}:${slot['end']!.minute.toString().padLeft(2, '0')}',
+          'start_time':
+              '${slot['start']!.hour.toString().padLeft(2, '0')}:${slot['start']!.minute.toString().padLeft(2, '0')}',
+          'end_time':
+              '${slot['end']!.hour.toString().padLeft(2, '0')}:${slot['end']!.minute.toString().padLeft(2, '0')}',
         });
       }
     });
 
     request.fields['availabilities'] = jsonEncode(availabilityPayload);
-    
-    request.files.add(
-        http.MultipartFile.fromBytes('profile_picture', _imageBytes!, filename: _imageName));
+
+    request.files.add(http.MultipartFile.fromBytes(
+        'profile_picture', _imageBytes!,
+        filename: _imageName));
 
     try {
       final streamedResponse = await request.send();
@@ -214,7 +206,7 @@ class _FormSectionState extends State<FormSection> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(responseData['message'] ?? 'An error occurred.'),
+            content: Text(responseData['message'] ?? 'Terjadi kesalahan.'),
             backgroundColor:
                 response.statusCode == 201 ? Colors.green : Colors.red,
           ),
@@ -225,12 +217,15 @@ class _FormSectionState extends State<FormSection> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred: $e')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
       }
     } finally {
-      if (mounted) { setState(() { _isLoading = false; }); }
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -255,8 +250,9 @@ class _FormSectionState extends State<FormSection> {
                     children: [
                       Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
-                        icon: const Icon(Icons.add_circle_outline, color: Color(0xFF5B3F5B)),
-                        tooltip: 'Add Time Slot for $day',
+                        icon: const Icon(Icons.add_circle_outline,
+                            color: Color(0xFF5B3F5B)),
+                        tooltip: 'Tambah Jadwal untuk $day',
                         onPressed: () => _addOrEditTimeSlot(day),
                       ),
                     ],
@@ -268,17 +264,21 @@ class _FormSectionState extends State<FormSection> {
                       Map<String, TimeOfDay> slot = entry.value;
                       return ListTile(
                         dense: true,
-                        title: Text('${slot['start']!.format(context)} - ${slot['end']!.format(context)}'),
+                        title: Text(
+                            '${slot['start']!.format(context)} - ${slot['end']!.format(context)}'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit, size: 20),
-                              onPressed: () => _addOrEditTimeSlot(day, editIndex: idx),
+                              onPressed: () =>
+                                  _addOrEditTimeSlot(day, editIndex: idx),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, size: 20, color: Colors.red),
-                              onPressed: () => setState(() => _availabilities[day]!.removeAt(idx)),
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  size: 20, color: Colors.red),
+                              onPressed: () =>
+                                  setState(() => _availabilities[day]!.removeAt(idx)),
                             ),
                           ],
                         ),
@@ -286,8 +286,10 @@ class _FormSectionState extends State<FormSection> {
                     }),
                   ] else
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: Text('Tidak ada jadwal tersedia.', style: TextStyle(color: Colors.grey)),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: Text('Tidak ada jadwal tersedia.',
+                          style: TextStyle(color: Colors.grey)),
                     ),
                 ],
               ),
@@ -300,6 +302,10 @@ class _FormSectionState extends State<FormSection> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthService>().currentUser;
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       constraints: BoxConstraints(
@@ -327,19 +333,22 @@ class _FormSectionState extends State<FormSection> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text('Daftar Sebagai Psikolog', textAlign: TextAlign.center, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                const Text('Daftar Sebagai Psikolog',
+                    textAlign: TextAlign.center,
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 24),
-
-                
                 Center(
                   child: Stack(
                     children: [
                       CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.grey.shade200,
-                        backgroundImage: _imageBytes != null ? MemoryImage(_imageBytes!) : null,
+                        backgroundImage:
+                            _imageBytes != null ? MemoryImage(_imageBytes!) : null,
                         child: _imageBytes == null
-                            ? Icon(Icons.camera_alt, size: 50, color: Colors.grey.shade800)
+                            ? Icon(Icons.camera_alt,
+                                size: 50, color: Colors.grey.shade800)
                             : null,
                       ),
                       Positioned(
@@ -350,7 +359,8 @@ class _FormSectionState extends State<FormSection> {
                           child: const CircleAvatar(
                             radius: 20,
                             backgroundColor: Color(0xFF5B3F5B),
-                            child: Icon(Icons.edit, size: 20, color: Colors.white),
+                            child:
+                                Icon(Icons.edit, size: 20, color: Colors.white),
                           ),
                         ),
                       ),
@@ -358,9 +368,8 @@ class _FormSectionState extends State<FormSection> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                
                 TextFormField(
-                  initialValue: widget.user.fullName,
+                  initialValue: user.fullName,
                   readOnly: true,
                   decoration: const InputDecoration(
                     labelText: 'Nama Lengkap (dari profil Anda)',
@@ -369,7 +378,6 @@ class _FormSectionState extends State<FormSection> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
                 TextFormField(
                   controller: _educationalHistoryController,
                   decoration: const InputDecoration(
@@ -380,7 +388,6 @@ class _FormSectionState extends State<FormSection> {
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
                 const SizedBox(height: 16),
-                
                 TextFormField(
                   controller: _hourlyRateController,
                   keyboardType: TextInputType.number,
@@ -393,7 +400,6 @@ class _FormSectionState extends State<FormSection> {
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
                 const SizedBox(height: 16),
-                
                 TextFormField(
                   controller: _experienceController,
                   keyboardType: TextInputType.number,
@@ -405,21 +411,23 @@ class _FormSectionState extends State<FormSection> {
                   ),
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
-
                 const SizedBox(height: 24),
-                const Text('Spesialisasi (bisa pilih lebih dari satu)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                const Text('Spesialisasi (bisa pilih lebih dari satu)',
+                    style:
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 8),
                 ..._specializations.keys.map((String key) {
                   return CheckboxListTile(
                     title: Text(key),
                     value: _specializations[key],
                     onChanged: (bool? value) {
-                      setState(() { _specializations[key] = value!; });
+                      setState(() {
+                        _specializations[key] = value!;
+                      });
                     },
                   );
                 }).toList(),
                 const SizedBox(height: 16),
-                
                 TextFormField(
                   controller: _problemAreasController,
                   decoration: const InputDecoration(
@@ -430,22 +438,19 @@ class _FormSectionState extends State<FormSection> {
                   ),
                   validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                 ),
-                
                 const SizedBox(height: 24),
-                const Divider(), // --- ADD DIVIDER ---
+                const Divider(),
                 const SizedBox(height: 24),
-                
                 _buildAvailabilitySection(),
-
                 const SizedBox(height: 24),
-
                 ElevatedButton(
                   onPressed: _isLoading ? null : _submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFC89E25),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)

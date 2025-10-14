@@ -2,29 +2,44 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mindspace_app/models/user.dart';
-
+import 'package:provider/provider.dart';
+import 'package:mindspace_app/services/auth_service.dart';
 
 class LandingDashboard extends StatefulWidget {
-  final User user;
-  final String token;
-  const LandingDashboard({super.key, required this.user, required this.token});
+  const LandingDashboard({super.key});
 
   @override
   State<LandingDashboard> createState() => LandingDashboardState();
 }
 
 class LandingDashboardState extends State<LandingDashboard> {
-  String _activityTitle = 'Loading Activity...';
+  String _activityTitle = 'Memuat Aktivitas...';
   String _activityDescription = '';
   bool _isLoadingActivity = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchRecentActivity();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _fetchRecentActivity();
+      }
+    });
   }
 
   Future<void> _fetchRecentActivity() async {
+    final token = context.read<AuthService>().token;
+    if (token == null) {
+      if (mounted) {
+        setState(() {
+          _activityTitle = 'Error';
+          _activityDescription = 'Token otentikasi tidak ditemukan.';
+          _isLoadingActivity = false;
+        });
+      }
+      return;
+    }
+
     final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
 
     try {
@@ -32,7 +47,7 @@ class LandingDashboardState extends State<LandingDashboard> {
         url,
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer $token',
         },
       );
 
@@ -41,22 +56,22 @@ class LandingDashboardState extends State<LandingDashboard> {
           final data = json.decode(response.body);
           final latestActivity = (data['data'] as List).firstOrNull;
           if (latestActivity != null) {
-             setState(() {
-                _activityTitle = 'Recent ${latestActivity['activity_type']}';
-                _activityDescription = 'From IP: ${latestActivity['ip_address']}';
-                _isLoadingActivity = false;
-             });
+            setState(() {
+              _activityTitle = 'Aktivitas Terakhir: ${latestActivity['activity_type']}';
+              _activityDescription = 'Dari IP: ${latestActivity['ip_address']}';
+              _isLoadingActivity = false;
+            });
           } else {
-             setState(() {
-                _activityTitle = 'Welcome!';
-                _activityDescription = 'No recent activity found.';
-                _isLoadingActivity = false;
-             });
+            setState(() {
+              _activityTitle = 'Selamat Datang!';
+              _activityDescription = 'Tidak ada aktivitas terbaru.';
+              _isLoadingActivity = false;
+            });
           }
         } else {
           setState(() {
             _activityTitle = 'Error';
-            _activityDescription = 'Could not load recent activity.';
+            _activityDescription = 'Tidak dapat memuat aktivitas terbaru.';
             _isLoadingActivity = false;
           });
         }
@@ -65,7 +80,7 @@ class LandingDashboardState extends State<LandingDashboard> {
       if (mounted) {
         setState(() {
           _activityTitle = 'Error';
-          _activityDescription = 'Could not connect to the server.';
+          _activityDescription = 'Tidak dapat terhubung ke server.';
           _isLoadingActivity = false;
         });
       }
@@ -120,6 +135,11 @@ class LandingDashboardState extends State<LandingDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthService>().currentUser;
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -135,7 +155,7 @@ class LandingDashboardState extends State<LandingDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selamat Datang, ${widget.user.username}',
+                  'Selamat Datang, ${user.username}',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

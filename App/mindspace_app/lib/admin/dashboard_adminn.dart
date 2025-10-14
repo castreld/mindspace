@@ -3,6 +3,7 @@ import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/routes.dart'; 
 import 'navbar_admin.dart';
+import '../navigation.dart';
 import 'admin_sidebar.dart';
 import 'kelola_psikolog.dart';
 
@@ -18,9 +19,13 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   final User user = AuthService().currentUser!;
 
   Future<void> _logout() async {
-    await AuthService().clearSession();
+    debugPrint('DashboardAdminPage._logout invoked');
+    AuthService().clearSession();
     if (mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+          debugPrint('DashboardAdminPage: executing scheduled navigation after clearSession');
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+      });
     }
   }
 

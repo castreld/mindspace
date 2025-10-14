@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mindspace_app/therapist/register.dart';
+import 'package:mindspace_app/therapist_dashboard/register.dart';
+import 'package:provider/provider.dart';
 import '../../models/user.dart';
 import '../../routes.dart';
 import '../../services/auth_service.dart';
@@ -9,28 +10,17 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 
 class SettingsDashboard extends StatefulWidget {
-  final User user;
-  final String token;
-  final Function(User) onProfileUpdated;
-
-  const SettingsDashboard({
-    super.key,
-    required this.user,
-    required this.token,
-    required this.onProfileUpdated,
-  });
+  const SettingsDashboard({super.key});
 
   @override
   State<SettingsDashboard> createState() => _SettingsDashboardState();
 }
 
 class _SettingsDashboardState extends State<SettingsDashboard> {
-  // Loading and editing states
   bool _isEditing = false;
   bool _isLoading = false;
   bool _isAvailabilityLoading = false;
 
-  // Profile controllers
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
@@ -39,12 +29,10 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   late String _genderValue;
   late bool _flyerPreference;
 
-  // Image picking
   Uint8List? _imageBytes;
   String? _imageName;
   final ImagePicker _picker = ImagePicker();
 
-  // Availability state
   final Map<String, List<Map<String, TimeOfDay>>> _availabilities = {
     'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [],
     'Friday': [], 'Saturday': [], 'Sunday': [],
@@ -53,11 +41,17 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   @override
   void initState() {
     super.initState();
-    _initializeProfileControllers();
-    // Fetch availability only if the user is a psychologist
-    if (widget.user.role == 'psikolog') {
-      _fetchAvailability();
-    }
+    _fullNameController = TextEditingController();
+    _usernameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+    _birthDateController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeProfileData();
   }
 
   @override
@@ -70,48 +64,68 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     super.dispose();
   }
 
-  void _initializeProfileControllers() {
-    _fullNameController = TextEditingController(text: widget.user.fullName);
-    _usernameController = TextEditingController(text: widget.user.username);
-    _emailController = TextEditingController(text: widget.user.email);
-    _phoneController = TextEditingController(text: widget.user.phoneNumber ?? "");
-    _birthDateController = TextEditingController(text: widget.user.birthDate ?? "");
-    _genderValue = widget.user.gender ?? "pria";
-    _flyerPreference = widget.user.flyer == 'yes';
+  void _initializeProfileData() {
+    final user = context.read<AuthService>().currentUser;
+    if (user != null) {
+      _fullNameController.text = user.fullName;
+      _usernameController.text = user.username;
+      _emailController.text = user.email;
+      _phoneController.text = user.phoneNumber ?? "";
+      _birthDateController.text = user.birthDate ?? "";
+      _genderValue = user.gender ?? "pria";
+      _flyerPreference = user.flyer == 'yes';
+
+      if (user.role == 'psikolog') {
+        _fetchAvailability();
+      }
+    }
   }
 
   Future<void> _fetchAvailability() async {
     setState(() => _isAvailabilityLoading = true);
+    final token = context.read<AuthService>().token;
+    if (token == null) {
+      setState(() => _isAvailabilityLoading = false);
+      return;
+    }
     final url = Uri.parse('http://127.0.0.1:8000/api/psikolog/availability');
     try {
       final response = await http.get(url, headers: {
         'Accept': 'application/json',
-        'Authorization': 'Bearer ${widget.token}',
+        'Authorization': 'Bearer $token',
       });
 
       if (response.statusCode == 200 && mounted) {
         List<dynamic> data = json.decode(response.body);
-        final dayMapping = {1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday'};
-        
+        final dayMapping = {
+          1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
+          5: 'Friday', 6: 'Saturday', 7: 'Sunday'
+        };
         _availabilities.forEach((key, value) => value.clear());
 
         for (var slot in data) {
           final day = dayMapping[slot['day_of_week']];
           if (day != null) {
-            final startTime = TimeOfDay(hour: int.parse(slot['start_time'].split(':')[0]), minute: int.parse(slot['start_time'].split(':')[1]));
-            final endTime = TimeOfDay(hour: int.parse(slot['end_time'].split(':')[0]), minute: int.parse(slot['end_time'].split(':')[1]));
+            final startTime = TimeOfDay(
+                hour: int.parse(slot['start_time'].split(':')[0]),
+                minute: int.parse(slot['start_time'].split(':')[1]));
+            final endTime = TimeOfDay(
+                hour: int.parse(slot['end_time'].split(':')[0]),
+                minute: int.parse(slot['end_time'].split(':')[1]));
             _availabilities[day]!.add({'start': startTime, 'end': endTime});
           }
         }
       }
     } catch (e) {
-      // Handle error if needed
+      // Handle error
     } finally {
       if (mounted) setState(() => _isAvailabilityLoading = false);
     }
   }
-
+  
   Future<void> _updateAvailability() async {
+    final token = context.read<AuthService>().token;
+    if (token == null) return;
     final url = Uri.parse('http://127.0.0.1:8000/api/psikolog/availability');
     final messenger = ScaffoldMessenger.of(context);
     
@@ -133,28 +147,32 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer $token',
         },
         body: json.encode({'availabilities': payload}),
       );
 
       messenger.showSnackBar(
-        SnackBar(content: Text(json.decode(response.body)['message'] ?? 'Availability update status.'),
+        SnackBar(content: Text(json.decode(response.body)['message'] ?? 'Status pembaruan ketersediaan.'),
         backgroundColor: response.statusCode == 200 ? Colors.green : Colors.red,
       ));
     } catch(e) {
-      messenger.showSnackBar(SnackBar(content: Text('Error updating availability: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('Error memperbarui ketersediaan: $e')));
     }
   }
-  
+
   Future<void> _updateProfile() async {
+    final authService = context.read<AuthService>();
+    final token = authService.token;
+    if (token == null) return;
+
     final url = Uri.parse('http://127.0.0.1:8000/api/user/profile');
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Accept': 'application/json',
-      'Authorization': 'Bearer ${widget.token}',
+      'Authorization': 'Bearer $token',
     });
-
+    
     request.fields['username'] = _usernameController.text;
     request.fields['full_name'] = _fullNameController.text;
     request.fields['email'] = _emailController.text;
@@ -179,9 +197,9 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         if (response.statusCode == 200) {
           final responseData = jsonDecode(response.body);
           final updatedUser = User.fromJson(responseData['user']);
-          widget.onProfileUpdated(updatedUser);
+          await authService.updateUser(updatedUser);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully!')),
+            const SnackBar(content: Text('Profil berhasil diperbarui!')),
           );
         } else {
           final error = jsonDecode(response.body);
@@ -191,16 +209,18 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     }
   }
 
   Future<void> _onSaveChanges() async {
     setState(() => _isLoading = true);
+    final user = context.read<AuthService>().currentUser;
     
     List<Future> updateFutures = [_updateProfile()]; 
-    if (widget.user.role == 'psikolog') {
+    if (user?.role == 'psikolog') {
       updateFutures.add(_updateAvailability());
     }
 
@@ -253,7 +273,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
 
     if (startMinutes >= endMinutes) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('End time must be after start time.'), backgroundColor: Colors.red));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Waktu selesai harus setelah waktu mulai.'), backgroundColor: Colors.red));
       }
       return;
     }
@@ -262,13 +282,18 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.watch<AuthService>().currentUser;
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildProfileSection(),
+          _buildProfileSection(user),
           const SizedBox(height: 24),
-          if (widget.user.role == 'psikolog') ...[
+          if (user.role == 'psikolog') ...[
             _buildAvailabilitySection(),
             const SizedBox(height: 24),
           ],
@@ -276,7 +301,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
           const SizedBox(height: 24),
           _buildPreferencesSection(),
           const SizedBox(height: 24),
-          if (widget.user.role != 'psikolog') ...[
+          if (user.role != 'psikolog') ...[
             _buildPsychologistCard(),
             const SizedBox(height: 24),
           ],
@@ -285,7 +310,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     );
   }
 
-  Widget _buildProfileSection() {
+  Widget _buildProfileSection(User user) {
     return Card(
       color: const Color(0xFFFFF8F0),
       elevation: 4,
@@ -303,10 +328,10 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                     backgroundColor: Colors.grey.shade200,
                     backgroundImage: _imageBytes != null
                         ? MemoryImage(_imageBytes!)
-                        : (widget.user.profilePicture != null
-                            ? NetworkImage('http://127.0.0.1:8000/api/${widget.user.profilePicture!}')
+                        : (user.profilePicture != null
+                            ? NetworkImage('http://127.0.0.1:8000/api/${user.profilePicture!}')
                             : null) as ImageProvider?,
-                    child: _imageBytes == null && widget.user.profilePicture == null
+                    child: _imageBytes == null && user.profilePicture == null
                         ? Icon(Icons.person, size: 60, color: Colors.grey.shade800)
                         : null,
                   ),
@@ -332,11 +357,11 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('User Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                const Text('Profil Pengguna', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 ElevatedButton.icon(
                   icon: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                       : Icon(_isEditing ? Icons.save : Icons.edit, size: 16),
-                  label: Text(_isEditing ? 'Save All Changes' : 'Edit'),
+                  label: Text(_isEditing ? 'Simpan Perubahan' : 'Ubah'),
                   onPressed: _isLoading ? null : () {
                     if (_isEditing) {
                       _onSaveChanges();
@@ -348,16 +373,16 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
               ],
             ),
             const Divider(height: 32),
-            _buildTextField(label: 'Full Name', controller: _fullNameController, icon: Icons.person_outline),
+            _buildTextField(label: 'Nama Lengkap', controller: _fullNameController, icon: Icons.person_outline),
             const SizedBox(height: 16),
-            _buildTextField(label: 'Username', controller: _usernameController, icon: Icons.alternate_email),
+            _buildTextField(label: 'Nama Pengguna', controller: _usernameController, icon: Icons.alternate_email),
             const SizedBox(height: 16),
             _buildTextField(label: 'Email', controller: _emailController, icon: Icons.email_outlined),
             const SizedBox(height: 16),
-            _buildTextField(label: 'Phone Number', controller: _phoneController, icon: Icons.phone_outlined),
+            _buildTextField(label: 'Nomor Telepon', controller: _phoneController, icon: Icons.phone_outlined),
             const SizedBox(height: 16),
             _buildTextField(
-              label: 'Birth Date',
+              label: 'Tanggal Lahir',
               controller: _birthDateController,
               icon: Icons.calendar_today_outlined,
               readOnly: true,
@@ -366,7 +391,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _genderValue,
-              decoration: const InputDecoration(labelText: 'Gender', prefixIcon: Icon(Icons.wc_outlined), border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Jenis Kelamin', prefixIcon: Icon(Icons.wc_outlined), border: OutlineInputBorder()),
               items: const [DropdownMenuItem(value: 'pria', child: Text("Pria")), DropdownMenuItem(value: 'wanita', child: Text("Wanita"))],
               onChanged: _isEditing ? (value) => setState(() => _genderValue = value!) : null,
             ),
@@ -386,14 +411,14 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Manage Your Availability', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Atur Ketersediaan Anda', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Divider(height: 32),
             if (_isAvailabilityLoading)
               const Center(child: CircularProgressIndicator())
             else
               ..._availabilities.keys.map((day) {
                 return ExpansionTile(
-                  key: PageStorageKey(day), // Helps maintain state on rebuild
+                  key: PageStorageKey(day),
                   title: Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
                   children: [
                     ..._availabilities[day]!.asMap().entries.map((entry) {
@@ -409,7 +434,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                     }),
                     if (_isEditing)
                       ListTile(
-                        title: const Text('Add Time Slot', style: TextStyle(color: Colors.blue)),
+                        title: const Text('Tambah Jadwal', style: TextStyle(color: Colors.blue)),
                         leading: const Icon(Icons.add, color: Colors.blue),
                         onTap: () => _addOrEditTimeSlot(day),
                       )
@@ -432,18 +457,18 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Account Security', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Keamanan Akun', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Divider(height: 32),
             ListTile(
               leading: const Icon(Icons.lock_outline),
-              title: const Text('Change Password'),
+              title: const Text('Ubah Kata Sandi'),
               trailing: const Icon(Icons.chevron_right),
               onTap: _showChangePasswordDialog,
             ),
             const Divider(),
             ListTile(
               leading: Icon(Icons.delete_forever_outlined, color: Colors.red.shade700),
-              title: Text('Delete Account', style: TextStyle(color: Colors.red.shade700)),
+              title: Text('Hapus Akun', style: TextStyle(color: Colors.red.shade700)),
               trailing: Icon(Icons.chevron_right, color: Colors.red.shade700),
               onTap: _showDeleteAccountDialog,
             ),
@@ -463,11 +488,11 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Preferences', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Preferensi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const Divider(height: 32),
             SwitchListTile(
-              title: const Text('Receive Educational Flyers'),
-              subtitle: const Text('Get psychology info once a month via email.'),
+              title: const Text('Terima Info Edukasi'),
+              subtitle: const Text('Dapatkan info psikologi sebulan sekali via email.'),
               secondary: const Icon(Icons.article_outlined),
               value: _flyerPreference,
               onChanged: _isEditing ? (value) => setState(() => _flyerPreference = value) : null,
@@ -510,10 +535,10 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Interested in becoming a psychologist?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text('Tertarik menjadi psikolog?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
             const Text(
-              'Join our team of professionals and help more people find their inner peace.',
+              'Bergabunglah dengan tim profesional kami dan bantu lebih banyak orang menemukan kedamaian batin mereka.',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 20),
@@ -529,9 +554,9 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                 ),
                 onPressed: () => Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TherapistForm(user: widget.user, token: widget.token)),
+                  MaterialPageRoute(builder: (context) => const TherapistForm()),
                 ),
-                child: const Text('Apply Here!'),
+                child: const Text('Daftar di Sini!'),
               ),
             ),
           ],
@@ -541,46 +566,46 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   }
 
   void _showChangePasswordDialog() {
-    final _formKey = GlobalKey<FormState>();
-    final _currentPasswordController = TextEditingController();
-    final _newPasswordController = TextEditingController();
-    final _confirmPasswordController = TextEditingController();
-    bool _isLoading = false;
+    final formKey = GlobalKey<FormState>();
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    bool isLoadingDialog = false;
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, setStateDialog) {
             return AlertDialog(
-              title: const Text('Change Password'),
+              title: const Text('Ubah Kata Sandi'),
               content: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextFormField(
-                      controller: _currentPasswordController,
+                      controller: currentPasswordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Current Password'),
-                      validator: (value) => value!.isEmpty ? 'This field is required' : null,
+                      decoration: const InputDecoration(labelText: 'Kata Sandi Saat Ini'),
+                      validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
                     ),
                     TextFormField(
-                      controller: _newPasswordController,
+                      controller: newPasswordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'New Password'),
+                      decoration: const InputDecoration(labelText: 'Kata Sandi Baru'),
                       validator: (value) {
-                        if (value == null || value.isEmpty) return 'This field is required';
-                        if (value.length < 8) return 'Password must be at least 8 characters';
+                        if (value == null || value.isEmpty) return 'Wajib diisi';
+                        if (value.length < 8) return 'Kata sandi minimal 8 karakter';
                         return null;
                       },
                     ),
                     TextFormField(
-                      controller: _confirmPasswordController,
+                      controller: confirmPasswordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Confirm New Password'),
+                      decoration: const InputDecoration(labelText: 'Konfirmasi Kata Sandi Baru'),
                       validator: (value) {
-                        if (value != _newPasswordController.text) return 'Passwords do not match';
+                        if (value != newPasswordController.text) return 'Kata sandi tidak cocok';
                         return null;
                       },
                     ),
@@ -588,20 +613,20 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                 ),
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
                 ElevatedButton(
-                  onPressed: _isLoading ? null : () async {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() => _isLoading = true);
+                  onPressed: isLoadingDialog ? null : () async {
+                    if (formKey.currentState!.validate()) {
+                      setStateDialog(() => isLoadingDialog = true);
                       await _updatePasswordApiCall(
-                        _currentPasswordController.text,
-                        _newPasswordController.text,
-                        _confirmPasswordController.text
+                        currentPasswordController.text,
+                        newPasswordController.text,
+                        confirmPasswordController.text
                       );
-                      setState(() => _isLoading = false);
+                      setStateDialog(() => isLoadingDialog = false);
                     }
                   },
-                  child: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Change'),
+                  child: isLoadingDialog ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Ubah'),
                 ),
               ],
             );
@@ -610,45 +635,45 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       },
     );
   }
-
+  
   void _showDeleteAccountDialog() {
-    final _passwordController = TextEditingController();
+    final passwordController = TextEditingController();
     final messenger = ScaffoldMessenger.of(context);
-    bool _isLoading = false;
+    bool isLoadingDialog = false;
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (context, setStateDialog) {
             return AlertDialog(
-              title: const Text('Delete Account'),
+              title: const Text('Hapus Akun'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('This action is irreversible. Please enter your password to confirm.'),
+                  const Text('Tindakan ini tidak dapat diurungkan. Silakan masukkan kata sandi Anda untuk mengonfirmasi.'),
                   const SizedBox(height: 16),
                   TextField(
-                    controller: _passwordController,
+                    controller: passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Password'),
+                    decoration: const InputDecoration(labelText: 'Kata Sandi'),
                   ),
                 ],
               ),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+                TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  onPressed: _isLoading ? null : () async {
-                    if (_passwordController.text.isEmpty) {
-                      messenger.showSnackBar(const SnackBar(content: Text('Password is required'), backgroundColor: Colors.orange));
+                  onPressed: isLoadingDialog ? null : () async {
+                    if (passwordController.text.isEmpty) {
+                      messenger.showSnackBar(const SnackBar(content: Text('Kata sandi diperlukan'), backgroundColor: Colors.orange));
                       return;
                     }
-                    setState(() => _isLoading = true);
-                    await _deleteAccountApiCall(_passwordController.text);
-                    setState(() => _isLoading = false);
+                    setStateDialog(() => isLoadingDialog = true);
+                    await _deleteAccountApiCall(passwordController.text);
+                    setStateDialog(() => isLoadingDialog = false);
                   },
-                  child: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Delete'),
+                  child: isLoadingDialog ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Text('Hapus'),
                 ),
               ],
             );
@@ -657,7 +682,11 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       },
     );
   }
+
   Future<void> _updatePasswordApiCall(String current, String newP, String confirm) async {
+    final token = context.read<AuthService>().token;
+    if (token == null) return;
+    
     final url = Uri.parse('http://127.0.0.1:8000/api/user/password');
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
@@ -667,7 +696,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         url,
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: json.encode({
@@ -687,40 +716,43 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       }
 
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('An error occurred: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
     }
   }
   
   Future<void> _deleteAccountApiCall(String password) async {
+    final authService = context.read<AuthService>();
+    final token = authService.token;
+    if (token == null) return;
+    
     final url = Uri.parse('http://127.0.0.1:8000/api/user');
     final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
 
     try {
       final response = await http.delete(
         url,
         headers: {
           'Accept': 'application/json',
-          'Authorization': 'Bearer ${widget.token}',
+          'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: json.encode({'current_password': password}),
       );
       
+      if (!mounted) return;
+      
       final responseData = json.decode(response.body);
 
       if (response.statusCode == 200) {
         messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.green));
-
-        await AuthService().clearSession();
-        navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
-
+        authService.clearSession();
       } else {
         messenger.showSnackBar(SnackBar(content: Text(responseData['message']), backgroundColor: Colors.red));
       }
-
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text('An error occurred: $e')));
+      if (mounted) {
+        messenger.showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+      }
     }
   }
 }

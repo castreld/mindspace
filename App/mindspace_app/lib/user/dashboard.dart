@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mindspace_app/user/dashboard/history_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/message_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/settings_dashboard.dart';
+import 'package:provider/provider.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 import '../models/user.dart';
 import 'package:mindspace_app/animated_background_dark.dart';
-import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/user/dashboard/landing_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/schedule_dashboard.dart';
 import 'package:mindspace_app/services/auth_service.dart';
@@ -15,9 +15,7 @@ import 'package:mindspace_app/services/auth_service.dart';
 enum DashboardSection { dashboard, schedule, history, messages, settings }
 
 class MainDashboard extends StatefulWidget {
-  final User user;
-  final String token;
-  const MainDashboard({super.key, required this.user, required this.token});
+  const MainDashboard({super.key});
 
   @override
   State<MainDashboard> createState() => _MainDashboardState();
@@ -25,59 +23,50 @@ class MainDashboard extends StatefulWidget {
 
 class _MainDashboardState extends State<MainDashboard> {
   DashboardSection _selectedSection = DashboardSection.dashboard;
-  late User _currentUser;
-
-  @override
-  void initState() {
-    super.initState();
-    _currentUser = widget.user;
-  }
-
-  Future<void> _logout() async {
-    await AuthService().clearSession();
-    if (mounted) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, AppRoutes.home, (route) => false);
-    }
-  }
 
   Widget _getSectionWidget() {
     switch (_selectedSection) {
       case DashboardSection.dashboard:
-        return LandingDashboard(user: widget.user, token: widget.token);
+        return const LandingDashboard();
       case DashboardSection.schedule:
         return const ScheduleDashboard();
       case DashboardSection.history:
         return const HistoryDashboard();
       case DashboardSection.messages:
-      final screenHeight = MediaQuery.of(context).size.height;
-      final appBarHeight = AppBar().preferredSize.height; 
-      final availableHeight = screenHeight - appBarHeight - 100;
-
-      return SizedBox(
-        height: availableHeight,
-        child: const MessageDashboard(),
-      );
-      case DashboardSection.settings:
-        return SettingsDashboard(
-          user: _currentUser,
-          token: widget.token,
-          onProfileUpdated: (updatedUser) {
-            setState(() {
-              _currentUser = updatedUser;
-            });
-            AuthService().saveSession(updatedUser, widget.token);
-          },
+        final screenHeight = MediaQuery.of(context).size.height;
+        final appBarHeight = AppBar().preferredSize.height;
+        final availableHeight = screenHeight - appBarHeight - 100;
+        return SizedBox(
+          height: availableHeight,
+          child: const MessageDashboard(),
         );
+      case DashboardSection.settings:
+        return const SettingsDashboard();
       default:
-        return LandingDashboard(user: widget.user, token: widget.token);
+        return const LandingDashboard();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final authService = context.watch<AuthService>();
+    final currentUser = authService.currentUser;
+
+    if (currentUser == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
-      appBar: CustomAppBar(user: widget.user, onLogout: _logout),
+      appBar: CustomAppBar(
+        user: currentUser,
+        onLogout: () {
+          debugPrint('MainDashboard: onLogout invoked - scheduling clearSession');
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            debugPrint('MainDashboard: executing scheduled clearSession');
+            context.read<AuthService>().clearSession();
+          });
+        },
+      ),
       body: Stack(
         children: [
           const AnimatedGradientBackgroundDark(),
@@ -95,7 +84,7 @@ class _MainDashboardState extends State<MainDashboard> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ProfileOverview(
-                              user: _currentUser,
+                              user: currentUser,
                               onEditProfilePressed: () {
                                 setState(() {
                                   _selectedSection = DashboardSection.settings;
@@ -104,7 +93,11 @@ class _MainDashboardState extends State<MainDashboard> {
                             ),
                             const SizedBox(height: 24),
                             MainMenu(
-                              onLogout: _logout,
+                              onLogout: () {
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  context.read<AuthService>().clearSession();
+                                });
+                              },
                               selectedSection: _selectedSection,
                               onSectionSelected: (DashboardSection section) {
                                 setState(() {
@@ -138,7 +131,7 @@ class ProfileOverview extends StatelessWidget {
   final VoidCallback onEditProfilePressed;
 
   const ProfileOverview({
-    super.key, 
+    super.key,
     required this.user,
     required this.onEditProfilePressed,
   });
