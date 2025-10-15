@@ -116,7 +116,7 @@ class _FormSectionState extends State<FormSection> {
         
         final errorData = jsonDecode(response.body);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${errorData['message'] ?? 'Unknown error'}')),
+            SnackBar(content: Text('Kesalahan: ${errorData['message'] ?? 'Terjadi kesalahan'}')),
           );
       }
     } catch (e) {

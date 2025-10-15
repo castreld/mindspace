@@ -49,7 +49,7 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Activity History'),
+  title: const Text('Riwayat Aktivitas'),
         backgroundColor: const Color(0xFF5B3F5B),
       ),
       body: FutureBuilder<List<dynamic>>(
@@ -58,9 +58,9 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Terjadi kesalahan: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No activity history found.'));
+            return const Center(child: Text('Riwayat aktivitas tidak ditemukan.'));
           }
 
           final activities = snapshot.data!;

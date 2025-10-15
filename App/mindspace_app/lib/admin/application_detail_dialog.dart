@@ -24,7 +24,7 @@ class ApplicationDetailDialog extends StatelessWidget {
       ),
       actions: <Widget>[
         TextButton(
-          child: const Text('Close'),
+          child: const Text('Tutup'),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],

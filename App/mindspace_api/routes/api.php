@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TherapistApplicationController;
 use App\Http\Controllers\Admin\TherapistManagementController;
 use App\Http\Controllers\Psikolog\AvailabilityController;
 use App\Http\Controllers\Api\TherapistController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -45,4 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/availability', [AvailabilityController::class, 'get']);
         Route::put('/availability', [AvailabilityController::class, 'update']);
     });
+    Route::post('/appointments', [App\Http\Controllers\Api\AppointmentController::class, 'store']);
+    Route::post('/midtrans/create-transaction', [PaymentController::class, 'createTransaction']);
 });
+
+Route::post('/midtrans/notification', [PaymentController::class, 'handleNotification']);

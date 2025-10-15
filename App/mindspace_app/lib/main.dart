@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
@@ -19,12 +21,15 @@ import 'navigation.dart';
 import 'auth/register.dart';
 
 Future<void> main() async {
+  // initialize Indonesian locale for dates
+  await initializeDateFormatting('id_ID');
+  Intl.defaultLocale = 'id_ID';
+
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
 
     FlutterError.onError = (FlutterErrorDetails details) {
       FlutterError.dumpErrorToConsole(details);
-      debugPrint('==== FlutterError.onError captured ====', wrapWidth: 120);
     };
 
     AuthService().init();
@@ -36,9 +41,9 @@ Future<void> main() async {
       ),
     );
   }, (error, stack) {
-    debugPrint('==== runZonedGuarded caught error ====', wrapWidth: 120);
-    debugPrint(error.toString(), wrapWidth: 120);
-    debugPrint(stack.toString(), wrapWidth: 120);
+  debugPrint('==== runZonedGuarded caught error ====', wrapWidth: 120);
+  debugPrint(error.toString(), wrapWidth: 120);
+  debugPrint(stack.toString(), wrapWidth: 120);
   });
 }
 
@@ -200,7 +205,7 @@ class _AppDrawer extends StatelessWidget {
               ),
             ),
           ),
-          _DrawerItem('Home', Icons.home, () {}),
+          _DrawerItem('Beranda', Icons.home, () {}),
           _DrawerItem('Terapis', Icons.people, () {}),
           _DrawerItem('Jadwal', Icons.calendar_today, () {}),
           _DrawerItem('Kontak', Icons.contact_phone, () {}),
@@ -256,11 +261,11 @@ class HeroSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
-                "“Your Safe Place To Be Heard”",
-                textAlign: isSmallScreen ? TextAlign.center : TextAlign.left,
+              const Text(
+                "\u201cTempat Aman untuk Didengarkan\u201d",
+                textAlign: TextAlign.left,
                 style: TextStyle(
-                  fontSize: isSmallScreen ? 24 : 32,
+                  fontSize: 24,
                   color: Colors.black,
                 ),
               ),

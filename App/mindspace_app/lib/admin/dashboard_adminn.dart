@@ -19,11 +19,11 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
   final User user = AuthService().currentUser!;
 
   Future<void> _logout() async {
-    debugPrint('DashboardAdminPage._logout invoked');
+    
     AuthService().clearSession();
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-          debugPrint('DashboardAdminPage: executing scheduled navigation after clearSession');
+          
           navigatorKey.currentState?.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
       });
     }

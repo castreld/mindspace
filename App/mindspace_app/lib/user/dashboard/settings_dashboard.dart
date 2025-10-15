@@ -204,13 +204,13 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         } else {
           final error = jsonDecode(response.body);
           ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${error['message'] ?? error}')));
+              SnackBar(content: Text('Kesalahan: ${error['message'] ?? error}')));
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error: $e')));
+            .showSnackBar(SnackBar(content: Text('Kesalahan: $e')));
       }
     }
   }

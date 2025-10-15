@@ -60,9 +60,9 @@ class _MainDashboardState extends State<MainDashboard> {
       appBar: CustomAppBar(
         user: currentUser,
         onLogout: () {
-          debugPrint('MainDashboard: onLogout invoked - scheduling clearSession');
+          
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            debugPrint('MainDashboard: executing scheduled clearSession');
+            
             context.read<AuthService>().clearSession();
           });
         },

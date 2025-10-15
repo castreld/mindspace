@@ -18,7 +18,7 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: const Color(0xFF1E88E5),
       elevation: 1,
       title: const Text(
-        "Admin Dashboard",
+        "Dasbor Admin",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
       ),
       iconTheme: const IconThemeData(color: Colors.white),
@@ -32,14 +32,12 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
           builder: (menuContext) {
             return PopupMenuButton<String>(
               onSelected: (value) {
-                debugPrint('PopupMenu selected: $value (navbar_admin)');
+                
                 if (value == 'home') {
                   Navigator.pushNamed(menuContext, AppRoutes.home);
                 } else if (value == 'dashboard') {
                 } else if (value == 'logout') {
-                  debugPrint('Logout selected, scheduling onLogout (navbar_admin)');
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    debugPrint('Executing onLogout callback (navbar_admin)');
                     onLogout();
                   });
                 }
@@ -69,14 +67,14 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
                   value: 'home',
                   child: ListTile(
                     leading: Icon(Icons.home_outlined),
-                    title: Text('Home'),
+                    title: Text('Beranda'),
                   ),
                 ),
                 const PopupMenuItem<String>(
                   value: 'dashboard',
                   child: ListTile(
                     leading: Icon(Icons.dashboard_outlined),
-                    title: Text('Dashboard'),
+                    title: Text('Dasbor'),
                   ),
                 ),
                 const PopupMenuDivider(),
@@ -84,7 +82,7 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
                   value: 'logout',
                   child: ListTile(
                     leading: Icon(Icons.logout, color: Colors.red.shade700),
-                    title: Text('Logout', style: TextStyle(color: Colors.red.shade700)),
+                    title: Text('Keluar', style: TextStyle(color: Colors.red.shade700)),
                   ),
                 ),
               ],

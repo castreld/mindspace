@@ -20,15 +20,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (menuContext) {
         return PopupMenuButton<String>(
           onSelected: (value) {
-            debugPrint('PopupMenu selected: $value (custom_app_bar)');
+          
             if (value == 'dashboard') {
               Navigator.pushNamed(menuContext, AppRoutes.dashboard);
             } else if (value == 'admin_dashboard') {
               Navigator.pushNamed(menuContext, AppRoutes.adminDashboard);
             } else if (value == 'logout') {
-              debugPrint('Logout selected, scheduling clearSession (custom_app_bar)');
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                debugPrint('Executing onLogout callback (custom_app_bar)');
                 onLogout?.call();
               });
             }
@@ -128,7 +126,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       toolbarHeight: 80,
       backgroundColor: const Color(0xFF5B3F5B),
-      title: const Text('Mindspace',
+  title: const Text('Mindspace',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       leading: Builder(
         builder: (context) => IconButton(

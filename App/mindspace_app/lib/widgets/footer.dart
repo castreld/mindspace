@@ -24,27 +24,27 @@ class FooterSection extends StatelessWidget {
               },
             ),
             FooterColumn(
-              title: "Use Cases",
+              title: "Fungsi",
               links: {
-                "UI Design": "#",
+                "Desain UI": "#",
                 "Wireframing": "#",
                 "Brainstorming": "#",
               },
             ),
             FooterColumn(
-              title: "Explore",
+              title: "Jelajahi",
               links: {
-                "Design": "#",
-                "Prototyping": "#",
-                "Development Features": "#",
+                "Desain": "#",
+                "Prototipe": "#",
+                "Fitur Pengembangan": "#",
               },
             ),
             FooterColumn(
-              title: "Support",
+              title: "Dukungan",
               links: {
-                "Help Center": "#",
-                "Privacy Policy": "#",
-                "Terms of Service": "#",
+                "Pusat Bantuan": "#",
+                "Kebijakan Privasi": "#",
+                "Syarat Layanan": "#",
               },
             ),
           ],
