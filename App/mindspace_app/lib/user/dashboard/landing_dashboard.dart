@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mindspace_app/models/user.dart';
 import 'package:provider/provider.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 
 class LandingDashboard extends StatefulWidget {
@@ -40,7 +41,7 @@ class LandingDashboardState extends State<LandingDashboard> {
       return;
     }
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/activity-history');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/activity-history');
 
     try {
       final response = await http.get(
@@ -57,7 +58,8 @@ class LandingDashboardState extends State<LandingDashboard> {
           final latestActivity = (data['data'] as List).firstOrNull;
           if (latestActivity != null) {
             setState(() {
-              _activityTitle = 'Aktivitas Terakhir: ${latestActivity['activity_type']}';
+              _activityTitle =
+                  'Aktivitas Terakhir: ${latestActivity['activity_type']}';
               _activityDescription = 'Dari IP: ${latestActivity['ip_address']}';
               _isLoadingActivity = false;
             });
@@ -140,6 +142,30 @@ class LandingDashboardState extends State<LandingDashboard> {
       return const Center(child: CircularProgressIndicator());
     }
 
+    final summaryCards = [
+      _buildSummaryCard(
+        icon: Icons.calendar_month,
+        title: 'Jadwal Konseling',
+        subtitle: '0 Jadwal Aktif',
+        buttonText: 'Buat Jadwal',
+        onPressed: () {},
+      ),
+      _buildSummaryCard(
+        icon: Icons.message,
+        title: 'Pesan',
+        subtitle: '0 Pesan Baru',
+        buttonText: 'Lihat Pesan',
+        onPressed: () {},
+      ),
+      _buildSummaryCard(
+        icon: Icons.article,
+        title: 'Materi',
+        subtitle: '5 Materi Tersedia',
+        buttonText: 'Lihat Materi',
+        onPressed: () {},
+      ),
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -174,39 +200,31 @@ class LandingDashboardState extends State<LandingDashboard> {
           ),
         ),
         const SizedBox(height: 24),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: _buildSummaryCard(
-                icon: Icons.calendar_month,
-                title: 'Jadwal Konseling',
-                subtitle: '0 Jadwal Aktif',
-                buttonText: 'Buat Jadwal',
-                onPressed: () {},
-              ),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: _buildSummaryCard(
-                icon: Icons.message,
-                title: 'Pesan',
-                subtitle: '0 Pesan Baru',
-                buttonText: 'Lihat Pesan',
-                onPressed: () {},
-              ),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: _buildSummaryCard(
-                icon: Icons.article,
-                title: 'Materi',
-                subtitle: '5 Materi Tersedia',
-                buttonText: 'Lihat Materi',
-                onPressed: () {},
-              ),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 700) {
+              return Column(
+                children: [
+                  summaryCards[0],
+                  const SizedBox(height: 20),
+                  summaryCards[1],
+                  const SizedBox(height: 20),
+                  summaryCards[2],
+                ],
+              );
+            } else {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: summaryCards[0]),
+                  const SizedBox(width: 20),
+                  Expanded(child: summaryCards[1]),
+                  const SizedBox(width: 20),
+                  Expanded(child: summaryCards[2]),
+                ],
+              );
+            }
+          },
         ),
         const SizedBox(height: 24),
         Card(

@@ -12,66 +12,70 @@ class PaymentController extends Controller
 {
     public function handleNotification(Request $request)
     {
-        Log::info('Midtrans notification received', ['payload' => $request->all()]);
+        Log::info('--- Midtrans Notification Received ---', ['payload' => $request->all()]);
 
         $payload = $request->all();
-        $orderId = $payload['order_id'] ?? $payload['orderId'] ?? null;
+        $orderId = $payload['order_id'] ?? null;
         $transactionStatus = $payload['transaction_status'] ?? null;
-        $transactionId = $payload['transaction_id'] ?? $payload['transactionId'] ?? null;
         $statusCode = $payload['status_code'] ?? null;
-        $grossAmount = $payload['gross_amount'] ?? $payload['grossAmount'] ?? null;
+        $grossAmount = $payload['gross_amount'] ?? null;
+        
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+        if (!$serverKey) {
+            Log::error('MIDTRANS_SERVER_KEY is not set in the .env file.');
+            return response()->json(['message' => 'Server configuration error.'], 500);
+        }
+        
+        $signatureKey = $payload['signature_key'] ?? null;
+        $computedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+        
+        if (!hash_equals($computedSignature, $signatureKey)) {
+            Log::warning('Midtrans signature validation failed.', ['order_id' => $orderId]);
+            return response()->json(['message' => 'Invalid signature.'], 403);
+        }
+        
+        Log::info('Signature validation successful.', ['order_id' => $orderId]);
 
-        // Verify signature if provided
-        $signatureKey = $payload['signature_key'] ?? $request->header('signature_key') ?? $request->header('x-midtrans-signature') ?? null;
-        if ($signatureKey && $orderId && $statusCode && $grossAmount) {
-            $serverKey = env('MIDTRANS_SERVER_KEY');
-            $computed = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
-            if (!hash_equals($computed, $signatureKey)) {
-                Log::warning('Midtrans signature mismatch', ['expected' => $computed, 'provided' => $signatureKey]);
-                return response()->json(['status' => 'signature_mismatch'], 400);
+        $transaction = Transaction::where('payment_gateway_id', $orderId)->first();
+
+        if (!$transaction) {
+            Log::warning('Transaction not found in database.', ['order_id' => $orderId]);
+            return response()->json(['message' => 'Transaction not found.'], 404);
+        }
+        
+        Log::info('Transaction found in database.', ['transaction_id' => $transaction->id, 'current_status' => $transaction->status]);
+
+        if ($transactionStatus == 'settlement' || $transactionStatus == 'capture') {
+            if ($transaction->status == 'paid') {
+                Log::info('Transaction already marked as paid. Ignoring notification.', ['order_id' => $orderId]);
+                return response()->json(['message' => 'Already updated.']);
+            }
+
+            $transaction->status = 'paid';
+            Log::info('Updating transaction status to PAID.');
+
+            $appointment = Appointment::find($transaction->appointment_id);
+            if ($appointment) {
+                $appointment->status = 'pending_confirmation';
+                $appointment->save();
+                Log::info('Updated associated appointment status to PENDING_CONFIRMATION.', ['appointment_id' => $appointment->id]);
+            }
+
+        } else if (in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure'])) {
+            $transaction->status = 'failed';
+            Log::info('Updating transaction status to FAILED.');
+
+            $appointment = Appointment::find($transaction->appointment_id);
+            if ($appointment) {
+                $appointment->status = 'payment_failed';
+                $appointment->save();
+                Log::info('Updated associated appointment status to PAYMENT_FAILED.', ['appointment_id' => $appointment->id]);
             }
         }
-
-        if ($orderId) {
-            $transaction = Transaction::where('payment_gateway_id', $orderId)->first();
-            if (!$transaction) {
-                // try find by order id stored earlier
-                $transaction = Transaction::where('payment_gateway_id', $orderId)->first();
-            }
-
-            if ($transaction) {
-                // Idempotency: if already paid, ignore repeated settlement
-                if ($transaction->status === 'paid' && in_array($transactionStatus, ['settlement', 'capture', 'success'])) {
-                    return response()->json(['status' => 'ok']);
-                }
-
-                // Map Midtrans status to our transaction status
-                if (in_array($transactionStatus, ['capture', 'settlement', 'success'])) {
-                    $transaction->status = 'paid';
-                } elseif (in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure'])) {
-                    $transaction->status = 'failed';
-                } else {
-                    $transaction->status = 'pending';
-                }
-                if ($transactionId) $transaction->payment_gateway_id = $transactionId;
-                $transaction->save();
-
-                if ($transaction->appointment_id) {
-                    $appt = Appointment::find($transaction->appointment_id);
-                    if ($appt) {
-                        if ($transaction->status === 'paid') {
-                            $appt->status = 'scheduled';
-                        } elseif ($transaction->status === 'failed') {
-                            $appt->status = 'payment_failed';
-                        }
-                        $appt->save();
-                    }
-                }
-            } else {
-                Log::warning('Transaction not found for Midtrans order_id: ' . $orderId);
-            }
-        }
-
+        
+        $transaction->save();
+        Log::info('--- Midtrans Notification Processed Successfully ---');
+        
         return response()->json(['status' => 'ok']);
     }
 
@@ -82,7 +86,6 @@ class PaymentController extends Controller
             'gross_amount' => 'required|numeric',
             'appointment_id' => 'nullable|exists:appointments,id',
         ]);
-
         
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         \Midtrans\Config::$clientKey = env('MIDTRANS_CLIENT_KEY');
@@ -102,7 +105,6 @@ class PaymentController extends Controller
         try {
             $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-            // create transaction record
             $appointmentId = $request->input('appointment_id');
             $userId = $request->user()->id ?? null;
 
@@ -114,7 +116,6 @@ class PaymentController extends Controller
                 'payment_gateway_id' => $request->input('order_id'),
             ]);
 
-            // mark appointment as pending_payment if linked
             if ($appointmentId) {
                 $appt = Appointment::find($appointmentId);
                 if ($appt) {

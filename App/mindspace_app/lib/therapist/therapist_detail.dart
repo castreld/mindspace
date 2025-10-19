@@ -5,8 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/config.dart';
+import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/services/booking_service.dart';
+import 'package:mindspace_app/widgets/bottom_nav_bar.dart';
 import 'package:mindspace_app/widgets/custom_app_bar.dart';
 import 'package:mindspace_app/widgets/footer.dart';
 import 'package:provider/provider.dart';
@@ -41,9 +43,9 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
     try {
       final url = Uri.parse(
           '${AppConfig.backendBaseUrl}/api/therapists/${widget.therapistId}');
+
       final resp = await http.get(url, headers: {
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
       });
 
       if (!mounted) return;
@@ -75,6 +77,9 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
   Widget build(BuildContext context) {
     final authService = context.watch<AuthService>();
     final currentUser = authService.currentUser;
+    const double mobileBreakpoint = 850;
+    final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
+    final String currentRoute = ModalRoute.of(context)?.settings.name ?? '';
 
     if (currentUser == null) {
       return const Scaffold(
@@ -88,7 +93,9 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
         onLogout: () {
           context.read<AuthService>().clearSession();
         },
+        showNavButtonsAsActions: !isMobile,
       ),
+      drawer: isMobile ? const _AppDrawer() : null,
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -121,11 +128,13 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
                                 ),
                 ),
               ),
-              if (kIsWeb) const FooterSection(),
+              if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
             ],
           ),
         ],
       ),
+      bottomNavigationBar:
+          isMobile ? AppBottomNavigationBar(currentRoute: currentRoute) : null,
     );
   }
 
@@ -150,10 +159,7 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
         children: [
           Expanded(
             flex: 1,
-            child:SizedBox(
-              height: 730,
-               child:  _buildProfileOverviewCard(),
-            ),
+            child: _buildProfileOverviewCard(),
           ),
           const SizedBox(width: 24),
           Expanded(
@@ -213,10 +219,8 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
             const Divider(height: 32),
-            _buildInfoRow(
-                Icons.star_rate_rounded,
-                '${_therapist!.rating.toStringAsFixed(1)} Rating',
-                Colors.amber),
+            _buildInfoRow(Icons.star_rate_rounded,
+                '${_therapist!.rating.toStringAsFixed(1)} Rating', Colors.amber),
             const SizedBox(height: 12),
             _buildInfoRow(Icons.wallet_rounded,
                 formatter.format(_therapist!.hourlyRate), Colors.green),
@@ -418,6 +422,7 @@ class _AvailabilityTab extends StatelessWidget {
     final next7Days = List.generate(7, (i) => now.add(Duration(days: i)));
 
     return ListView.builder(
+      shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       itemCount: next7Days.length,
       itemBuilder: (context, index) {
@@ -478,6 +483,7 @@ class _ReviewsTab extends StatelessWidget {
       return const Center(child: Text('Terapis ini belum memiliki ulasan.'));
     }
     return ListView.separated(
+      shrinkWrap: true,
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
       itemCount: reviews.length,
       separatorBuilder: (context, index) => const SizedBox(height: 12),
@@ -771,6 +777,57 @@ class _BookingDialogState extends State<BookingDialog> {
               : const Text('Lanjut Pembayaran'),
         ),
       ],
+    );
+  }
+}
+
+class _AppDrawer extends StatelessWidget {
+  const _AppDrawer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFF5B3F5B),
+            ),
+            child: Text(
+              'Mindspace',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          _DrawerItem('Home', Icons.home, () {
+            Navigator.pushNamed(context, '/');
+          }),
+          _DrawerItem('Terapis', Icons.people, () {}),
+          _DrawerItem('Jadwal', Icons.calendar_today, () {}),
+          _DrawerItem('Kontak', Icons.contact_phone, () {}),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _DrawerItem(this.title, this.icon, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title, style: const TextStyle(fontSize: 18)),
+      onTap: onTap,
     );
   }
 }

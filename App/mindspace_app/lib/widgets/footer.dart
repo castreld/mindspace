@@ -5,50 +5,48 @@ class FooterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
-        color: const Color.fromARGB(255, 101, 58, 80),
-        child: const Wrap(
-          spacing: 200,
-          runSpacing: 40,
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.start,
-          children: [
-            FooterColumn(
-              title: "Ikuti Kami",
-              links: {
-                "@mindspace.smkn1cmi": "#",
-                "Mindspace SMKN 1 Cimahi": "#",
-                "LinkedIn": "#",
-              },
-            ),
-            FooterColumn(
-              title: "Fungsi",
-              links: {
-                "Desain UI": "#",
-                "Wireframing": "#",
-                "Brainstorming": "#",
-              },
-            ),
-            FooterColumn(
-              title: "Jelajahi",
-              links: {
-                "Desain": "#",
-                "Prototipe": "#",
-                "Fitur Pengembangan": "#",
-              },
-            ),
-            FooterColumn(
-              title: "Dukungan",
-              links: {
-                "Pusat Bantuan": "#",
-                "Kebijakan Privasi": "#",
-                "Syarat Layanan": "#",
-              },
-            ),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 20),
+      color: const Color.fromARGB(255, 101, 58, 80),
+      child: const Wrap(
+        spacing: 200,
+        runSpacing: 40,
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        children: [
+          FooterColumn(
+            title: "Ikuti Kami",
+            links: {
+              "@mindspace.smkn1cmi": "#",
+              "Mindspace SMKN 1 Cimahi": "#",
+              "LinkedIn": "#",
+            },
+          ),
+          FooterColumn(
+            title: "Fungsi",
+            links: {
+              "Desain UI": "#",
+              "Wireframing": "#",
+              "Brainstorming": "#",
+            },
+          ),
+          FooterColumn(
+            title: "Jelajahi",
+            links: {
+              "Desain": "#",
+              "Prototipe": "#",
+              "Fitur Pengembangan": "#",
+            },
+          ),
+          FooterColumn(
+            title: "Dukungan",
+            links: {
+              "Pusat Bantuan": "#",
+              "Kebijakan Privasi": "#",
+              "Syarat Layanan": "#",
+            },
+          ),
+        ],
       ),
     );
   }

@@ -9,9 +9,12 @@ import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
+import 'package:mindspace_app/services/booking_service.dart';
+import 'package:mindspace_app/services/chat_service.dart';
 import 'package:mindspace_app/therapist/therapist.dart';
 import 'package:mindspace_app/therapist/therapist_detail.dart';
 import 'package:mindspace_app/therapist_dashboard/register.dart';
+import 'package:mindspace_app/widgets/bottom_nav_bar.dart';
 import 'package:mindspace_app/admin/dashboard_adminn.dart';
 import 'package:mindspace_app/user/dashboard.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +23,8 @@ import 'widgets/footer.dart';
 import 'navigation.dart';
 import 'auth/register.dart';
 
+
 Future<void> main() async {
-  // initialize Indonesian locale for dates
   await initializeDateFormatting('id_ID');
   Intl.defaultLocale = 'id_ID';
 
@@ -35,8 +38,12 @@ Future<void> main() async {
     AuthService().init();
 
     runApp(
-      ChangeNotifierProvider(
-        create: (context) => AuthService(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => AuthService()),
+          Provider(create: (context) => BookingService()),
+          Provider(create: (context) => ChatService()),
+        ],
         child: const MyApp(),
       ),
     );
@@ -60,7 +67,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Keep MaterialApp stable and only rebuild the home through `AuthGate`.
     return MaterialApp(
       navigatorKey: navigatorKey,
       title: 'Mindspace',
@@ -114,11 +120,10 @@ class AuthGate extends StatefulWidget {
 class _AuthGateState extends State<AuthGate> {
   late final AuthService _auth;
   late final VoidCallback _authExternalListener;
+
   @override
   void initState() {
     super.initState();
-    // Register listener immediately so we don't miss notifications that may
-    // be scheduled in a post-frame callback by the AuthService.
     _auth = context.read<AuthService>();
     _authExternalListener = () {
       final isLoggedIn = _auth.isLoggedIn;
@@ -141,8 +146,27 @@ class _AuthGateState extends State<AuthGate> {
   @override
   Widget build(BuildContext context) {
     final authService = context.watch<AuthService>();
-    debugPrint('AuthGate.build: building, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
-    return authService.isLoggedIn ? const MainDashboard() : const HomePage();
+    debugPrint(
+        'AuthGate.build: building, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
+
+      if (authService.isLoggedIn) {
+        final user = authService.currentUser;
+        if (user != null) {
+          if (user.role == 'admin') {
+            return const DashboardAdminPage();
+          } else {
+            return const MainDashboard();
+          }
+        } else {
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      }
+    } else {
+      return const HomePage();
+    }
   }
 }
 
@@ -162,10 +186,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.watch<AuthService>().currentUser;
+    const double mobileBreakpoint = 850;
+    final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
+    final String currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.home;
 
     return Scaffold(
       key: GlobalKey<ScaffoldState>(),
-      appBar: CustomAppBar(user: currentUser, onLogout: _logout),
+      appBar: CustomAppBar(
+        user: currentUser,
+        onLogout: _logout,
+        showNavButtonsAsActions: !isMobile,
+      ),
       drawer: const _AppDrawer(),
       body: Stack(
         children: [
@@ -176,11 +207,14 @@ class _HomePageState extends State<HomePage> {
               HeroSection(),
               ServicesSection(),
               FaqSection(),
-              if (kIsWeb) FooterSection(),
+              if (kIsWeb) const SliverToBoxAdapter(child: FooterSection()),
             ],
           ),
         ],
       ),
+      bottomNavigationBar: isMobile 
+        ? AppBottomNavigationBar(currentRoute: currentRoute) 
+        : null,
     );
   }
 }
@@ -262,7 +296,7 @@ class HeroSection extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                "\u201cTempat Aman untuk Didengarkan\u201d",
+                "\u201cYour Safe Place To Be Heard\u201d",
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 24,

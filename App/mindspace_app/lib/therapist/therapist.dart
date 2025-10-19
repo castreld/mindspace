@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:mindspace_app/widgets/bottom_nav_bar.dart';
 import 'package:mindspace_app/widgets/custom_app_bar.dart';
 import 'package:mindspace_app/widgets/footer.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +12,6 @@ import 'package:mindspace_app/services/auth_service.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
-
 
 class Therapist {
   final int id;
@@ -32,7 +33,6 @@ class Therapist {
   });
 
   factory Therapist.fromJson(Map<String, dynamic> json) {
-    
     List<String> parseSpecializations(dynamic specs) {
       if (specs is String) {
         try {
@@ -50,15 +50,16 @@ class Therapist {
     return Therapist(
       id: json['id'],
       name: json['full_name'] ?? 'Unknown Therapist',
-      
       imageUrl: json['therapist_profile']?['profile_picture_path'] != null
-          ? 'http://127.0.0.1:8000/api/${json['therapist_profile']['profile_picture_path']}'
+          ? '${AppConfig.backendBaseUrl}/${json['therapist_profile']['profile_picture_path']}'
           : null,
-      
-      rating: double.tryParse(json['reviews_avg_rating']?.toString() ?? '0.0') ?? 0.0,
+      rating:
+          double.tryParse(json['reviews_avg_rating']?.toString() ?? '0.0') ??
+              0.0,
       hourlyRate: json['therapist_profile']?['hourly_rate'] ?? 0,
       experienceYears: json['therapist_profile']?['experience_years'] ?? 0,
-      specializations: parseSpecializations(json['therapist_profile']?['specializations']),
+      specializations:
+          parseSpecializations(json['therapist_profile']?['specializations']),
     );
   }
 }
@@ -75,6 +76,9 @@ class _TherapistPageState extends State<TherapistPage> {
   Widget build(BuildContext context) {
     final authService = context.watch<AuthService>();
     final currentUser = authService.currentUser;
+    const double mobileBreakpoint = 850;
+    final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
+    final String currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.therapistPage;
 
     if (currentUser == null) {
       return const Scaffold(
@@ -89,6 +93,7 @@ class _TherapistPageState extends State<TherapistPage> {
         onLogout: () {
           context.read<AuthService>().clearSession();
         },
+        showNavButtonsAsActions: !isMobile,
       ),
       drawer: const _AppDrawer(),
       body: Stack(
@@ -100,11 +105,14 @@ class _TherapistPageState extends State<TherapistPage> {
               SliverToBoxAdapter(
                 child: TherapistSection(),
               ),
-              if (kIsWeb) const FooterSection(),
+              if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
             ],
           )
         ],
       ),
+      bottomNavigationBar: isMobile
+        ? AppBottomNavigationBar(currentRoute: currentRoute)
+        : null,
     );
   }
 }
@@ -117,7 +125,6 @@ class TherapistSection extends StatefulWidget {
 }
 
 class _TherapistSectionState extends State<TherapistSection> {
-  
   List<Therapist> _therapists = [];
   bool _isLoading = true;
   String? _error;
@@ -125,16 +132,15 @@ class _TherapistSectionState extends State<TherapistSection> {
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _minPriceController = TextEditingController();
   final TextEditingController _maxPriceController = TextEditingController();
-  
+
   final Map<String, dynamic> _filters = {};
-  
+
   Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _fetchTherapists();
-    
     _searchController.addListener(_onSearchChanged);
     _minPriceController.addListener(_onPriceChanged);
     _maxPriceController.addListener(_onPriceChanged);
@@ -154,24 +160,23 @@ class _TherapistSectionState extends State<TherapistSection> {
       _isLoading = true;
       _error = null;
     });
-
     try {
-      
-      final uri = Uri.parse('http://127.0.0.1:8000/api/therapists').replace(
-        queryParameters: _filters.map((key, value) => MapEntry(key, value.toString())),
+      final uri = Uri.parse('${AppConfig.backendBaseUrl}/api/therapists').replace(
+        queryParameters:
+            _filters.map((key, value) => MapEntry(key, value.toString())),
       );
 
       final response = await http.get(uri, headers: {'Accept': 'application/json'});
-      
+
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
-        final List<dynamic> therapistData = responseData['data']; 
-        
+        final List<dynamic> therapistData = responseData['data'];
         setState(() {
-          _therapists = therapistData.map((data) => Therapist.fromJson(data)).toList();
+          _therapists =
+              therapistData.map((data) => Therapist.fromJson(data)).toList();
         });
       } else {
-        throw Exception('Failed to load therapists');
+        throw Exception('Gagal memuat daftar terapis');
       }
     } catch (e) {
       setState(() {
@@ -184,27 +189,26 @@ class _TherapistSectionState extends State<TherapistSection> {
     }
   }
 
-  
-
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
-       _updateFilter('search', _searchController.text);
+      _updateFilter('search', _searchController.text);
     });
   }
 
   void _onPriceChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 800), () {
-       _updateFilter('min_price', _minPriceController.text);
-       _updateFilter('max_price', _maxPriceController.text);
+      _updateFilter('min_price', _minPriceController.text);
+      _updateFilter('max_price', _maxPriceController.text);
     });
   }
 
-  
   void _updateFilter(String key, dynamic value) {
     setState(() {
-      if (value == null || (value is String && value.isEmpty) || (value is bool && !value)) {
+      if (value == null ||
+          (value is String && value.isEmpty) ||
+          (value is bool && !value)) {
         _filters.remove(key);
       } else {
         _filters[key] = value;
@@ -213,11 +217,9 @@ class _TherapistSectionState extends State<TherapistSection> {
     _fetchTherapists();
   }
 
-  
   void _updateCheckboxListFilter(String key, String value, bool isChecked) {
-    
-    final List<String> currentList = _filters[key]?.toString().split(',') ?? [];
-    
+    final List<String> currentList =
+        _filters[key]?.toString().split(',') ?? [];
     if (isChecked) {
       if (!currentList.contains(value)) {
         currentList.add(value);
@@ -225,8 +227,34 @@ class _TherapistSectionState extends State<TherapistSection> {
     } else {
       currentList.remove(value);
     }
-    
     _updateFilter(key, currentList.isNotEmpty ? currentList.join(',') : null);
+  }
+
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.8,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return FilterSidebar(
+              minPriceController: _minPriceController,
+              maxPriceController: _maxPriceController,
+              onCheckboxChanged: _updateCheckboxListFilter,
+              onFilterChanged: _updateFilter,
+              isScrollable: true,
+              scrollController: scrollController,
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -235,33 +263,52 @@ class _TherapistSectionState extends State<TherapistSection> {
       builder: (context, constraints) {
         bool isDesktop = constraints.maxWidth > 800;
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (isDesktop)
-                Expanded(
-                  flex: 2,
-                  child: FilterSidebar(
-                    
-                    minPriceController: _minPriceController,
-                    maxPriceController: _maxPriceController,
-                    onCheckboxChanged: _updateCheckboxListFilter,
-                    onFilterChanged: _updateFilter,
-                  ),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+          child: isDesktop
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: FilterSidebar(
+                        minPriceController: _minPriceController,
+                        maxPriceController: _maxPriceController,
+                        onCheckboxChanged: _updateCheckboxListFilter,
+                        onFilterChanged: _updateFilter,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      flex: 5,
+                      child: TherapistContent(
+                        therapists: _therapists,
+                        isLoading: _isLoading,
+                        error: _error,
+                        searchController: _searchController,
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: _showFilterSheet,
+                      icon: const Icon(Icons.filter_list),
+                      label: const Text('Filter Hasil'),
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 48),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TherapistContent(
+                      therapists: _therapists,
+                      isLoading: _isLoading,
+                      error: _error,
+                      searchController: _searchController,
+                    ),
+                  ],
                 ),
-              if (isDesktop) const SizedBox(width: 24),
-              Expanded(
-                flex: 5,
-                child: TherapistContent(
-                  therapists: _therapists, 
-                  isLoading: _isLoading,
-                  error: _error,
-                  searchController: _searchController,
-                ),
-              ),
-            ],
-          ),
         );
       },
     );
@@ -273,6 +320,8 @@ class FilterSidebar extends StatelessWidget {
   final TextEditingController maxPriceController;
   final Function(String, String, bool) onCheckboxChanged;
   final Function(String, dynamic) onFilterChanged;
+  final bool isScrollable;
+  final ScrollController? scrollController;
 
   const FilterSidebar({
     super.key,
@@ -280,83 +329,128 @@ class FilterSidebar extends StatelessWidget {
     required this.maxPriceController,
     required this.onCheckboxChanged,
     required this.onFilterChanged,
+    this.isScrollable = false,
+    this.scrollController,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: const Color(0xFFFFF8F0),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+    final content = ListView(
+      controller: scrollController,
+      shrinkWrap: !isScrollable,
+      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
+      children: [
+        if (isScrollable)
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+            child: Center(
+              child: Container(
+                width: 40,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        const Text('Filter',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 16),
+        _FilterGroup(
+          title: 'Kategori Terapis',
           children: [
-            const Text('Filter', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 16),
-            _FilterGroup(
-              title: 'Kategori Terapis',
-              children: [
-                _CheckboxFilterItem(
-                    title: 'Klinis Dewasa',
-                    onChanged: (isChecked) => onCheckboxChanged('specializations', 'Klinis Dewasa', isChecked)),
-                _CheckboxFilterItem(
-                    title: 'Klinis Anak dan Remaja',
-                    onChanged: (isChecked) => onCheckboxChanged('specializations', 'Klinis Anak dan Remaja', isChecked)),
-                _CheckboxFilterItem(
-                    title: 'Klinis Pendidikan',
-                    onChanged: (isChecked) => onCheckboxChanged('specializations', 'Klinis Pendidikan', isChecked)),
-              ],
+            _CheckboxFilterItem(
+                title: 'Klinis Dewasa',
+                onChanged: (isChecked) =>
+                    onCheckboxChanged('specializations', 'Klinis Dewasa', isChecked)),
+            _CheckboxFilterItem(
+                title: 'Klinis Anak dan Remaja',
+                onChanged: (isChecked) => onCheckboxChanged(
+                    'specializations', 'Klinis Anak dan Remaja', isChecked)),
+            _CheckboxFilterItem(
+                title: 'Klinis Pendidikan',
+                onChanged: (isChecked) => onCheckboxChanged(
+                    'specializations', 'Klinis Pendidikan', isChecked)),
+          ],
+        ),
+        _FilterGroup(
+          title: 'Harga',
+          children: [
+            TextField(
+              controller: minPriceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                  prefixText: 'Rp ',
+                  labelText: 'Harga Minimum',
+                  border: OutlineInputBorder()),
             ),
-            _FilterGroup(
-              title: 'Harga',
-              children: [
-                TextField(
-                  controller: minPriceController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefixText: 'Rp ', labelText: 'Harga Minimum', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: maxPriceController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefixText: 'Rp ', labelText: 'Harga Maksimum', border: OutlineInputBorder()),
-                ),
-              ],
-            ),
-            _FilterGroup(
-              title: 'Gender',
-              children: [
-                _CheckboxFilterItem(title: 'Pria', onChanged: (isChecked) => onFilterChanged('gender', isChecked ? 'pria' : null)),
-                _CheckboxFilterItem(title: 'Wanita', onChanged: (isChecked) => onFilterChanged('gender', isChecked ? 'wanita' : null)),
-              ],
-            ),
-             _FilterGroup(
-              title: 'Jadwal',
-              children: [
-                _CheckboxFilterItem(title: 'Tersedia', onChanged: (isChecked) => onFilterChanged('is_available', isChecked ? 'true' : null)),
-              ],
-            ),
-            _FilterGroup(
-              title: 'Rating',
-              children: [
-                _CheckboxFilterItem(title: 'Rating 4 ke atas', onChanged: (isChecked) => onFilterChanged('min_rating', isChecked ? '4' : null)),
-              ],
-            ),
-            _FilterGroup(
-              title: 'Lainnya',
-              children: [
-                _CheckboxFilterItem(title: 'Pengalaman 5 Tahun Ke Atas', onChanged: (isChecked) => onFilterChanged('min_experience', isChecked ? '5' : null)),
-              ],
+            const SizedBox(height: 8),
+            TextField(
+              controller: maxPriceController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                  prefixText: 'Rp ',
+                  labelText: 'Harga Maksimum',
+                  border: OutlineInputBorder()),
             ),
           ],
         ),
-      ),
+        _FilterGroup(
+          title: 'Gender',
+          children: [
+            _CheckboxFilterItem(
+                title: 'Pria',
+                onChanged: (isChecked) =>
+                    onFilterChanged('gender', isChecked ? 'pria' : null)),
+            _CheckboxFilterItem(
+                title: 'Wanita',
+                onChanged: (isChecked) =>
+                    onFilterChanged('gender', isChecked ? 'wanita' : null)),
+          ],
+        ),
+        _FilterGroup(
+          title: 'Jadwal',
+          children: [
+            _CheckboxFilterItem(
+                title: 'Tersedia',
+                onChanged: (isChecked) =>
+                    onFilterChanged('is_available', isChecked ? 'true' : null)),
+          ],
+        ),
+        _FilterGroup(
+          title: 'Rating',
+          children: [
+            _CheckboxFilterItem(
+                title: 'Rating 4 ke atas',
+                onChanged: (isChecked) =>
+                    onFilterChanged('min_rating', isChecked ? '4' : null)),
+          ],
+        ),
+        _FilterGroup(
+          title: 'Lainnya',
+          children: [
+            _CheckboxFilterItem(
+                title: 'Pengalaman 5 Tahun Ke Atas',
+                onChanged: (isChecked) =>
+                    onFilterChanged('min_experience', isChecked ? '5' : null)),
+          ],
+        ),
+      ],
     );
+
+    return isScrollable
+        ? Padding(padding: const EdgeInsets.all(16.0), child: content)
+        : Card(
+            elevation: 4,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            color: const Color(0xFFFFF8F0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: content,
+            ),
+          );
   }
 }
 
@@ -439,28 +533,34 @@ class TherapistContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        
         if (isLoading)
           const Center(child: CircularProgressIndicator())
         else if (error != null)
           Center(child: Text(error!, style: const TextStyle(color: Colors.red)))
         else if (therapists.isEmpty)
-          const Center(child: Text('Tidak ada terapis yang cocok dengan kriteria.'))
+          const Center(
+              child: Text('Tidak ada terapis yang cocok dengan kriteria.'))
         else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.8,
-            ),
-            itemCount: therapists.length,
-            itemBuilder: (context, index) {
-              return TherapistCard(therapist: therapists[index]);
-            },
-          ),
+          LayoutBuilder(builder: (context, constraints) {
+            final double cardWidth = 180;
+            final int crossAxisCount = (constraints.maxWidth / cardWidth).floor().clamp(1, 6);
+            final double childAspectRatio = (constraints.maxWidth < 600) ? 0.75 : 0.8;
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: childAspectRatio,
+              ),
+              itemCount: therapists.length,
+              itemBuilder: (context, index) {
+                return TherapistCard(therapist: therapists[index]);
+              },
+            );
+          }),
       ],
     );
   }
@@ -481,19 +581,27 @@ class TherapistCard extends StatelessWidget {
         );
       },
       borderRadius: BorderRadius.circular(12),
-      child:  Container(
-        width: 150,
-        margin: const EdgeInsets.only(right: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFF8F0),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            )
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                 child: therapist.imageUrl != null
                     ? Image.network(
-                        therapist.imageUrl!, 
+                        therapist.imageUrl!,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         loadingBuilder: (context, child, loadingProgress) {
@@ -507,26 +615,34 @@ class TherapistCard extends StatelessWidget {
                           );
                         },
                       )
-                    : Container( 
+                    : Container(
                         color: Colors.grey[300],
                         child: const Icon(Icons.person, color: Colors.grey),
                       ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              therapist.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    therapist.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                      const SizedBox(width: 4),
+                      Text(therapist.rating.toStringAsFixed(1)),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 16),
-                const SizedBox(width: 4),
-                Text(therapist.rating.toStringAsFixed(1)), 
-              ],
-            )
           ],
         ),
       ),
@@ -584,4 +700,3 @@ class _DrawerItem extends StatelessWidget {
     );
   }
 }
-

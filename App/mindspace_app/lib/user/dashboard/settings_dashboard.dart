@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/therapist_dashboard/register.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart';
@@ -68,11 +69,11 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     final user = context.read<AuthService>().currentUser;
     if (user != null) {
       _fullNameController.text = user.fullName;
-      _usernameController.text = user.username;
+      _usernameController.text = user.username ?? '';
       _emailController.text = user.email;
-      _phoneController.text = user.phoneNumber ?? "";
-      _birthDateController.text = user.birthDate ?? "";
-      _genderValue = user.gender ?? "pria";
+      _phoneController.text = user.phoneNumber ?? '';
+      _birthDateController.text = user.birthDate ?? '';
+      _genderValue = user.gender ?? 'pria';
       _flyerPreference = user.flyer == 'yes';
 
       if (user.role == 'psikolog') {
@@ -88,7 +89,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       setState(() => _isAvailabilityLoading = false);
       return;
     }
-    final url = Uri.parse('http://127.0.0.1:8000/api/psikolog/availability');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/psikolog/availability');
     try {
       final response = await http.get(url, headers: {
         'Accept': 'application/json',
@@ -126,7 +127,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   Future<void> _updateAvailability() async {
     final token = context.read<AuthService>().token;
     if (token == null) return;
-    final url = Uri.parse('http://127.0.0.1:8000/api/psikolog/availability');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/psikolog/availability');
     final messenger = ScaffoldMessenger.of(context);
     
     List<Map<String, dynamic>> payload = [];
@@ -166,7 +167,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     final token = authService.token;
     if (token == null) return;
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/user/profile');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/user/profile');
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Accept': 'application/json',
@@ -311,6 +312,9 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   }
 
   Widget _buildProfileSection(User user) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final displayName = user.username ?? user.fullName;
+
     return Card(
       color: const Color(0xFFFFF8F0),
       elevation: 4,
@@ -329,7 +333,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                     backgroundImage: _imageBytes != null
                         ? MemoryImage(_imageBytes!)
                         : (user.profilePicture != null
-                            ? NetworkImage('http://127.0.0.1:8000/api/${user.profilePicture!}')
+                            ? NetworkImage('${AppConfig.backendBaseUrl}/${user.profilePicture!}')
                             : null) as ImageProvider?,
                     child: _imageBytes == null && user.profilePicture == null
                         ? Icon(Icons.person, size: 60, color: Colors.grey.shade800)
@@ -358,18 +362,36 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Profil Pengguna', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ElevatedButton.icon(
-                  icon: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : Icon(_isEditing ? Icons.save : Icons.edit, size: 16),
-                  label: Text(_isEditing ? 'Simpan Perubahan' : 'Ubah'),
-                  onPressed: _isLoading ? null : () {
-                    if (_isEditing) {
-                      _onSaveChanges();
-                    } else {
-                      setState(() => _isEditing = true);
-                    }
-                  },
-                ),
+                if (isMobile)
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      padding: const EdgeInsets.all(12),
+                    ),
+                    onPressed: _isLoading ? null : () {
+                      if (_isEditing) {
+                        _onSaveChanges();
+                      } else {
+                        setState(() => _isEditing = true);
+                      }
+                    },
+                    child: _isLoading
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        : Icon(_isEditing ? Icons.save : Icons.edit, size: 20),
+                  )
+                else
+                  ElevatedButton.icon(
+                    icon: _isLoading ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : Icon(_isEditing ? Icons.save : Icons.edit, size: 16),
+                    label: Text(_isEditing ? 'Simpan Perubahan' : 'Ubah'),
+                    onPressed: _isLoading ? null : () {
+                      if (_isEditing) {
+                        _onSaveChanges();
+                      } else {
+                        setState(() => _isEditing = true);
+                      }
+                    },
+                  ),
               ],
             ),
             const Divider(height: 32),
@@ -687,7 +709,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     final token = context.read<AuthService>().token;
     if (token == null) return;
     
-    final url = Uri.parse('http://127.0.0.1:8000/api/user/password');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/user/password');
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
 
@@ -725,7 +747,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     final token = authService.token;
     if (token == null) return;
     
-    final url = Uri.parse('http://127.0.0.1:8000/api/user');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/user');
     final messenger = ScaffoldMessenger.of(context);
 
     try {

@@ -1,99 +1,131 @@
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final User? user;
   final VoidCallback? onLogout;
+  final bool showNavButtonsAsActions;
 
-  const CustomAppBar({super.key, this.user, this.onLogout});
+  const CustomAppBar({
+    super.key,
+    this.user,
+    this.onLogout,
+    this.showNavButtonsAsActions = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const double mobileBreakpoint = 850;
-    final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
-    return isMobile ? _buildMobileAppBar(context) : _buildDesktopAppBar(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 850) {
+          return _buildMobileAppBar(context);
+        } else {
+          return _buildDesktopAppBar(context);
+        }
+      },
+    );
   }
 
-  Widget _buildUserProfileDropdown(BuildContext context) {
-    return Builder(
-      builder: (menuContext) {
-        return PopupMenuButton<String>(
-          onSelected: (value) {
-          
-            if (value == 'dashboard') {
-              Navigator.pushNamed(menuContext, AppRoutes.dashboard);
-            } else if (value == 'admin_dashboard') {
-              Navigator.pushNamed(menuContext, AppRoutes.adminDashboard);
-            } else if (value == 'logout') {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                onLogout?.call();
-              });
-            }
-          },
-          child: Padding(
+  Widget _buildUserProfileDropdown(BuildContext context, {bool isMobile = false}) {
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
+
+    final displayName = user!.username ?? user!.fullName;
+    final firstChar = displayName.isNotEmpty 
+        ? displayName.substring(0, 1).toUpperCase() 
+        : '?';
+
+    final Widget dropdownChild = isMobile
+        ? Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.white.withOpacity(0.8),
+              backgroundImage: user!.profilePicture != null
+                  ? NetworkImage('${AppConfig.backendBaseUrl}/${user!.profilePicture!}')
+                  : null,
+              child: user!.profilePicture == null
+                  ? Text(
+                      firstChar,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  : null,
+            ),
+          )
+        : Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: Row(
               children: [
                 CircleAvatar(
                   backgroundColor: Colors.white.withOpacity(0.8),
                   backgroundImage: user!.profilePicture != null
-                      ? NetworkImage('http://127.0.0.1:8000/api/${user!.profilePicture!}')
+                      ? NetworkImage('${AppConfig.backendBaseUrl}/${user!.profilePicture!}')
                       : null,
                   child: user!.profilePicture == null
                       ? Text(
-                          user!.username.substring(0, 1).toUpperCase(),
+                          firstChar,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         )
                       : null,
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  user!.username,
+                  displayName,
                   style: const TextStyle(color: Colors.white, fontSize: 16),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const Icon(Icons.arrow_drop_down, color: Colors.white),
               ],
             ),
-          ),
-          itemBuilder: (BuildContext context) {
-            List<PopupMenuEntry<String>> menuItems = [
-              const PopupMenuItem<String>(
-                value: 'dashboard',
-                child: ListTile(
-                  leading: Icon(Icons.dashboard_outlined),
-                  title: Text('Dashboard'),
-                ),
-              ),
-            ];
+          );
 
-            if (user != null && user!.role == 'admin') {
-              menuItems.add(
-                const PopupMenuItem<String>(
-                  value: 'admin_dashboard',
-                  child: ListTile(
-                    leading: Icon(Icons.admin_panel_settings_outlined),
-                    title: Text('Admin Dashboard'),
-                  ),
-                ),
-              );
-            }
-
-            menuItems.addAll([
-              const PopupMenuDivider(),
-              const PopupMenuItem<String>(
-                value: 'logout',
-                child: ListTile(
-                  leading: Icon(Icons.logout, color: Colors.red),
-                  title: Text('Log out', style: TextStyle(color: Colors.red)),
-                ),
-              ),
-            ]);
-
-            return menuItems;
-          },
-        );
+    return PopupMenuButton<String>(
+      onSelected: (value) {
+        if (value == 'dashboard') {
+          Navigator.pushNamed(context, AppRoutes.dashboard);
+        } else if (value == 'admin_dashboard') {
+          Navigator.pushNamed(context, AppRoutes.adminDashboard);
+        } else if (value == 'logout') {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            onLogout?.call();
+          });
+        }
       },
+      itemBuilder: (BuildContext context) {
+        List<PopupMenuEntry<String>> menuItems = [
+          const PopupMenuItem<String>(
+            value: 'dashboard',
+            child: ListTile(
+              leading: Icon(Icons.dashboard_outlined),
+              title: Text('Dashboard'),
+            ),
+          ),
+        ];
+        if (user != null && user!.role == 'admin') {
+          menuItems.add(const PopupMenuItem<String>(
+            value: 'admin_dashboard',
+            child: ListTile(
+              leading: Icon(Icons.admin_panel_settings_outlined),
+              title: Text('Admin Dashboard'),
+            ),
+          ));
+        }
+        menuItems.addAll([
+          const PopupMenuDivider(),
+          const PopupMenuItem<String>(
+            value: 'logout',
+            child: ListTile(
+              leading: Icon(Icons.logout, color: Colors.red),
+              title: Text('Log out', style: TextStyle(color: Colors.red)),
+            ),
+          ),
+        ]);
+        return menuItems;
+      },
+      child: dropdownChild,
     );
   }
 
@@ -126,23 +158,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       toolbarHeight: 80,
       backgroundColor: const Color(0xFF5B3F5B),
-  title: const Text('Mindspace',
+      title: const Text('Mindspace',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      leading: Builder(
-        builder: (context) => IconButton(
-          icon: const Icon(Icons.menu, color: Colors.white, size: 30),
-          onPressed: () => Scaffold.of(context).openDrawer(),
-        ),
-      ),
+      leading: user != null
+          ? Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu, color: Colors.white, size: 30),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            )
+          : null,
       actions: <Widget>[
-        _AppBarTextButton(
-            'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
-        _AppBarTextButton(
-            'Psikolog', () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
-        _AppBarTextButton('Kontak', () {}),
-        const SizedBox(width: 20),
         user != null
-            ? _buildUserProfileDropdown(context)
+            ? _buildUserProfileDropdown(context, isMobile: true)
             : _buildAuthButtons(context),
       ],
     );
@@ -157,11 +185,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
       actions: <Widget>[
-        _AppBarTextButton(
-            'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
-        _AppBarTextButton('Psikolog', () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
-        _AppBarTextButton('Kontak', () {}),
-        const SizedBox(width: 20),
+        if (showNavButtonsAsActions) ...[
+          _AppBarTextButton(
+              'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
+          _AppBarTextButton('Psikolog',
+              () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
+          _AppBarTextButton('Kontak', () {}),
+          const SizedBox(width: 20),
+        ],
         user != null
             ? _buildUserProfileDropdown(context)
             : _buildAuthButtons(context),

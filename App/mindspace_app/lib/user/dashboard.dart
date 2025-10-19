@@ -1,18 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/user/dashboard/history_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/message_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/settings_dashboard.dart';
+import 'package:mindspace_app/user/dashboard/therapist_dashboard.dart';
 import 'package:provider/provider.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/footer.dart';
-import '../models/user.dart';
+import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/custom_app_bar.dart';
+import '../../widgets/footer.dart';
+import '../../models/user.dart';
+import '../../routes.dart';
 import 'package:mindspace_app/animated_background_dark.dart';
 import 'package:mindspace_app/user/dashboard/landing_dashboard.dart';
 import 'package:mindspace_app/user/dashboard/schedule_dashboard.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 
-enum DashboardSection { dashboard, schedule, history, messages, settings }
+enum DashboardSection {
+  dashboard,
+  schedule,
+  history,
+  messages,
+  settings,
+  manageAppointments,
+}
 
 class MainDashboard extends StatefulWidget {
   const MainDashboard({super.key});
@@ -24,6 +35,15 @@ class MainDashboard extends StatefulWidget {
 class _MainDashboardState extends State<MainDashboard> {
   DashboardSection _selectedSection = DashboardSection.dashboard;
 
+  void _onSectionSelected(DashboardSection section) {
+    setState(() {
+      _selectedSection = section;
+    });
+    if (MediaQuery.of(context).size.width < 900) {
+      Navigator.of(context).pop();
+    }
+  }
+
   Widget _getSectionWidget() {
     switch (_selectedSection) {
       case DashboardSection.dashboard:
@@ -33,15 +53,11 @@ class _MainDashboardState extends State<MainDashboard> {
       case DashboardSection.history:
         return const HistoryDashboard();
       case DashboardSection.messages:
-        final screenHeight = MediaQuery.of(context).size.height;
-        final appBarHeight = AppBar().preferredSize.height;
-        final availableHeight = screenHeight - appBarHeight - 100;
-        return SizedBox(
-          height: availableHeight,
-          child: const MessageDashboard(),
-        );
+        return const MessageDashboard();
       case DashboardSection.settings:
         return const SettingsDashboard();
+      case DashboardSection.manageAppointments:
+        return const TherapistDashboard();
       default:
         return const LandingDashboard();
     }
@@ -49,79 +65,117 @@ class _MainDashboardState extends State<MainDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = context.watch<AuthService>();
-    final currentUser = authService.currentUser;
+    final authService = context.read<AuthService>();
+    final currentUser = authService.currentUser!;
 
-    if (currentUser == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final mainMenu = MainMenu(
+      user: currentUser,
+      onLogout: () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.read<AuthService>().clearSession();
+        });
+      },
+      selectedSection: _selectedSection,
+      onSectionSelected: _onSectionSelected,
+    );
+
+    const double mobileBreakpoint = 850;
+    final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
+    final String currentRoute =
+        ModalRoute.of(context)?.settings.name ?? AppRoutes.dashboard;
 
     return Scaffold(
       appBar: CustomAppBar(
         user: currentUser,
         onLogout: () {
-          
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            
             context.read<AuthService>().clearSession();
           });
+        },
+        showNavButtonsAsActions: !isMobile,
+      ),
+      drawer: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 900) {
+            return Drawer(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      ProfileOverview(
+                        user: currentUser,
+                        onEditProfilePressed: () =>
+                            _onSectionSelected(DashboardSection.settings),
+                      ),
+                      const SizedBox(height: 24),
+                      mainMenu,
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
         },
       ),
       body: Stack(
         children: [
           const AnimatedGradientBackgroundDark(),
-          CustomScrollView(
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: 260,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            ProfileOverview(
-                              user: currentUser,
-                              onEditProfilePressed: () {
-                                setState(() {
-                                  _selectedSection = DashboardSection.settings;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                            MainMenu(
-                              onLogout: () {
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  context.read<AuthService>().clearSession();
-                                });
-                              },
-                              selectedSection: _selectedSection,
-                              onSectionSelected: (DashboardSection section) {
-                                setState(() {
-                                  _selectedSection = section;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        child: _getSectionWidget(),
-                      ),
-                    ],
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth < 900) {
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: _getSectionWidget(),
+                        );
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 260,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    ProfileOverview(
+                                      user: currentUser,
+                                      onEditProfilePressed: () =>
+                                          _onSectionSelected(
+                                              DashboardSection.settings),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    mainMenu,
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              Expanded(
+                                child: _getSectionWidget(),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ),
               ),
-              const SliverFillRemaining(hasScrollBody: false),
               if (kIsWeb) const FooterSection(),
             ],
           ),
         ],
       ),
+      bottomNavigationBar:
+          isMobile ? AppBottomNavigationBar(currentRoute: currentRoute) : null,
     );
   }
 }
@@ -138,6 +192,11 @@ class ProfileOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName = user.username ?? user.fullName;
+    final firstChar = displayName.isNotEmpty 
+        ? displayName.substring(0, 1).toUpperCase() 
+        : '?';
+
     return Card(
       color: const Color(0xFFFFF8F0),
       elevation: 4,
@@ -153,7 +212,8 @@ class ProfileOverview extends StatelessWidget {
               radius: 40,
               backgroundColor: Colors.grey.shade300,
               backgroundImage: user.profilePicture != null
-                  ? NetworkImage('http://127.0.0.1:8000/api/${user.profilePicture!}')
+                  ? NetworkImage(
+                      '${AppConfig.backendBaseUrl}/${user.profilePicture!}')
                   : null,
               child: user.profilePicture == null
                   ? Icon(Icons.person, size: 50, color: Colors.grey.shade700)
@@ -161,13 +221,17 @@ class ProfileOverview extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              user.username,
+              displayName,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               user.email,
               style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -190,12 +254,14 @@ class ProfileOverview extends StatelessWidget {
 }
 
 class MainMenu extends StatelessWidget {
+  final User user;
   final VoidCallback onLogout;
   final DashboardSection selectedSection;
   final ValueChanged<DashboardSection> onSectionSelected;
 
   const MainMenu({
     super.key,
+    required this.user,
     required this.onLogout,
     required this.selectedSection,
     required this.onSectionSelected,
@@ -220,7 +286,8 @@ class MainMenu extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? const Color(0xFFC89E25) : Colors.grey[700]),
+            Icon(icon,
+                color: isSelected ? const Color(0xFFC89E25) : Colors.grey[700]),
             const SizedBox(width: 12),
             Text(
               title,
@@ -253,6 +320,13 @@ class MainMenu extends StatelessWidget {
             section: DashboardSection.dashboard,
             isSelected: selectedSection == DashboardSection.dashboard,
           ),
+          if (user.role == 'psikolog')
+            _buildMenuItem(
+              icon: Icons.assignment_ind_outlined,
+              title: 'Kelola Janji Temu',
+              section: DashboardSection.manageAppointments,
+              isSelected: selectedSection == DashboardSection.manageAppointments,
+            ),
           _buildMenuItem(
             icon: Icons.calendar_today_outlined,
             title: 'Jadwal Konseling',

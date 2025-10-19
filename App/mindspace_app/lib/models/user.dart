@@ -1,6 +1,6 @@
 class User {
   final int id;
-  final String username;
+  final String? username;
   final String fullName;
   final String email;
   final String? profilePicture;
@@ -12,7 +12,7 @@ class User {
 
   User({
     required this.id,
-    required this.username,
+    this.username,
     required this.fullName,
     required this.email,
     this.profilePicture,
@@ -25,16 +25,16 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      username: json['username'],
-      fullName: json['full_name'],
-      email: json['email'],
-      profilePicture: json['profile_picture'],
-      phoneNumber: json['phone_number'],
-      birthDate: json['birth_date'],
-      gender: json['gender'],
-      flyer: json['flyer'],
-      role: json['role'],
+      id: json['id'] as int,
+      username: json['username'] as String?,
+      fullName: json['full_name'] as String? ?? 'Unknown User',
+      email: json['email'] as String? ?? '',
+      profilePicture: json['profile_picture'] as String?,
+      phoneNumber: json['phone_number'] as String?,
+      birthDate: json['birth_date'] as String?,
+      gender: json['gender'] as String?,
+      flyer: json['flyer'] as String?,
+      role: json['role'] as String? ?? 'klien',
     );
   }
 
@@ -49,6 +49,7 @@ class User {
       'birth_date': birthDate,
       'gender': gender,
       'flyer': flyer,
+      'role': role,
     };
   }
 }

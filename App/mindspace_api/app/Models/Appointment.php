@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Appointment extends Model
 {
@@ -15,5 +16,16 @@ class Appointment extends Model
 
     protected $casts = [
         'appointment_time' => 'datetime',
+        'client_notes' => 'encrypted',
     ];
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'client_id');
+    }
+
+    public function therapist(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'therapist_id');
+    }
 }

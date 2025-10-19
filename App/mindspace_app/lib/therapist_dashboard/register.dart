@@ -30,7 +30,7 @@ class TherapistForm extends StatelessWidget {
             physics: AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverToBoxAdapter(child: FormSection()),
-              if (kIsWeb) FooterSection(),
+              if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
             ],
           )
         ],
@@ -79,6 +79,34 @@ class _FormSectionState extends State<FormSection> {
     super.dispose();
   }
 
+  Future<void> _showErrorDialog(String title, String content) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red),
+              const SizedBox(width: 10),
+              Text(title),
+            ],
+          ),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _addOrEditTimeSlot(String day, {int? editIndex}) async {
     final Map<String, TimeOfDay>? existingSlot =
         editIndex != null ? _availabilities[day]![editIndex] : null;
@@ -105,11 +133,7 @@ class _FormSectionState extends State<FormSection> {
 
     if (startMinutes >= endMinutes) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Waktu selesai harus setelah waktu mulai.'),
-              backgroundColor: Colors.red),
-        );
+        _showErrorDialog('Waktu Tidak Valid', 'Waktu selesai harus setelah waktu mulai.');
       }
       return;
     }
@@ -138,10 +162,7 @@ class _FormSectionState extends State<FormSection> {
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate() || _imageBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Mohon isi semua kolom dan pilih gambar.')),
-      );
+      _showErrorDialog('Form Belum Lengkap', 'Mohon isi semua kolom yang wajib diisi dan unggah foto profil Anda.');
       return;
     }
 
@@ -151,6 +172,7 @@ class _FormSectionState extends State<FormSection> {
 
     final token = context.read<AuthService>().token;
     if (token == null) {
+       _showErrorDialog('Otentikasi Gagal', 'Sesi Anda tidak valid. Mohon login kembali.');
       setState(() => _isLoading = false);
       return;
     }
@@ -194,9 +216,7 @@ class _FormSectionState extends State<FormSection> {
 
     request.fields['availabilities'] = jsonEncode(availabilityPayload);
 
-    request.files.add(http.MultipartFile.fromBytes(
-        'profile_picture', _imageBytes!,
-        filename: _imageName));
+    request.files.add(http.MultipartFile.fromBytes('profile_picture', _imageBytes!, filename: _imageName));
 
     try {
       final streamedResponse = await request.send();
@@ -204,21 +224,21 @@ class _FormSectionState extends State<FormSection> {
       final responseData = jsonDecode(response.body);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(responseData['message'] ?? 'Terjadi kesalahan.'),
-            backgroundColor:
-                response.statusCode == 201 ? Colors.green : Colors.red,
-          ),
-        );
         if (response.statusCode == 201) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(responseData['message'] ?? 'Pendaftaran berhasil dikirim!'),
+              backgroundColor: Colors.green,
+            ),
+          );
           Navigator.pop(context);
+        } else {
+           _showErrorDialog('Pendaftaran Gagal', responseData['message'] ?? 'Terjadi kesalahan pada server.');
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+        _showErrorDialog('Koneksi Gagal', 'Tidak dapat terhubung ke server. Mohon periksa koneksi internet Anda.');
       }
     } finally {
       if (mounted) {
@@ -248,7 +268,8 @@ class _FormSectionState extends State<FormSection> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(day, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(day,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
                         icon: const Icon(Icons.add_circle_outline,
                             color: Color(0xFF5B3F5B)),
@@ -312,151 +333,155 @@ class _FormSectionState extends State<FormSection> {
         minHeight: MediaQuery.of(context).size.height - 200,
       ),
       child: Center(
-        child: Container(
-          width: 600,
-          padding: const EdgeInsets.all(24.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text('Daftar Sebagai Psikolog',
-                    textAlign: TextAlign.center,
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 24),
-                Center(
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.grey.shade200,
-                        backgroundImage:
-                            _imageBytes != null ? MemoryImage(_imageBytes!) : null,
-                        child: _imageBytes == null
-                            ? Icon(Icons.camera_alt,
-                                size: 50, color: Colors.grey.shade800)
-                            : null,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: _pickImage,
-                          child: const CircleAvatar(
-                            radius: 20,
-                            backgroundColor: Color(0xFF5B3F5B),
-                            child:
-                                Icon(Icons.edit, size: 20, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: Container(
+            padding: const EdgeInsets.all(24.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  spreadRadius: 2,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  initialValue: user.fullName,
-                  readOnly: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Nama Lengkap (dari profil Anda)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _educationalHistoryController,
-                  decoration: const InputDecoration(
-                    labelText: 'Riwayat Pendidikan (Universitas)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.school),
-                  ),
-                  validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _hourlyRateController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Harga per Jam (contoh: 150000)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.price_change),
-                  ),
-                  validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _experienceController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Pengalaman Praktik (Tahun)',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.work_history),
-                  ),
-                  validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
-                ),
-                const SizedBox(height: 24),
-                const Text('Spesialisasi (bisa pilih lebih dari satu)',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 8),
-                ..._specializations.keys.map((String key) {
-                  return CheckboxListTile(
-                    title: Text(key),
-                    value: _specializations[key],
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _specializations[key] = value!;
-                      });
-                    },
-                  );
-                }).toList(),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _problemAreasController,
-                  decoration: const InputDecoration(
-                    labelText: 'Area Permasalahan',
-                    hintText: 'Cth: Kecemasan, Depresi, Hubungan',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.psychology),
-                  ),
-                  validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
-                ),
-                const SizedBox(height: 24),
-                const Divider(),
-                const SizedBox(height: 24),
-                _buildAvailabilitySection(),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC89E25),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Kirim Pendaftaran"),
-                )
               ],
+            ),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text('Daftar Sebagai Psikolog',
+                        textAlign: TextAlign.center,
+                        style:
+                            TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundColor: Colors.grey.shade200,
+                            backgroundImage:
+                                _imageBytes != null ? MemoryImage(_imageBytes!) : null,
+                            child: _imageBytes == null
+                                ? Icon(Icons.camera_alt,
+                                    size: 50, color: Colors.grey.shade800)
+                                : null,
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: InkWell(
+                              onTap: _pickImage,
+                              child: const CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Color(0xFF5B3F5B),
+                                child:
+                                    Icon(Icons.edit, size: 20, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      initialValue: user.fullName,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Nama Lengkap (dari profil Anda)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.person),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _educationalHistoryController,
+                      decoration: const InputDecoration(
+                        labelText: 'Riwayat Pendidikan (Universitas)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.school),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _hourlyRateController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
+                        labelText: 'Harga per Jam (contoh: 150000)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.price_change),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _experienceController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
+                        labelText: 'Pengalaman Praktik (Tahun)',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.work_history),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 24),
+                    const Text('Spesialisasi (bisa pilih lebih dari satu)',
+                        style:
+                            TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                    const SizedBox(height: 8),
+                    ..._specializations.keys.map((String key) {
+                      return CheckboxListTile(
+                        title: Text(key),
+                        value: _specializations[key],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _specializations[key] = value!;
+                          });
+                        },
+                      );
+                    }).toList(),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _problemAreasController,
+                      decoration: const InputDecoration(
+                        labelText: 'Area Permasalahan',
+                        hintText: 'Cth: Kecemasan, Depresi, Hubungan',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.psychology),
+                      ),
+                      validator: (value) => value!.isEmpty ? 'Wajib diisi' : null,
+                    ),
+                    const SizedBox(height: 24),
+                    const Divider(),
+                    const SizedBox(height: 24),
+                    _buildAvailabilitySection(),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC89E25),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        textStyle: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text("Kirim Pendaftaran"),
+                    )
+                  ],
+                ),
+              ),
             ),
           ),
         ),

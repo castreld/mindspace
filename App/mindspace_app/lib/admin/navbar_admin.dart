@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart'; 
 
@@ -14,6 +15,11 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayName = user.username ?? user.fullName;
+    final firstChar = displayName.isNotEmpty 
+        ? displayName.substring(0, 1).toUpperCase() 
+        : '?';
+
     return AppBar(
       backgroundColor: const Color(0xFF1E88E5),
       elevation: 1,
@@ -49,19 +55,26 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
                     CircleAvatar(
                       radius: 16,
                       backgroundImage: user.profilePicture != null
-                          ? NetworkImage('http://127.0.0.1:8000/api/${user.profilePicture!}')
+                          ? NetworkImage('${AppConfig.backendBaseUrl}/${user.profilePicture!}')
                           : null,
                       child: user.profilePicture == null
-                          ? Text(user.username.substring(0, 1).toUpperCase())
+                          ? Text(
+                              firstChar,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            )
                           : null,
                     ),
                     const SizedBox(width: 8),
-                    Text(user.username, style: const TextStyle(color: Colors.white)),
+                    Text(
+                      displayName,
+                      style: const TextStyle(color: Colors.white),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     const Icon(Icons.arrow_drop_down, color: Colors.white),
                   ],
                 ),
               ),
-              // These are the dropdown items
               itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                 const PopupMenuItem<String>(
                   value: 'home',

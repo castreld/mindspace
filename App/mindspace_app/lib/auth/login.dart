@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/animated_background.dart';
@@ -5,9 +6,7 @@ import 'package:mindspace_app/routes.dart';
 import 'package:http/http.dart' as http;
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart'; 
-import '../user/dashboard.dart';
+import 'package:mindspace_app/config.dart';
 import '../models/user.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
@@ -35,7 +34,7 @@ class _LoginFormState extends State<LoginForm> {
                 SliverToBoxAdapter(
                   child: FormSection(),
                 ),
-                if (kIsWeb) FooterSection(),
+                if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
               ],
             )
           ],
@@ -58,7 +57,34 @@ class _FormSectionState extends State<FormSection> {
   bool _rememberMe = false;
   bool _obscurePassword = true;
 
-  
+  Future<void> _showErrorDialog(String title, String content) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red),
+              const SizedBox(width: 10),
+              Text(title),
+            ],
+          ),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _loginUser() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -67,7 +93,7 @@ class _FormSectionState extends State<FormSection> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/login');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/login');
 
     try {
       final response = await http.post(
@@ -91,16 +117,17 @@ class _FormSectionState extends State<FormSection> {
         final token = responseData['access_token'];
 
         await context.read<AuthService>().saveSession(user, token);
-        
-        String route = user.role == 'admin' ? AppRoutes.adminDashboard : AppRoutes.dashboard;
-        Navigator.pushNamedAndRemoveUntil(context, route, (route) => false);
 
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
       } else {
-        _showErrorSnackbar(
-            responseData['message'] ?? 'Login gagal, periksa kembali detail Anda.');
+        _showErrorDialog('Login Gagal',
+            'Username atau password salah. Mohon periksa kembali detail Anda.');
       }
     } catch (e) {
-      _showErrorSnackbar('Terjadi kesalahan. Mohon periksa koneksi Anda.');
+      _showErrorDialog('Koneksi Gagal',
+          'Tidak dapat terhubung ke server. Mohon periksa koneksi internet Anda.');
     } finally {
       if (mounted) {
         setState(() {
@@ -110,128 +137,127 @@ class _FormSectionState extends State<FormSection> {
     }
   }
 
-  void _showErrorSnackbar(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
-    final double? containerHeight = !kIsWeb ? screenSize.height : null;
-
     return Container(
-      height: containerHeight,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       constraints: BoxConstraints(
         minHeight: MediaQuery.of(context).size.height - 200,
       ),
       child: Center(
-        child: Container(
-          width: 500,
-          padding: const EdgeInsets.all(20.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.15),
-                spreadRadius: 2,
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Masuk',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  spreadRadius: 2,
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: const OutlineInputBorder(),
-                    prefixIcon: const Icon(Icons.key_outlined),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                // The 'remember me' checkbox only sends the value to the backend.
-                // To persist sessions locally, you must also store and reuse the token in AuthService.
-                CheckboxListTile(
-                  title: const Text("Ingat saya"),
-                  value: _rememberMe,
-                  onChanged: (newValue) {
-                    setState(() {
-                      _rememberMe = newValue!;
-                    });
-                  },
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.register);
-                    },
-                    child: const Text(
-                      "Belum punya akun? Daftar",
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _loginUser,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC89E25),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Masuk"),
-                )
               ],
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Masuk',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Username tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.key_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Password tidak boleh kosong';
+                      }
+                      return null;
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text("Ingat saya"),
+                    value: _rememberMe,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _rememberMe = newValue!;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, AppRoutes.register);
+                      },
+                      child: const Text(
+                        "Belum punya akun? Daftar",
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _loginUser,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFC89E25),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      textStyle: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text("Masuk"),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -239,7 +265,6 @@ class _FormSectionState extends State<FormSection> {
     );
   }
 }
-
 
 class _AppDrawer extends StatelessWidget {
   const _AppDrawer();
