@@ -1,0 +1,128 @@
+body {
+    background-color: #E9F0FB;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+    height: 56px;
+}
+
+.sidebar {
+    width: 240px;
+    background-color: #F3F4FB;
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    padding-top: 20px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.sidebar .nav-link {
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin: 4px 12px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #dbe4ff;
+    color: #1E56A0;
+}
+
+.sidebar .nav-link.active {
+    background-color: #E2E6F9;
+    color: #1E56A0;
+    font-weight: 600;
+}
+
+.main-content {
+    margin-left: 240px;
+    padding: 90px 30px 40px;
+    flex-grow: 1;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+/* Card dashboard */
+.card-dashboard {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    background-color: white;
+    text-align: center;
+}
+
+.card-dashboard .icon {
+    font-size: 28px;
+    color: #1E56A0;
+    margin-bottom: 8px;
+}
+
+/* Warna status */
+.alert-warning {
+    background-color: #FFF5D9;
+    color: #9E7700;
+}
+
+.alert-danger {
+    background-color: #FFE2E2;
+    color: #B90000;
+}
+
+.alert-success {
+    background-color: #D7F8E4;
+    color: #146C43;
+}
+
+.table th {
+    background-color: #EFF3FB;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+
+.table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.badge-success {
+    background-color: #22C55E;
+}
+
+/* Tombol aksi di tabel psikolog */
+.btn-action {
+    min-width: 90px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+.btn-action + .btn-action {
+    margin-left: 6px;
+}
+
+.card {
+    border-radius: 10px;
+}
+
+.table thead th {
+    font-weight: 600;
+    color: #555;
+}
+
+.badge {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+}
+
+.nav-link.active {
+  background-color: #dbeafe; /* biru muda biar nyatu sama dashboard kamu */
+  color: #0d6efd;
+  border-radius: 8px;
+  font-weight: 600;
+}
