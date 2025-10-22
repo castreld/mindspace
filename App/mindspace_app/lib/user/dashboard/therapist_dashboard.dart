@@ -176,7 +176,7 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                         if (kDebugMode) { print("Failed to load client image: $exception"); }
                       },
                       backgroundImage: clientImageUrl != null 
-                        ? NetworkImage('${AppConfig.backendBaseUrl}/$clientImageUrl') 
+                        ? NetworkImage('${AppConfig.backendBaseUrl}/api/$clientImageUrl') 
                         : null,
                       child: clientImageUrl == null ? const Icon(Icons.person, size: 30) : null,
                     ),

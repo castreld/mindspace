@@ -34,6 +34,7 @@ class MainDashboard extends StatefulWidget {
 
 class _MainDashboardState extends State<MainDashboard> {
   DashboardSection _selectedSection = DashboardSection.dashboard;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _onSectionSelected(DashboardSection section) {
     setState(() {
@@ -63,6 +64,29 @@ class _MainDashboardState extends State<MainDashboard> {
     }
   }
 
+  // Widget to show background - animated on desktop/web, static on mobile
+  Widget _buildBackground(bool isMobile) {
+    if (isMobile && !kIsWeb) {
+      // Static gradient for mobile apps
+      return Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF2C1A3D),
+              Color(0xFF1A1A2E),
+              Color(0xFF16213E),
+            ],
+          ),
+        ),
+      );
+    } else {
+      // Animated background for web or desktop
+      return const AnimatedGradientBackgroundDark();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = context.read<AuthService>();
@@ -70,11 +94,6 @@ class _MainDashboardState extends State<MainDashboard> {
 
     final mainMenu = MainMenu(
       user: currentUser,
-      onLogout: () {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<AuthService>().clearSession();
-        });
-      },
       selectedSection: _selectedSection,
       onSectionSelected: _onSectionSelected,
     );
@@ -85,13 +104,9 @@ class _MainDashboardState extends State<MainDashboard> {
         ModalRoute.of(context)?.settings.name ?? AppRoutes.dashboard;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: CustomAppBar(
         user: currentUser,
-        onLogout: () {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            context.read<AuthService>().clearSession();
-          });
-        },
         showNavButtonsAsActions: !isMobile,
       ),
       drawer: LayoutBuilder(
@@ -122,7 +137,7 @@ class _MainDashboardState extends State<MainDashboard> {
       ),
       body: Stack(
         children: [
-          const AnimatedGradientBackgroundDark(),
+          _buildBackground(isMobile),
           Column(
             children: [
               Expanded(
@@ -169,7 +184,6 @@ class _MainDashboardState extends State<MainDashboard> {
                   ),
                 ),
               ),
-              if (kIsWeb) const FooterSection(),
             ],
           ),
         ],
@@ -213,7 +227,7 @@ class ProfileOverview extends StatelessWidget {
               backgroundColor: Colors.grey.shade300,
               backgroundImage: user.profilePicture != null
                   ? NetworkImage(
-                      '${AppConfig.backendBaseUrl}/${user.profilePicture!}')
+                      '${AppConfig.backendBaseUrl}/api/${user.profilePicture!}')
                   : null,
               child: user.profilePicture == null
                   ? Icon(Icons.person, size: 50, color: Colors.grey.shade700)
@@ -255,14 +269,12 @@ class ProfileOverview extends StatelessWidget {
 
 class MainMenu extends StatelessWidget {
   final User user;
-  final VoidCallback onLogout;
   final DashboardSection selectedSection;
   final ValueChanged<DashboardSection> onSectionSelected;
 
   const MainMenu({
     super.key,
     required this.user,
-    required this.onLogout,
     required this.selectedSection,
     required this.onSectionSelected,
   });
@@ -353,7 +365,9 @@ class MainMenu extends StatelessWidget {
           ),
           const Divider(height: 1),
           InkWell(
-            onTap: onLogout,
+            onTap: () {
+              context.read<AuthService>().clearSession();
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(

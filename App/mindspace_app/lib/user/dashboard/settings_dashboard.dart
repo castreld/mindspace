@@ -333,7 +333,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                     backgroundImage: _imageBytes != null
                         ? MemoryImage(_imageBytes!)
                         : (user.profilePicture != null
-                            ? NetworkImage('${AppConfig.backendBaseUrl}/${user.profilePicture!}')
+                            ? NetworkImage('${AppConfig.backendBaseUrl}/api/${user.profilePicture!}')
                             : null) as ImageProvider?,
                     child: _imageBytes == null && user.profilePicture == null
                         ? Icon(Icons.person, size: 60, color: Colors.grey.shade800)

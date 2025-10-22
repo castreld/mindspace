@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/appointment.dart';
 
 class ClientDetailDialog extends StatelessWidget {
@@ -37,7 +38,7 @@ class ClientDetailDialog extends StatelessWidget {
             CircleAvatar(
               radius: 50,
               backgroundImage: client.profilePicture != null
-                  ? NetworkImage(client.profilePicture!)
+                  ? NetworkImage('${AppConfig.backendBaseUrl}/api/${client.profilePicture}') 
                   : null,
               child: client.profilePicture == null
                   ? const Icon(Icons.person, size: 50)

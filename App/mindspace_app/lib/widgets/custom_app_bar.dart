@@ -2,18 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:provider/provider.dart';
+import 'package:mindspace_app/services/auth_service.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final User? user;
-  final VoidCallback? onLogout;
   final bool showNavButtonsAsActions;
 
   const CustomAppBar({
     super.key,
     this.user,
-    this.onLogout,
     this.showNavButtonsAsActions = true,
   });
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(80.0);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+  AuthService? _authService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_authService == null) {
+      _authService = context.read<AuthService>();
+    }
+  }
+
+  void _handleLogout() {
+    final authService = _authService;
+    if (authService != null) {
+      // Close any open popups first
+      Navigator.of(context).popUntil((route) => route is! PopupRoute);
+      // Then logout after a brief delay to ensure popup is closed
+      Future.delayed(const Duration(milliseconds: 100), () {
+        authService.clearSession();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,47 +59,38 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildUserProfileDropdown(BuildContext context, {bool isMobile = false}) {
-    if (user == null) {
+    if (widget.user == null) {
       return const SizedBox.shrink();
     }
 
-    final displayName = user!.username ?? user!.fullName;
+    final displayName = widget.user!.username ?? widget.user!.fullName;
     final firstChar = displayName.isNotEmpty 
         ? displayName.substring(0, 1).toUpperCase() 
         : '?';
 
+    final Widget avatarWidget = CircleAvatar(
+      backgroundColor: Colors.white.withOpacity(0.8),
+      backgroundImage: widget.user!.profilePicture != null
+          ? NetworkImage('${AppConfig.backendBaseUrl}/api/${widget.user!.profilePicture!}')
+          : null,
+      child: widget.user!.profilePicture == null
+          ? Text(
+              firstChar,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            )
+          : null,
+    );
+
     final Widget dropdownChild = isMobile
         ? Padding(
             padding: const EdgeInsets.only(right: 15.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.8),
-              backgroundImage: user!.profilePicture != null
-                  ? NetworkImage('${AppConfig.backendBaseUrl}/${user!.profilePicture!}')
-                  : null,
-              child: user!.profilePicture == null
-                  ? Text(
-                      firstChar,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  : null,
-            ),
+            child: avatarWidget,
           )
         : Padding(
             padding: const EdgeInsets.only(right: 15.0),
             child: Row(
               children: [
-                CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.8),
-                  backgroundImage: user!.profilePicture != null
-                      ? NetworkImage('${AppConfig.backendBaseUrl}/${user!.profilePicture!}')
-                      : null,
-                  child: user!.profilePicture == null
-                      ? Text(
-                          firstChar,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      : null,
-                ),
+                avatarWidget,
                 const SizedBox(width: 10),
                 Text(
                   displayName,
@@ -83,18 +104,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           );
 
     return PopupMenuButton<String>(
+      offset: const Offset(0, 50),
       onSelected: (value) {
         if (value == 'dashboard') {
           Navigator.pushNamed(context, AppRoutes.dashboard);
         } else if (value == 'admin_dashboard') {
           Navigator.pushNamed(context, AppRoutes.adminDashboard);
         } else if (value == 'logout') {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            onLogout?.call();
-          });
+          _handleLogout();
         }
       },
-      itemBuilder: (BuildContext context) {
+      itemBuilder: (BuildContext popupContext) {
         List<PopupMenuEntry<String>> menuItems = [
           const PopupMenuItem<String>(
             value: 'dashboard',
@@ -104,7 +124,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ];
-        if (user != null && user!.role == 'admin') {
+        if (widget.user != null && widget.user!.role == 'admin') {
           menuItems.add(const PopupMenuItem<String>(
             value: 'admin_dashboard',
             child: ListTile(
@@ -160,7 +180,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: const Color(0xFF5B3F5B),
       title: const Text('Mindspace',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      leading: user != null
+      leading: widget.user != null
           ? Builder(
               builder: (context) => IconButton(
                 icon: const Icon(Icons.menu, color: Colors.white, size: 30),
@@ -169,7 +189,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       actions: <Widget>[
-        user != null
+        widget.user != null
             ? _buildUserProfileDropdown(context, isMobile: true)
             : _buildAuthButtons(context),
       ],
@@ -185,7 +205,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
       actions: <Widget>[
-        if (showNavButtonsAsActions) ...[
+        if (widget.showNavButtonsAsActions) ...[
           _AppBarTextButton(
               'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
           _AppBarTextButton('Psikolog',
@@ -193,15 +213,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           _AppBarTextButton('Kontak', () {}),
           const SizedBox(width: 20),
         ],
-        user != null
+        widget.user != null
             ? _buildUserProfileDropdown(context)
             : _buildAuthButtons(context),
       ],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(80.0);
 }
 
 class _AppBarTextButton extends StatelessWidget {

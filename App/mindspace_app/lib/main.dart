@@ -178,9 +178,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _logout() {
-    debugPrint('HomePage._logout invoked');
-    context.read<AuthService>().clearSession();
+  String _currentRoute = AppRoutes.home;
+  bool _isRouteInitialized = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isRouteInitialized) {
+      _currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.home;
+      _isRouteInitialized = true;
+    }
   }
 
   @override
@@ -188,13 +196,11 @@ class _HomePageState extends State<HomePage> {
     final currentUser = context.watch<AuthService>().currentUser;
     const double mobileBreakpoint = 850;
     final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
-    final String currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.home;
 
     return Scaffold(
-      key: GlobalKey<ScaffoldState>(),
+      key: _scaffoldKey,
       appBar: CustomAppBar(
         user: currentUser,
-        onLogout: _logout,
         showNavButtonsAsActions: !isMobile,
       ),
       drawer: const _AppDrawer(),
@@ -207,13 +213,13 @@ class _HomePageState extends State<HomePage> {
               HeroSection(),
               ServicesSection(),
               FaqSection(),
-              if (kIsWeb) const SliverToBoxAdapter(child: FooterSection()),
+              if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
             ],
           ),
         ],
       ),
       bottomNavigationBar: isMobile 
-        ? AppBottomNavigationBar(currentRoute: currentRoute) 
+        ? AppBottomNavigationBar(currentRoute: _currentRoute)
         : null,
     );
   }

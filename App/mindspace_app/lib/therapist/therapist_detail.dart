@@ -90,9 +90,6 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
     return Scaffold(
       appBar: CustomAppBar(
         user: currentUser,
-        onLogout: () {
-          context.read<AuthService>().clearSession();
-        },
         showNavButtonsAsActions: !isMobile,
       ),
       drawer: isMobile ? const _AppDrawer() : null,
@@ -371,7 +368,7 @@ class TherapistDetail {
       id: json['id'] ?? 0,
       name: json['full_name'] ?? 'Unknown Therapist',
       profilePicture: profile['profile_picture_path'] != null
-          ? '${AppConfig.backendBaseUrl}/${profile['profile_picture_path']}'
+          ? '${AppConfig.backendBaseUrl}/api/${profile['profile_picture_path']}'
           : null,
       education: profile['education_history'] ?? '',
       problemAreas: profile['problem_areas'] ?? '',

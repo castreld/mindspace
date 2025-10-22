@@ -51,7 +51,7 @@ class Therapist {
       id: json['id'],
       name: json['full_name'] ?? 'Unknown Therapist',
       imageUrl: json['therapist_profile']?['profile_picture_path'] != null
-          ? '${AppConfig.backendBaseUrl}/${json['therapist_profile']['profile_picture_path']}'
+          ? '${AppConfig.backendBaseUrl}/api/${json['therapist_profile']['profile_picture_path']}'
           : null,
       rating:
           double.tryParse(json['reviews_avg_rating']?.toString() ?? '0.0') ??
@@ -72,13 +72,25 @@ class TherapistPage extends StatefulWidget {
 }
 
 class _TherapistPageState extends State<TherapistPage> {
+  String _currentRoute = AppRoutes.therapistPage;
+  bool _isRouteInitialized = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isRouteInitialized) {
+      _currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.therapistPage;
+      _isRouteInitialized = true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = context.watch<AuthService>();
     final currentUser = authService.currentUser;
     const double mobileBreakpoint = 850;
     final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
-    final String currentRoute = ModalRoute.of(context)?.settings.name ?? AppRoutes.therapistPage;
 
     if (currentUser == null) {
       return const Scaffold(
@@ -87,12 +99,9 @@ class _TherapistPageState extends State<TherapistPage> {
     }
 
     return Scaffold(
-      key: GlobalKey<ScaffoldState>(),
+      key: _scaffoldKey,
       appBar: CustomAppBar(
         user: currentUser,
-        onLogout: () {
-          context.read<AuthService>().clearSession();
-        },
         showNavButtonsAsActions: !isMobile,
       ),
       drawer: const _AppDrawer(),
@@ -111,7 +120,7 @@ class _TherapistPageState extends State<TherapistPage> {
         ],
       ),
       bottomNavigationBar: isMobile
-        ? AppBottomNavigationBar(currentRoute: currentRoute)
+        ? AppBottomNavigationBar(currentRoute: _currentRoute)
         : null,
     );
   }

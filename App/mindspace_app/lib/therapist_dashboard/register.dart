@@ -20,7 +20,6 @@ class TherapistForm extends StatelessWidget {
       key: GlobalKey<ScaffoldState>(),
       appBar: CustomAppBar(
         user: context.watch<AuthService>().currentUser,
-        onLogout: () => context.read<AuthService>().clearSession(),
       ),
       drawer: const _AppDrawer(),
       body: Stack(

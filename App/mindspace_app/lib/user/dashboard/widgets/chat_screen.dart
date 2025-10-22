@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -11,7 +10,9 @@ import 'package:mindspace_app/services/chat_service.dart';
 import 'package:mindspace_app/config.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
+import 'websocket_setup/websocket_channel_stub.dart'
+    if (dart.library.html) 'websocket_setup/websocket_channel_html.dart'
+    if (dart.library.io) 'websocket_setup/websocket_channel_io.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation conversation;
@@ -32,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   User? _currentUser;
   int? _otherUserId;
 
-  late WebSocketChannel _channel;
+  WebSocketChannel? _channel;
   bool _isWebSocketConnected = false;
 
   @override
@@ -89,13 +90,14 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     try {
-      String wsUrl = 'ws://192.168.100.13:8080/app/l1kxgzsfajfdudiywfit';
+      String wsUrl = 'ws://${AppConfig.webSocketHost}:8080/app/${AppConfig.webSocketPusherAppKey}';
       
       debugPrint('🔌 Connecting to WebSocket: $wsUrl');
 
-      _channel = IOWebSocketChannel.connect(Uri.parse(wsUrl));
+      // Use the platform-specific function from conditional import
+      _channel = createWebSocketChannel(wsUrl);
 
-      _channel.stream.listen(
+      _channel!.stream.listen(
         (dynamic message) {
           debugPrint('📨 Received: $message');
           try {
@@ -200,7 +202,7 @@ class _ChatScreenState extends State<ChatScreen> {
             'auth': authSignature,
           },
         });
-        _channel.sink.add(subscribeMessage);
+        _channel?.sink.add(subscribeMessage);
         debugPrint('✓ Subscription request sent for channel: $channelName');
       } else {
          debugPrint('✗ Channel auth failed with status: ${authResponse.statusCode}');
@@ -341,7 +343,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    _channel.sink.close();
+    _channel?.sink.close();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();

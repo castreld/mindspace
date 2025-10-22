@@ -16,7 +16,7 @@ class Client {
       id: json['id'],
       fullName: json['full_name'] ?? 'Nama Klien Tidak Diketahui',
       profilePicture: json['profile_picture'] != null
-          ? '${AppConfig.backendBaseUrl}/${json['profile_picture']}'
+          ? '${json['profile_picture']}'
           : null,
     );
   }
@@ -64,7 +64,7 @@ class ClientDetail {
       fullName: json['full_name'] ?? 'N/A',
       email: json['email'] ?? 'N/A',
       profilePicture: json['profile_picture'] != null
-          ? '${AppConfig.backendBaseUrl}/${json['profile_picture']}'
+          ? '${json['profile_picture']}'
           : null,
       birthDate: json['birth_date'],
       phoneNumber: json['phone_number'],

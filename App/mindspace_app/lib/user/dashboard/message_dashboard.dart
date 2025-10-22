@@ -286,7 +286,7 @@ class _MessageDashboardState extends State<MessageDashboard> with SingleTickerPr
               selectedTileColor: const Color(0xFFF9EBC8),
               leading: CircleAvatar(
                 backgroundImage: conversation.profilePicture != null
-                    ? NetworkImage('${AppConfig.backendBaseUrl}/${conversation.profilePicture!}')
+                    ? NetworkImage('${AppConfig.backendBaseUrl}/api/${conversation.profilePicture!}')
                     : null,
                 child: conversation.profilePicture == null
                     ? Text(conversation.name.substring(0, 1).toUpperCase())
@@ -384,7 +384,7 @@ class _MessageDashboardState extends State<MessageDashboard> with SingleTickerPr
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: user.profilePicture != null
-                ? NetworkImage('${AppConfig.backendBaseUrl}/${user.profilePicture!}')
+                ? NetworkImage('${AppConfig.backendBaseUrl}/api/${user.profilePicture!}')
                 : null,
             child: user.profilePicture == null
                 ? Text(user.fullName.substring(0, 1).toUpperCase())
@@ -415,7 +415,7 @@ class _MessageDashboardState extends State<MessageDashboard> with SingleTickerPr
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: request.initiatorProfilePicture != null
-                ? NetworkImage('${AppConfig.backendBaseUrl}/${request.initiatorProfilePicture!}')
+                ? NetworkImage('${AppConfig.backendBaseUrl}/api/${request.initiatorProfilePicture!}')
                 : null,
             child: request.initiatorProfilePicture == null
                 ? Text(request.initiatorName.substring(0, 1).toUpperCase())
