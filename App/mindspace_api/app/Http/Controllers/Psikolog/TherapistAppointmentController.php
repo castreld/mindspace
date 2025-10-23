@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\Appointment;
-use App\Models\Conversation;
+use App\Models\Conversation; 
 use Throwable;
 
 class TherapistAppointmentController extends Controller
@@ -48,21 +48,10 @@ class TherapistAppointmentController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        $userOneId = min(Auth::id(), $appointment->client_id);
-        $userTwoId = max(Auth::id(), $appointment->client_id);
-
-        Conversation::updateOrCreate(
-            ['user_one_id' => $userOneId, 'user_two_id' => $userTwoId],
-            [
-                'status' => 'accepted',
-                'initiator_id' => Auth::id()
-            ]
-        );
-
         $appointment->status = 'scheduled';
         $appointment->save();
 
-        Log::info("Appointment approved and conversation created/updated.", ['appointment_id' => $appointment->id, 'therapist_id' => Auth::id()]);
+        Log::info("Appointment approved.", ['appointment_id' => $appointment->id, 'therapist_id' => Auth::id()]);
 
         return response()->json($appointment);
     }

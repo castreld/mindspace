@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\ChatMessage;
+use App\Models\User;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -38,40 +40,77 @@ class MessageRequestController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        $senderId = Auth::id();
-        $receiverId = $validated['receiver_id'];
+        $sender = Auth::user();
+        $receiver = User::find($validated['receiver_id']);
 
-        
+        if ($sender->role === 'klien' && $receiver->role === 'psikolog') {
+            return response()->json(['message' => 'Anda tidak dapat mengirim permintaan pesan ke psikolog. Silakan lakukan booking.'], 403);
+        }
+
+        $senderId = $sender->id;
+        $receiverId = $receiver->id;
         $userOneId = min($senderId, $receiverId);
         $userTwoId = max($senderId, $receiverId);
 
-        
-        return DB::transaction(function () use ($userOneId, $userTwoId, $senderId, $validated) {
-            $conversation = Conversation::firstOrCreate(
-                ['user_one_id' => $userOneId, 'user_two_id' => $userTwoId],
-                ['initiator_id' => $senderId, 'status' => 'pending']
-            );
-
+        return DB::transaction(function () use ($userOneId, $userTwoId, $sender, $receiver, $validated) {
             
-            if ($conversation->status === 'rejected') {
-                $conversation->status = 'pending';
-                $conversation->initiator_id = $senderId;
-                $conversation->save();
-            }
+            if ($sender->role === 'psikolog' && $receiver->role === 'klien') {
+                
+                $appointment = Appointment::where('therapist_id', $sender->id)
+                    ->where('client_id', $receiver->id)
+                    ->where('status', 'scheduled') 
+                    ->where('appointment_time', '>', now()->subHours(1)) 
+                    ->where('appointment_time', '<', now()->addHours(1)) 
+                    ->first();
 
+                if (!$appointment) {
+                    return response()->json(['message' => 'Tidak ada jadwal konsultasi aktif dengan klien ini.'], 403);
+                }
+
+                $conversation = Conversation::firstOrCreate(
+                    ['user_one_id' => $userOneId, 'user_two_id' => $userTwoId, 'appointment_id' => $appointment->id],
+                    [
+                        'initiator_id' => $sender->id,
+                        'status' => 'accepted', 
+                        'session_status' => 'active', 
+                        'session_started_at' => now(), 
+                        'session_duration_minutes' => $appointment->duration_minutes ?? 60,
+                    ]
+                );
+
+                if (!$conversation->wasRecentlyCreated) {
+                    if ($conversation->session_status == 'active') {
+                        return response()->json(['message' => 'Sesi konsultasi sudah berjalan.'], 409);
+                    }
+                }
+            } 
+            else {
+                $conversation = Conversation::firstOrCreate(
+                    ['user_one_id' => $userOneId, 'user_two_id' => $userTwoId],
+                    ['initiator_id' => $sender->id, 'status' => 'pending', 'session_status' => 'pending']
+                );
+                if ($conversation->status === 'rejected') {
+                    $conversation->status = 'pending';
+                    $conversation->session_status = 'pending';
+                    $conversation->initiator_id = $sender->id;
+                    $conversation->save();
+                }
+                if (!$conversation->wasRecentlyCreated && $conversation->status === 'pending') {
+                    return response()->json(['message' => 'A message request is already pending.'], 409);
+                }
+                if ($conversation->status === 'accepted') {
+                    return response()->json(['message' => 'Anda sudah terhubung dengan pengguna ini.'], 409);
+                }
+            }
             
-            if ($conversation->wasRecentlyCreated || ($conversation->status === 'pending' && $conversation->initiator_id !== $senderId)) {
-                $message = ChatMessage::create([
-                    'conversation_id' => $conversation->id,
-                    'sender_id' => $senderId,
-                    'receiver_id' => $validated['receiver_id'],
-                    'message' => $validated['message'],
-                ]);
-    
-                return response()->json(['message' => 'Message request sent.', 'data' => $conversation], 201);
-            }
+            $message = ChatMessage::create([
+                'conversation_id' => $conversation->id,
+                'sender_id' => $sender->id,
+                'receiver_id' => $validated['receiver_id'],
+                'message' => $validated['message'],
+            ]);
 
-            return response()->json(['message' => 'A message request is already pending.'], 409); 
+            return response()->json(['message' => 'Message request sent.', 'data' => $conversation], 201);
         });
     }
 

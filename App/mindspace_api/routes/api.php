@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/conversations/{user}', [ConversationController::class, 'show']);
     Route::get('/conversations/{conversation}/messages', [ConversationController::class, 'getMessages']);
     Route::delete('/conversations/{conversation}', [ConversationController::class, 'deleteConversation']);
+    Route::post('/conversations/{conversation}/stop', [ConversationController::class, 'stopSession']);
     Route::get('/message-requests', [MessageRequestController::class, 'index']);
     Route::post('/message-requests', [MessageRequestController::class, 'store']);
     Route::put('/message-requests/{conversation}/accept', [MessageRequestController::class, 'accept']);

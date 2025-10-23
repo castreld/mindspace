@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -32,6 +33,11 @@ class _ChatScreenState extends State<ChatScreen> {
   bool _isLoading = true;
   User? _currentUser;
   int? _otherUserId;
+  Timer? _sessionTimer;
+  Duration? _timeRemaining;
+  String _sessionStatus = 'pending';
+  bool _isConsultation = false;
+  bool _isChatLocked = false;
 
   WebSocketChannel? _channel;
   bool _isWebSocketConnected = false;
@@ -54,15 +60,27 @@ class _ChatScreenState extends State<ChatScreen> {
       final token = context.read<AuthService>().token;
       if (token == null) throw Exception('Authentication token not found.');
       
-      final messages = await context.read<ChatService>().getMessagesByConversationId(
+      final details = await context.read<ChatService>().getMessagesByConversationId(
         token, 
         widget.conversation.id
       );
       
       if (mounted) {
         setState(() {
-          _messages = messages;
+          _messages = details.messages;
           _isLoading = false;
+
+          _isConsultation = details.conversation.appointmentId != null;
+          _sessionStatus = details.conversation.sessionStatus;
+
+          if (_isConsultation && details.conversation.sessionStartedAt != null && _sessionStatus != 'ended') {
+            _startSessionTimer(
+              DateTime.parse(details.conversation.sessionStartedAt!).toLocal(),
+              details.conversation.sessionDurationMinutes ?? 60
+            );
+          } else if (_isConsultation && _sessionStatus == 'ended') {
+            _updateChatLock();
+          }
         });
         _scrollToBottom();
       }
@@ -241,8 +259,16 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       if (mounted) {
         _messageController.text = messageText;
-
-        if (e.toString().contains('403') && e.toString().contains('No accepted conversation found')) {
+        if (e.toString().contains('Sesi telah berakhir')) {
+          _showConversationDeletedDialog(
+            title: 'Sesi Berakhir',
+            content: 'Waktu konsultasi Anda telah berakhir. Anda tidak dapat mengirim pesan lagi.'
+          );
+          setState(() {
+            _sessionStatus = 'ended';
+            _updateChatLock();
+          });
+        } else if (e.toString().contains('No accepted conversation found')) {
           _showConversationDeletedDialog();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -304,7 +330,10 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _showConversationDeletedDialog() {
+  void _showConversationDeletedDialog({
+    String title = 'Gagal Mengirim Pesan',
+    String content = 'Percakapan tidak ditemukan, mungkin telah dihapus oleh orang yang kamu hubungi.'
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -313,13 +342,13 @@ class _ChatScreenState extends State<ChatScreen> {
             borderRadius: BorderRadius.circular(16.0),
           ),
           icon: Icon(Icons.forum_outlined, color: Colors.orange.shade700, size: 48),
-          title: const Text(
-            'Gagal Mengirim Pesan',
+          title: Text(
+            title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: const Text(
-            'Percakapan tidak ditemukan, mungkin telah dihapus oleh orang yang kamu hubungi.',
+          content: Text(
+            content,
             textAlign: TextAlign.center,
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -343,6 +372,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
+    _sessionTimer?.cancel();
     _channel?.sink.close();
     _messageController.dispose();
     _scrollController.dispose();
@@ -399,6 +429,7 @@ class _ChatScreenState extends State<ChatScreen> {
             ],
           ),
         ),
+        _buildTimerBar(),
         Expanded(
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -487,7 +518,9 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildMessageComposer() {
+Widget _buildMessageComposer() {
+    _updateChatLock();
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
@@ -499,20 +532,24 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _messageController,
+              enabled: !_isChatLocked,
+              maxLines: null,
               decoration: InputDecoration(
-                hintText: 'Ketik pesan...',
+                hintText: _isChatLocked 
+                    ? 'Sesi telah berakhir' 
+                    : 'Ketik pesan...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: const BorderSide(color: Colors.grey),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
-              onSubmitted: (_) => _sendMessage(),
+              onSubmitted: _isChatLocked ? null : (_) => _sendMessage(),
             ),
           ),
           const SizedBox(width: 12),
           ElevatedButton(
-            onPressed: _sendMessage,
+            onPressed: _isChatLocked ? null : _sendMessage,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange.shade300,
               foregroundColor: Colors.black87,
@@ -521,6 +558,141 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: const Text('Kirim'),
           ),
+        ],
+      ),
+    );
+  }
+
+  void _startSessionTimer(DateTime startTime, int durationMinutes) {
+    final int overtimeMinutes = 10;
+    final endTime = startTime.add(Duration(minutes: durationMinutes));
+    final overtimeEndTime = endTime.add(Duration(minutes: overtimeMinutes));
+
+    _sessionTimer?.cancel();
+    _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final now = DateTime.now();
+
+      if (now.isAfter(overtimeEndTime)) {
+        if (mounted) {
+          setState(() {
+            _timeRemaining = Duration.zero;
+            _sessionStatus = 'ended';
+            _updateChatLock();
+          });
+          timer.cancel();
+        }
+      } else if (now.isAfter(endTime)) {
+        if (mounted) {
+          setState(() {
+            _timeRemaining = overtimeEndTime.difference(now);
+            _sessionStatus = 'overtime';
+            _updateChatLock();
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() {
+            _timeRemaining = endTime.difference(now);
+            _sessionStatus = 'active';
+            _updateChatLock();
+          });
+        }
+      }
+    });
+  }
+
+  void _updateChatLock() {
+    setState(() {
+      _isChatLocked = _isConsultation &&
+                      _currentUser?.role == 'klien' &&
+                      (_sessionStatus == 'ended' || _sessionStatus == 'overtime');
+      _isChatLocked = _isConsultation &&
+                      _currentUser?.role == 'klien' &&
+                      _sessionStatus == 'ended';
+    });
+  }
+
+  String _formatDuration(Duration d) {
+    if (d.isNegative) return "00:00";
+    return "${d.inMinutes.remainder(60).toString().padLeft(2, '0')}:${d.inSeconds.remainder(60).toString().padLeft(2, '0')}";
+  }
+
+  void _handleStopSesi() async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hentikan Sesi?'),
+        content: const Text('Apakah Anda yakin ingin menghentikan sesi konsultasi ini?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Batal')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Hentikan', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        final token = context.read<AuthService>().token!;
+        await context.read<ChatService>().stopSession(token, widget.conversation.id);
+        if (mounted) {
+          setState(() {
+            _sessionStatus = 'ended';
+            _timeRemaining = Duration.zero;
+            _sessionTimer?.cancel();
+            _updateChatLock();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal menghentikan sesi: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+  }
+
+  Widget _buildTimerBar() {
+    if (!_isConsultation || _sessionStatus == 'pending' || _timeRemaining == null) {
+      return const SizedBox.shrink();
+    }
+
+    String text;
+    Color color;
+    Color bgColor;
+
+    if (_sessionStatus == 'ended') {
+      text = "Sesi telah berakhir";
+      color = Colors.grey.shade700;
+      bgColor = Colors.grey.shade200;
+    } else if (_sessionStatus == 'overtime') {
+      text = "Waktu Tambahan: ${_formatDuration(_timeRemaining!)}";
+      color = Colors.red.shade900;
+      bgColor = Colors.red.shade100;
+    } else {
+      text = "Sisa Waktu: ${_formatDuration(_timeRemaining!)}";
+      color = Colors.green.shade900;
+      bgColor = Colors.green.shade100;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: bgColor,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.timer, color: color, size: 18),
+          const SizedBox(width: 8),
+          Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+          const Spacer(),
+          if (_currentUser?.role == 'klien' && (_sessionStatus == 'active' || _sessionStatus == 'overtime'))
+            TextButton(
+              onPressed: _handleStopSesi,
+              child: const Text('Stop Sesi', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            ),
         ],
       ),
     );

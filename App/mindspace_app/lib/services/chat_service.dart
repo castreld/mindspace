@@ -5,6 +5,7 @@ import 'package:mindspace_app/models/conversation.dart';
 import 'package:mindspace_app/models/message_request.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/config.dart';
+import 'dart:async';
 
 class ChatService {
   final String baseUrl;
@@ -143,7 +144,7 @@ class ChatService {
     }
   }
 
-  Future<List<ChatMessage>> getMessagesByConversationId(String token, int conversationId) async {
+  Future<ChatSessionDetails> getMessagesByConversationId(String token, int conversationId) async {
     try {
       final response = await http.get(
         Uri.parse('${AppConfig.backendBaseUrl}/api/conversations/$conversationId/messages'),
@@ -154,8 +155,8 @@ class ChatService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        return data.map((json) => ChatMessage.fromJson(json)).toList();
+        final Map<String, dynamic> data = json.decode(response.body);
+        return ChatSessionDetails.fromJson(data);
       } else {
         throw Exception('Failed to load messages: ${response.statusCode}');
       }
@@ -192,5 +193,41 @@ class ChatService {
     if (response.statusCode != 200) {
         throw Exception('Failed to delete conversation: ${response.body}');
     }
+  }
+
+  Future<void> stopSession(String token, int conversationId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${AppConfig.backendBaseUrl}/api/conversations/$conversationId/stop'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Failed to stop session: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error stopping session: $e');
+    }
+  }
+}
+
+class ChatSessionDetails {
+  final Conversation conversation;
+  final List<ChatMessage> messages;
+
+  ChatSessionDetails({required this.conversation, required this.messages});
+
+  factory ChatSessionDetails.fromJson(Map<String, dynamic> json) {
+    var messagesList = json['messages'] as List;
+    List<ChatMessage> messages = messagesList.map((i) => ChatMessage.fromJson(i)).toList();
+    
+    Conversation conversation = Conversation.fromFullJson(json['conversation']);
+    
+    return ChatSessionDetails(
+      conversation: conversation,
+      messages: messages,
+    );
   }
 }

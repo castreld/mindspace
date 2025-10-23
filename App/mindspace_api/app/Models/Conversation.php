@@ -14,6 +14,10 @@ class Conversation extends Model
         'user_two_id',
         'status',
         'initiator_id',
+        'appointment_id',
+        'session_started_at',
+        'session_duration_minutes',
+        'session_status',
     ];
 
     public function userOne()
@@ -39,5 +43,10 @@ class Conversation extends Model
     public function latestMessage()
     {
         return $this->hasOne(ChatMessage::class)->latestOfMany();
+    }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class);
     }
 }

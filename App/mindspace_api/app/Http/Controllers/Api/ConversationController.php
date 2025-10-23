@@ -77,7 +77,8 @@ class ConversationController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        if ($conversation->status !== 'accepted') {
+        
+        if ($conversation->status !== 'accepted' && $conversation->appointment_id === null) {
             return response()->json(['error' => 'Conversation not accepted'], 403);
         }
 
@@ -85,7 +86,11 @@ class ConversationController extends Controller
             ->orderBy('created_at', 'asc')
             ->get();
 
-        return response()->json($messages);
+        
+        return response()->json([
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ]);
     }
 
     public function deleteConversation(Conversation $conversation)
@@ -107,5 +112,27 @@ class ConversationController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete conversation.'], 500);
         }
+    }
+
+    public function stopSession(Conversation $conversation)
+    {
+        $user = Auth::user();
+
+        if ($user->role !== 'klien' || 
+        ($conversation->user_one_id !== $user->id && $conversation->user_two_id !== $user->id)) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($conversation->appointment_id === null || $conversation->session_status !== 'active') {
+            
+            if ($conversation->session_status === 'ended') {
+                return response()->json(['message' => 'Sesi sudah berakhir.'], 400);
+            }
+        }
+
+        $conversation->session_status = 'ended';
+        $conversation->save();
+
+        return response()->json(['message' => 'Session ended successfully.']);
     }
 }

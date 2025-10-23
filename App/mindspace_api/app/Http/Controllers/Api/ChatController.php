@@ -7,6 +7,7 @@ use App\Events\MessageDeleted;
 use App\Http\Controllers\Controller;
 use App\Models\ChatMessage;
 use App\Models\Conversation; 
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,20 +20,53 @@ class ChatController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        $senderId = Auth::id();
+        $sender = Auth::user();
+        $senderId = $sender->id;
         $receiverId = $validated['receiver_id'];
 
         $userOneId = min($senderId, $receiverId);
         $userTwoId = max($senderId, $receiverId);
 
+        
         $conversation = Conversation::where('user_one_id', $userOneId)
             ->where('user_two_id', $userTwoId)
-            ->where('status', 'accepted')
+            ->where('status', 'accepted') 
             ->first();
 
         if (!$conversation) {
             return response()->json(['message' => 'Cannot send message. No accepted conversation found.'], 403);
         }
+
+        
+        if ($conversation->appointment_id !== null) {
+            
+            
+            if ($sender->role === 'klien') {
+                
+                
+                if ($conversation->session_status === 'ended') {
+                    return response()->json(['message' => 'Sesi telah berakhir. Anda tidak dapat mengirim pesan lagi.'], 403);
+                }
+
+                
+                if ($conversation->session_started_at !== null) {
+                    $startTime = Carbon::parse($conversation->session_started_at);
+                    $duration = $conversation->session_duration_minutes ?? 5;
+                    $overtime = 1; 
+                    $totalDuration = $duration + $overtime;
+
+                    
+                    if (now()->isAfter($startTime->addMinutes($totalDuration))) {
+                        
+                        $conversation->session_status = 'ended';
+                        $conversation->save();
+                        return response()->json(['message' => 'Sesi telah berakhir. Anda tidak dapat mengirim pesan lagi.'], 403);
+                    }
+                }
+            }
+            
+        }
+        
 
         $message = ChatMessage::create([
             'conversation_id' => $conversation->id,
@@ -41,9 +75,7 @@ class ChatController extends Controller
             'message' => $validated['message'],
         ]);
 
-        // REMOVED ->toOthers() TO BROADCAST TO THE SENDER AS WELL
         broadcast(new MessageSent($message));
-
         return response()->json($message, 201);
     }
 
