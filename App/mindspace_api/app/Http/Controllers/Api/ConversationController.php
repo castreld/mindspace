@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\User;
+use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -118,21 +119,37 @@ class ConversationController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'klien' || 
+        if ($user->role !== 'klien' ||
         ($conversation->user_one_id !== $user->id && $conversation->user_two_id !== $user->id)) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if ($conversation->appointment_id === null || $conversation->session_status !== 'active') {
-            
-            if ($conversation->session_status === 'ended') {
-                return response()->json(['message' => 'Sesi sudah berakhir.'], 400);
-            }
+        if ($conversation->session_status === 'ended') {
+            return response()->json(['message' => 'Sesi sudah berakhir.'], 400);
         }
 
-        $conversation->session_status = 'ended';
-        $conversation->save();
+        if ($conversation->appointment_id === null ||
+            ($conversation->session_status !== 'active' && $conversation->session_status !== 'overtime'))
+        {
+            return response()->json(['message' => 'Sesi tidak aktif dan tidak dapat dihentikan.'], 400);
+        }
 
-        return response()->json(['message' => 'Session ended successfully.']);
+        try {
+            DB::transaction(function () use ($conversation) {
+                $conversation->session_status = 'ended';
+                $conversation->save();
+
+                $appointment = Appointment::find($conversation->appointment_id);
+                if ($appointment) {
+                    $appointment->status = 'completed';
+                    $appointment->save();
+                }
+            });
+
+            return response()->json(['message' => 'Session ended successfully.']);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to stop session.', 'error' => $e->getMessage()], 500);
+        }
     }
 }

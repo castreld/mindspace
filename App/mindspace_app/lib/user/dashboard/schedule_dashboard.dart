@@ -184,8 +184,19 @@ class _ScheduleDashboardState extends State<ScheduleDashboard> {
           return Center(child: Text('Gagal memuat jadwal: ${snapshot.error}'));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-              child: Text('Anda belum memiliki jadwal konseling.'));
+          return Center(
+            child: Card(
+              color: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: const Text('Anda belum memiliki jadwal konseling.'),
+              ),
+            ),
+          );
         }
 
         final schedules = snapshot.data!;

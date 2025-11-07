@@ -107,7 +107,19 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Tidak ada janji temu yang akan datang.'));
+          return Center(
+            child: Card(
+              color: Colors.white,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: const Text('Tidak ada janji temu yang akan datang.'),
+              ),
+            ),
+          );
         }
 
         final appointments = snapshot.data!;
@@ -152,7 +164,11 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
     final clientName = appointment.client?.fullName ?? 'Klien Tidak Diketahui';
     final clientImageUrl = appointment.client?.profilePicture;
 
-    final bool isActionable = appointment.status == 'pending_confirmation';
+    final String displayStatus =
+        appointment.status.replaceAll('_', ' ').toUpperCase();
+    final bool isActionable =
+        displayStatus == 'PENDING CONFIRMATION' ||
+        displayStatus == 'MENUNGGU KONFIRMASI';
 
     return Card(
       margin: EdgeInsets.zero,
@@ -173,23 +189,33 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                     CircleAvatar(
                       radius: 30,
                       onBackgroundImageError: (exception, stackTrace) {
-                        if (kDebugMode) { print("Failed to load client image: $exception"); }
+                        if (kDebugMode) {
+                          print("Failed to load client image: $exception");
+                        }
                       },
-                      backgroundImage: clientImageUrl != null 
-                        ? NetworkImage('${AppConfig.backendBaseUrl}/api/$clientImageUrl') 
-                        : null,
-                      child: clientImageUrl == null ? const Icon(Icons.person, size: 30) : null,
+                      backgroundImage: clientImageUrl != null
+                          ? NetworkImage(
+                              '${AppConfig.backendBaseUrl}/api/$clientImageUrl')
+                          : null,
+                      child: clientImageUrl == null
+                          ? const Icon(Icons.person, size: 30)
+                          : null,
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(clientName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                          Text(clientName,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis),
                           const SizedBox(height: 4),
                           Text(
-                            'Status: ${appointment.status.replaceAll('_', ' ').toUpperCase()}',
-                            style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+                            'Status: $displayStatus',
+                            style: TextStyle(
+                                color: Colors.grey.shade700,
+                                fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),
@@ -197,14 +223,16 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                   ],
                 ),
                 const Divider(height: 24),
-                _buildInfoRow(Icons.calendar_today_outlined, dateFormat.format(appointment.appointmentTime)),
+                _buildInfoRow(Icons.calendar_today_outlined,
+                    dateFormat.format(appointment.appointmentTime)),
                 const SizedBox(height: 8),
                 _buildInfoRow(
                   Icons.access_time_outlined,
                   '${timeFormat.format(appointment.appointmentTime)} - ${timeFormat.format(appointment.appointmentTime.add(Duration(minutes: appointment.durationMinutes)))} WIB',
                 ),
                 const SizedBox(height: 12),
-                if (appointment.clientNotes != null && appointment.clientNotes!.isNotEmpty)
+                if (appointment.clientNotes != null &&
+                    appointment.clientNotes!.isNotEmpty)
                   Text(
                     'Keluhan: ${appointment.clientNotes}',
                     style: TextStyle(color: Colors.grey.shade800),
@@ -219,16 +247,28 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                 OutlinedButton(
                   onPressed: () async {
                     if (appointment.client == null) return;
-                    showDialog(context: context, barrierDismissible: false, builder: (context) => const Center(child: CircularProgressIndicator()));
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) =>
+                            const Center(child: CircularProgressIndicator()));
                     try {
-                      final clientDetails = await context.read<BookingService>().getClientDetails(appointment.client!.id);
+                      final clientDetails = await context
+                          .read<BookingService>()
+                          .getClientDetails(appointment.client!.id);
                       if (!mounted) return;
                       Navigator.of(context).pop();
-                      showDialog(context: context, builder: (context) => ClientDetailDialog(client: clientDetails));
+                      showDialog(
+                          context: context,
+                          builder: (context) =>
+                              ClientDetailDialog(client: clientDetails));
                     } catch (e) {
                       if (!mounted) return;
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Gagal memuat detail klien: ${_parseApiError(e)}'), backgroundColor: Colors.red));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              'Gagal memuat detail klien: ${_parseApiError(e)}'),
+                          backgroundColor: Colors.red));
                     }
                   },
                   child: const Text('Lihat Detail'),
@@ -246,26 +286,37 @@ class _TherapistDashboardState extends State<TherapistDashboard> {
                   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
                     const PopupMenuItem<String>(
                       value: 'approve',
-                      child: ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text('Setujui')),
+                      child: ListTile(
+                          leading: Icon(Icons.check, color: Colors.green),
+                          title: Text('Setujui')),
                     ),
                     const PopupMenuItem<String>(
                       value: 'reject',
-                      child: ListTile(leading: Icon(Icons.close, color: Colors.red), title: Text('Tolak')),
+                      child: ListTile(
+                          leading: Icon(Icons.close, color: Colors.red),
+                          title: Text('Tolak')),
                     ),
                   ],
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                         color: isActionable ? Colors.green : Colors.grey,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))
+                          BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2))
                         ]),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Tindakan', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        SizedBox(width: 4),
+                        Text('Tindakan',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: 4),
                         Icon(Icons.arrow_drop_down, color: Colors.white)
                       ],
                     ),

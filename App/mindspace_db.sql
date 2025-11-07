@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 19, 2025 at 01:18 PM
+-- Generation Time: Nov 07, 2025 at 06:02 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -439,7 +439,139 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `ip_address`, `us
 (547, 15, 'login', '127.0.0.1', 'PostmanRuntime/7.49.0', '2025-10-19 00:51:55', '2025-10-19 00:51:55'),
 (548, 15, 'login', '127.0.0.1', 'PostmanRuntime/7.49.0', '2025-10-19 00:51:55', '2025-10-19 00:51:55'),
 (549, 20, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-19 04:53:15', '2025-10-19 04:53:15'),
-(550, 20, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-19 04:53:15', '2025-10-19 04:53:15');
+(550, 20, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-19 04:53:15', '2025-10-19 04:53:15'),
+(551, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:35:59', '2025-10-19 18:35:59'),
+(552, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:35:59', '2025-10-19 18:35:59'),
+(553, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:46:47', '2025-10-19 18:46:47'),
+(554, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:46:47', '2025-10-19 18:46:47'),
+(555, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:55:06', '2025-10-19 18:55:06'),
+(556, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:55:06', '2025-10-19 18:55:06'),
+(557, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:59:27', '2025-10-19 18:59:27'),
+(558, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 18:59:27', '2025-10-19 18:59:27'),
+(559, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 19:03:59', '2025-10-19 19:03:59'),
+(560, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 19:03:59', '2025-10-19 19:03:59'),
+(561, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 19:24:00', '2025-10-19 19:24:00'),
+(562, 20, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 19:24:00', '2025-10-19 19:24:00'),
+(563, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:55:58', '2025-10-19 19:55:58'),
+(564, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:55:58', '2025-10-19 19:55:58'),
+(565, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:00', '2025-10-19 19:56:00'),
+(566, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:00', '2025-10-19 19:56:00'),
+(567, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:28', '2025-10-19 19:56:28'),
+(568, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:28', '2025-10-19 19:56:28'),
+(569, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:32', '2025-10-19 19:56:32'),
+(570, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 19:56:32', '2025-10-19 19:56:32'),
+(571, 15, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:07:49', '2025-10-19 20:07:49'),
+(572, 15, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:07:49', '2025-10-19 20:07:49'),
+(573, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:09:28', '2025-10-19 20:09:28'),
+(574, 20, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:09:28', '2025-10-19 20:09:28'),
+(575, 11, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:10:18', '2025-10-19 20:10:18'),
+(576, 11, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:10:18', '2025-10-19 20:10:18'),
+(577, 11, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:10:34', '2025-10-19 20:10:34'),
+(578, 11, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:10:34', '2025-10-19 20:10:34'),
+(579, 15, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:12:53', '2025-10-19 20:12:53'),
+(580, 15, 'login', '10.143.133.214', 'Dart/3.9 (dart:io)', '2025-10-19 20:12:53', '2025-10-19 20:12:53'),
+(581, 15, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:27:13', '2025-10-19 20:27:13'),
+(582, 15, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:27:13', '2025-10-19 20:27:13'),
+(583, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:41:50', '2025-10-19 20:41:50'),
+(584, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:41:50', '2025-10-19 20:41:50'),
+(585, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:48:29', '2025-10-19 20:48:29'),
+(586, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 20:48:29', '2025-10-19 20:48:29'),
+(587, 20, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:55:42', '2025-10-19 20:55:42'),
+(588, 20, 'login', '10.143.133.25', 'Dart/3.9 (dart:io)', '2025-10-19 20:55:42', '2025-10-19 20:55:42'),
+(589, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 21:00:09', '2025-10-19 21:00:09'),
+(590, 11, 'login', '10.143.133.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 21:00:09', '2025-10-19 21:00:09'),
+(591, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 21:33:05', '2025-10-19 21:33:05'),
+(592, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 21:33:05', '2025-10-19 21:33:05'),
+(593, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 22:24:01', '2025-10-19 22:24:01'),
+(594, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-19 22:24:01', '2025-10-19 22:24:01'),
+(595, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-21 16:57:15', '2025-10-21 16:57:15'),
+(596, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-21 16:57:15', '2025-10-21 16:57:15'),
+(597, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-21 17:00:24', '2025-10-21 17:00:24'),
+(598, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-21 17:00:24', '2025-10-21 17:00:24'),
+(599, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', '2025-10-21 18:29:18', '2025-10-21 18:29:18'),
+(600, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36', '2025-10-21 18:29:18', '2025-10-21 18:29:18'),
+(601, 20, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-21 18:44:52', '2025-10-21 18:44:52'),
+(602, 20, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-21 18:44:52', '2025-10-21 18:44:52'),
+(603, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:11:00', '2025-10-22 00:11:00'),
+(604, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:11:00', '2025-10-22 00:11:00'),
+(605, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:11:25', '2025-10-22 00:11:25'),
+(606, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:11:25', '2025-10-22 00:11:25'),
+(607, 20, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-22 00:17:29', '2025-10-22 00:17:29'),
+(608, 20, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-22 00:17:29', '2025-10-22 00:17:29'),
+(609, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:40:26', '2025-10-22 00:40:26'),
+(610, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:40:26', '2025-10-22 00:40:26'),
+(611, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:42:09', '2025-10-22 00:42:09'),
+(612, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:42:09', '2025-10-22 00:42:09'),
+(613, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:44:05', '2025-10-22 00:44:05'),
+(614, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:44:05', '2025-10-22 00:44:05'),
+(615, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:49:18', '2025-10-22 00:49:18'),
+(616, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:49:18', '2025-10-22 00:49:18'),
+(617, 14, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:55:34', '2025-10-22 00:55:34'),
+(618, 14, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:55:34', '2025-10-22 00:55:34'),
+(619, 21, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:56:59', '2025-10-22 00:56:59'),
+(620, 21, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:58:05', '2025-10-22 00:58:05'),
+(621, 21, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:58:05', '2025-10-22 00:58:05'),
+(622, 21, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:58:13', '2025-10-22 00:58:13'),
+(623, 21, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:58:13', '2025-10-22 00:58:13'),
+(624, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:59:29', '2025-10-22 00:59:29'),
+(625, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:59:36', '2025-10-22 00:59:36'),
+(626, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 00:59:36', '2025-10-22 00:59:36'),
+(627, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:04:03', '2025-10-22 01:04:03'),
+(628, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:04:03', '2025-10-22 01:04:03'),
+(629, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:04:30', '2025-10-22 01:04:30'),
+(630, 22, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:04:30', '2025-10-22 01:04:30'),
+(631, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:09:32', '2025-10-22 01:09:32'),
+(632, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:09:32', '2025-10-22 01:09:32'),
+(633, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:10:07', '2025-10-22 01:10:07'),
+(634, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:10:07', '2025-10-22 01:10:07'),
+(635, 23, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:12:14', '2025-10-22 01:12:14'),
+(636, 23, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:12:23', '2025-10-22 01:12:23'),
+(637, 23, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:12:23', '2025-10-22 01:12:23'),
+(638, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:20:28', '2025-10-22 01:20:28'),
+(639, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:20:28', '2025-10-22 01:20:28'),
+(640, 14, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:20:45', '2025-10-22 01:20:45'),
+(641, 14, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:20:45', '2025-10-22 01:20:45'),
+(642, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:31:50', '2025-10-22 01:31:50'),
+(643, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:31:50', '2025-10-22 01:31:50'),
+(644, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:32:36', '2025-10-22 01:32:36'),
+(645, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:32:36', '2025-10-22 01:32:36'),
+(646, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:32:50', '2025-10-22 01:32:50'),
+(647, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 01:32:50', '2025-10-22 01:32:50'),
+(648, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:41:52', '2025-10-22 08:41:52'),
+(649, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:41:52', '2025-10-22 08:41:52'),
+(650, 24, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:42:24', '2025-10-22 08:42:24'),
+(651, 24, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:43:07', '2025-10-22 08:43:07'),
+(652, 24, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:43:07', '2025-10-22 08:43:07'),
+(653, 24, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:43:50', '2025-10-22 08:43:50'),
+(654, 24, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-22 08:43:50', '2025-10-22 08:43:50'),
+(655, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 02:52:54', '2025-10-23 02:52:54'),
+(656, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 02:52:54', '2025-10-23 02:52:54'),
+(657, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 02:53:22', '2025-10-23 02:53:22'),
+(658, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 02:53:22', '2025-10-23 02:53:22'),
+(659, 20, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 03:10:41', '2025-10-23 03:10:41'),
+(660, 20, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 03:10:41', '2025-10-23 03:10:41'),
+(661, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 05:25:23', '2025-10-23 05:25:23'),
+(662, 13, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 05:25:23', '2025-10-23 05:25:23'),
+(663, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 05:27:42', '2025-10-23 05:27:42'),
+(664, 15, 'login', '10.178.156.214', 'Dart/3.9 (dart:io)', '2025-10-23 05:27:42', '2025-10-23 05:27:42'),
+(665, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 05:27:53', '2025-10-23 05:27:53'),
+(666, 11, 'login', '10.178.156.214', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-10-23 05:27:53', '2025-10-23 05:27:53'),
+(667, 16, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-26 07:59:05', '2025-10-26 07:59:05'),
+(668, 16, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-26 07:59:05', '2025-10-26 07:59:05'),
+(669, 15, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-26 07:59:17', '2025-10-26 07:59:17'),
+(670, 15, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-10-26 07:59:17', '2025-10-26 07:59:17'),
+(671, 11, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 01:55:05', '2025-11-07 01:55:05'),
+(672, 11, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 01:55:05', '2025-11-07 01:55:05'),
+(673, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 01:56:27', '2025-11-07 01:56:27'),
+(674, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 01:56:27', '2025-11-07 01:56:27'),
+(675, 11, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-11-07 01:56:41', '2025-11-07 01:56:41'),
+(676, 11, 'login', '192.168.100.13', 'Dart/3.9 (dart:io)', '2025-11-07 01:56:41', '2025-11-07 01:56:41'),
+(677, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 04:05:36', '2025-11-07 04:05:36'),
+(678, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 04:05:36', '2025-11-07 04:05:36'),
+(679, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:25:33', '2025-11-07 05:25:33'),
+(680, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:25:33', '2025-11-07 05:25:33'),
+(681, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:47:03', '2025-11-07 05:47:03'),
+(682, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:47:03', '2025-11-07 05:47:03');
 
 -- --------------------------------------------------------
 
@@ -461,13 +593,6 @@ CREATE TABLE `appointments` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `appointments`
---
-
-INSERT INTO `appointments` (`id`, `client_id`, `therapist_id`, `availability_id`, `appointment_time`, `duration_minutes`, `status`, `client_notes`, `therapist_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(23, 20, 15, 46, '2025-10-21 02:00:00', 60, 'pending_confirmation', 'eyJpdiI6IlBTR0VCWWlYdlJVSm5ERldoVlc1VVE9PSIsInZhbHVlIjoiM2h3anMyUzhPb3FMNkNUb01MSXBOQT09IiwibWFjIjoiODVhNWEwZGYzZDZhZTk5MzIxNDA4YWExMGZjYjNlZjdlMTM4NmZjMjg2YjkxYzZhNjA4YTgxOGRjMjE2MTI0ZSIsInRhZyI6IiJ9', NULL, '2025-10-19 04:56:08', '2025-10-19 04:56:33', NULL);
 
 -- --------------------------------------------------------
 
@@ -519,11 +644,25 @@ CREATE TABLE `chat_messages` (
   `conversation_id` bigint UNSIGNED NOT NULL,
   `sender_id` bigint UNSIGNED NOT NULL,
   `receiver_id` bigint UNSIGNED NOT NULL,
-  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'text',
+  `message` text COLLATE utf8mb4_unicode_ci,
+  `file_path` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `original_file_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `read_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `chat_messages`
+--
+
+INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `receiver_id`, `message_type`, `message`, `file_path`, `original_file_name`, `read_at`, `created_at`, `updated_at`) VALUES
+(165, 23, 20, 11, 'text', 'Halo, saya ingin memulai percakapan dengan Anda.', NULL, NULL, NULL, '2025-11-07 05:25:38', '2025-11-07 05:25:38'),
+(166, 23, 11, 20, 'text', 'hai', NULL, NULL, NULL, '2025-11-07 05:25:51', '2025-11-07 05:25:51'),
+(167, 23, 20, 11, 'text', 'halooo', NULL, NULL, NULL, '2025-11-07 05:25:59', '2025-11-07 05:25:59'),
+(170, 23, 11, 20, 'text', 'nerd.png', NULL, NULL, NULL, '2025-11-07 05:47:51', '2025-11-07 05:47:51'),
+(171, 23, 11, 20, 'text', 'nerd.png', NULL, NULL, NULL, '2025-11-07 05:58:40', '2025-11-07 05:58:40');
 
 -- --------------------------------------------------------
 
@@ -533,13 +672,24 @@ CREATE TABLE `chat_messages` (
 
 CREATE TABLE `conversations` (
   `id` bigint UNSIGNED NOT NULL,
+  `appointment_id` bigint UNSIGNED DEFAULT NULL,
   `user_one_id` bigint UNSIGNED NOT NULL,
   `user_two_id` bigint UNSIGNED NOT NULL,
   `status` enum('pending','accepted','rejected') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `session_status` enum('pending','accepted','rejected','active','ended') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',
+  `session_started_at` timestamp NULL DEFAULT NULL,
+  `session_duration_minutes` int DEFAULT NULL,
   `initiator_id` bigint UNSIGNED NOT NULL COMMENT 'The user who sent the first message request',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `conversations`
+--
+
+INSERT INTO `conversations` (`id`, `appointment_id`, `user_one_id`, `user_two_id`, `status`, `session_status`, `session_started_at`, `session_duration_minutes`, `initiator_id`, `created_at`, `updated_at`) VALUES
+(23, NULL, 11, 20, 'accepted', 'pending', NULL, NULL, 20, '2025-11-07 05:25:38', '2025-11-07 05:25:46');
 
 -- --------------------------------------------------------
 
@@ -582,7 +732,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (22, '2025_10_17_164440_modify_client_notes_to_encrypted_in_appointments_table', 15),
 (23, '2025_10_18_025846_add_pending_confirmation_to_appointments_status', 16),
 (24, '2025_10_18_110210_create_conversations_table', 17),
-(25, '2025_10_18_110211_add_conversation_id_to_chat_messages_table', 17);
+(25, '2025_10_18_110211_add_conversation_id_to_chat_messages_table', 17),
+(27, '2025_10_22_061459_add_session_fields_to_conversations_table', 18),
+(28, '2025_11_07_103734_add_file_fields_to_chat_messages_table', 19);
 
 -- --------------------------------------------------------
 
@@ -837,7 +989,7 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (276, 'App\\Models\\User', 11, 'auth_token', 'f741a483c064d8d30f0d8f87e897a5c370232f678c30f027f6acb1129f4bd7a9', '[\"*\"]', '2025-10-18 03:22:57', NULL, '2025-10-18 03:22:20', '2025-10-18 03:22:57'),
 (277, 'App\\Models\\User', 11, 'auth_token', '294071e9391b9e6a7321077991ed58b3a6b83f4270cf02217371b068218858a8', '[\"*\"]', '2025-10-18 03:31:54', NULL, '2025-10-18 03:30:49', '2025-10-18 03:31:54'),
 (278, 'App\\Models\\User', 15, 'auth_token', '9a10b8c8d255b02e798561229b2c087f101578432b9d8fbb54b399f85cd9a9bc', '[\"*\"]', '2025-10-18 03:34:07', NULL, '2025-10-18 03:31:04', '2025-10-18 03:34:07'),
-(279, 'App\\Models\\User', 11, 'auth_token', '0df475675b53b2b1a6c1257dfc260cb9854f9d6c907d869c478da9c622db6d9a', '[\"*\"]', '2025-10-19 04:57:56', NULL, '2025-10-18 03:34:55', '2025-10-19 04:57:56'),
+(279, 'App\\Models\\User', 11, 'auth_token', '0df475675b53b2b1a6c1257dfc260cb9854f9d6c907d869c478da9c622db6d9a', '[\"*\"]', '2025-10-19 18:39:04', NULL, '2025-10-18 03:34:55', '2025-10-19 18:39:04'),
 (280, 'App\\Models\\User', 11, 'auth_token', '8dbfd725b913593ef73d7b716a8c8d56a08a3cf21e9c38f0cc83540b0073e2f7', '[\"*\"]', '2025-10-18 03:38:26', NULL, '2025-10-18 03:38:26', '2025-10-18 03:38:26'),
 (281, 'App\\Models\\User', 15, 'auth_token', 'e86296df4d512eff2c1627ca9a8d095516b51c07f3113e32187710171d99da8e', '[\"*\"]', '2025-10-18 03:38:53', NULL, '2025-10-18 03:38:35', '2025-10-18 03:38:53'),
 (282, 'App\\Models\\User', 15, 'auth_token', '2087a4ba1e857a424090396f318a55bf10b3b7c79629ae66477c15d20723d467', '[\"*\"]', '2025-10-18 03:42:04', NULL, '2025-10-18 03:42:03', '2025-10-18 03:42:04'),
@@ -857,7 +1009,76 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (296, 'App\\Models\\User', 20, 'auth_token', 'e0edfc895c09f51a5cf8a16ef8265e732025e3296967f87de9a33d4efecef919', '[\"*\"]', '2025-10-18 05:10:46', NULL, '2025-10-18 05:10:32', '2025-10-18 05:10:46'),
 (297, 'App\\Models\\User', 20, 'auth_token', '672599e637779422b20ed250eaad4c9e977d5c42cf816febe0952569e3e3581f', '[\"*\"]', '2025-10-19 04:52:48', NULL, '2025-10-18 05:10:53', '2025-10-19 04:52:48'),
 (298, 'App\\Models\\User', 15, 'auth_token', '36acb069ae689c07d67c4674369fa45ebc6cee6d745bb137fbb82742fceb7b2a', '[\"*\"]', NULL, NULL, '2025-10-19 00:51:56', '2025-10-19 00:51:56'),
-(299, 'App\\Models\\User', 20, 'auth_token', '6a8ff58a467a32be6ef7d7217b65e4332a190bf240338774271682294d841dbb', '[\"*\"]', '2025-10-19 04:58:02', NULL, '2025-10-19 04:53:15', '2025-10-19 04:58:02');
+(299, 'App\\Models\\User', 20, 'auth_token', '6a8ff58a467a32be6ef7d7217b65e4332a190bf240338774271682294d841dbb', '[\"*\"]', '2025-10-19 20:07:41', NULL, '2025-10-19 04:53:15', '2025-10-19 20:07:41'),
+(300, 'App\\Models\\User', 20, 'auth_token', 'a8b065ac6643af1da2fa69c54b3cae5caf125dec87d51669d4bff6866ddfe31f', '[\"*\"]', '2025-10-19 18:45:33', NULL, '2025-10-19 18:35:59', '2025-10-19 18:45:33'),
+(301, 'App\\Models\\User', 20, 'auth_token', '5721f713b21019a432b26f086b17cb50aba65fdcff982e28464e17a67455abe9', '[\"*\"]', '2025-10-19 18:54:21', NULL, '2025-10-19 18:46:47', '2025-10-19 18:54:21'),
+(302, 'App\\Models\\User', 20, 'auth_token', '67ac3a022e4c51c6b5e30a26f78317afab1682af31c61a8a295d1a73107ed91c', '[\"*\"]', '2025-10-19 18:58:18', NULL, '2025-10-19 18:55:06', '2025-10-19 18:58:18'),
+(303, 'App\\Models\\User', 20, 'auth_token', '6e249e482f0335675b633d233a8ab2df23be9eebd18e035772b01d787214cf5c', '[\"*\"]', '2025-10-19 19:03:03', NULL, '2025-10-19 18:59:27', '2025-10-19 19:03:03'),
+(304, 'App\\Models\\User', 20, 'auth_token', 'bdade24b1477045430ed7c14546c17444313786b722904720c42f5ae1e6c4081', '[\"*\"]', '2025-10-19 19:15:19', NULL, '2025-10-19 19:03:59', '2025-10-19 19:15:19');
+INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
+(305, 'App\\Models\\User', 20, 'auth_token', '132d96be1c0311c118b4267c5905fc800cf6b700ade8a6416ccb61cbf316ca60', '[\"*\"]', '2025-10-19 19:31:25', NULL, '2025-10-19 19:24:00', '2025-10-19 19:31:25'),
+(306, 'App\\Models\\User', 20, 'auth_token', '2d609f93cb79f1e717da3175674d144cb0a0d8e7a5f59bd7f21b01b90761b66f', '[\"*\"]', NULL, NULL, '2025-10-19 19:55:58', '2025-10-19 19:55:58'),
+(307, 'App\\Models\\User', 20, 'auth_token', 'd84d4179225a1f6a0e3489f0e952835c3451db2294d0c64e72a7ca77f3aaca5a', '[\"*\"]', NULL, NULL, '2025-10-19 19:56:00', '2025-10-19 19:56:00'),
+(308, 'App\\Models\\User', 20, 'auth_token', '19ebe78a442e910de388e558473fbeac90ddbcca31cb7afb41174503f3fc2548', '[\"*\"]', NULL, NULL, '2025-10-19 19:56:28', '2025-10-19 19:56:28'),
+(309, 'App\\Models\\User', 20, 'auth_token', 'adb4824c0866808ed7a9ab2f68c113b918fc36a73ec9e8dd5429611125d72a89', '[\"*\"]', NULL, NULL, '2025-10-19 19:56:32', '2025-10-19 19:56:32'),
+(310, 'App\\Models\\User', 15, 'auth_token', '51d49e6dedb00c2a1ca300d95d56e736351348c6b90f1674747ab22d40fdfb5c', '[\"*\"]', '2025-10-19 20:09:16', NULL, '2025-10-19 20:07:49', '2025-10-19 20:09:16'),
+(311, 'App\\Models\\User', 20, 'auth_token', '83470456716f443e89f25ea46bc018f70bccbc41ca22558199f7d2aab47c0c16', '[\"*\"]', '2025-10-19 20:12:30', NULL, '2025-10-19 20:09:28', '2025-10-19 20:12:30'),
+(312, 'App\\Models\\User', 11, 'auth_token', '7646cafd0d9b5faa03f807addc50a188b18b67d677f1381958aa0307be3742c8', '[\"*\"]', '2025-10-19 20:10:19', NULL, '2025-10-19 20:10:18', '2025-10-19 20:10:19'),
+(313, 'App\\Models\\User', 11, 'auth_token', 'efa0ec43299c229e98d0fe1146d82c6cc10b9bf2a80bfc27e1481b483e2b4749', '[\"*\"]', '2025-10-19 20:55:19', NULL, '2025-10-19 20:10:34', '2025-10-19 20:55:19'),
+(314, 'App\\Models\\User', 15, 'auth_token', '282796d223551da704484dc2f9300b945c80720bc78da559f8be7d03fd49a1a2', '[\"*\"]', '2025-10-21 17:00:11', NULL, '2025-10-19 20:12:53', '2025-10-21 17:00:11'),
+(315, 'App\\Models\\User', 15, 'auth_token', '6cf07f8651af0d054184772e6a78d525b77c14d5e839a987bbac30a273a4c3a4', '[\"*\"]', '2025-10-19 20:28:00', NULL, '2025-10-19 20:27:13', '2025-10-19 20:28:00'),
+(316, 'App\\Models\\User', 11, 'auth_token', 'e3c0cfc195e10a9c2d4981d9d400b55a0cd74aa45e2e9438526c480edf1a4e0c', '[\"*\"]', '2025-10-19 20:43:21', NULL, '2025-10-19 20:41:50', '2025-10-19 20:43:21'),
+(317, 'App\\Models\\User', 11, 'auth_token', '5785b958f460f1f9aa4e8980533bd5619203f4ba3befe3fdc6aa020eb25203f0', '[\"*\"]', '2025-10-19 20:50:56', NULL, '2025-10-19 20:48:29', '2025-10-19 20:50:56'),
+(318, 'App\\Models\\User', 20, 'auth_token', 'c82a03b7d681f9ffb3b137003ee3cb9219cf99b1a470275f983f5557b6e2f1fc', '[\"*\"]', '2025-10-23 05:31:26', NULL, '2025-10-19 20:55:42', '2025-10-23 05:31:26'),
+(319, 'App\\Models\\User', 11, 'auth_token', 'c9131ebe2e1ba3578dc28f51152cdf95d79b05e2aa40a12a45fca8776f3c9d70', '[\"*\"]', '2025-10-19 21:13:52', NULL, '2025-10-19 21:00:09', '2025-10-19 21:13:52'),
+(320, 'App\\Models\\User', 11, 'auth_token', 'ae0830d442ae10dd7cad575b92d55dcedcd2f0fc96f8410a2982e71e1f25cf41', '[\"*\"]', '2025-10-19 21:34:37', NULL, '2025-10-19 21:33:05', '2025-10-19 21:34:37'),
+(321, 'App\\Models\\User', 11, 'auth_token', '0e2af47d5209898675846e3c0ea3707364c51ae52bf84825c456134cd9013de7', '[\"*\"]', '2025-10-19 22:24:46', NULL, '2025-10-19 22:24:01', '2025-10-19 22:24:46'),
+(322, 'App\\Models\\User', 11, 'auth_token', '4ad3feff20b03bb6c53312c50db2aa5fe687c3443aacb36586b52b908628a72d', '[\"*\"]', '2025-10-21 17:02:13', NULL, '2025-10-21 16:57:15', '2025-10-21 17:02:13'),
+(323, 'App\\Models\\User', 15, 'auth_token', '08c84872d93189f3fe603b5ed720a8d0c80c65f0c48ca793de4b79575ad01926', '[\"*\"]', '2025-10-22 09:00:44', NULL, '2025-10-21 17:00:24', '2025-10-22 09:00:44'),
+(324, 'App\\Models\\User', 13, 'auth_token', 'b8585fe655903ca70703c3ba9120e1894d64cd2e48a2ce59511e00e74933a4ae', '[\"*\"]', NULL, NULL, '2025-10-21 18:29:18', '2025-10-21 18:29:18'),
+(325, 'App\\Models\\User', 20, 'auth_token', '90e85f8b21373a36bf6d28683d9fbcc48d562a00ec15306b8a2a793206a69008', '[\"*\"]', '2025-10-21 18:45:01', NULL, '2025-10-21 18:44:52', '2025-10-21 18:45:01'),
+(326, 'App\\Models\\User', 11, 'auth_token', 'add36072905390172bc50721424b6e29c43ef85d1a6a37b8ae4ea75f66fe11b3', '[\"*\"]', '2025-10-22 00:11:03', NULL, '2025-10-22 00:11:00', '2025-10-22 00:11:03'),
+(327, 'App\\Models\\User', 11, 'auth_token', '08b26e8a5374d2bbe1db5dce4f44a999158c677db06d75f20eef2e0eb8b26744', '[\"*\"]', '2025-10-22 08:59:37', NULL, '2025-10-22 00:11:25', '2025-10-22 08:59:37'),
+(328, 'App\\Models\\User', 20, 'auth_token', '1eb48ed7114b35f55db404e5d68d603144c8ab005d4c5c9f2f2b9b6a23756127', '[\"*\"]', '2025-10-23 02:51:04', NULL, '2025-10-22 00:17:29', '2025-10-23 02:51:04'),
+(329, 'App\\Models\\User', 13, 'auth_token', 'ce579a700bac2d1adfc1c0491d55ca5947f9f94a7a2f998116dd834366a4713a', '[\"*\"]', NULL, NULL, '2025-10-22 00:40:26', '2025-10-22 00:40:26'),
+(330, 'App\\Models\\User', 13, 'auth_token', '8e2c5e4632880176d9670b9301fce5915d0e032f9b2d529c569b0742e0d8e61f', '[\"*\"]', NULL, NULL, '2025-10-22 00:42:09', '2025-10-22 00:42:09'),
+(331, 'App\\Models\\User', 13, 'auth_token', '1b786842933af7ead87006b72137ad432128e04c28d03c4dd96c895c69847e03', '[\"*\"]', NULL, NULL, '2025-10-22 00:44:05', '2025-10-22 00:44:05'),
+(332, 'App\\Models\\User', 13, 'auth_token', '624de019acd30dc725780b5b20431cf4e685eda2997a17129cc02a7360bdb5cb', '[\"*\"]', '2025-10-22 00:50:38', NULL, '2025-10-22 00:49:18', '2025-10-22 00:50:38'),
+(333, 'App\\Models\\User', 14, 'auth_token', 'e3bfee506266b93d0a4c33b8874b904c7c18c77f212751b4d42a671932905c3f', '[\"*\"]', NULL, NULL, '2025-10-22 00:55:34', '2025-10-22 00:55:34'),
+(334, 'App\\Models\\User', 21, 'auth_token', 'b1b33c60fdcb8babc3a52bf4a8beea55ad8209cc7c611cc32d9a827c4b9d4473', '[\"*\"]', NULL, NULL, '2025-10-22 00:56:59', '2025-10-22 00:56:59'),
+(335, 'App\\Models\\User', 21, 'auth_token', '1d4b9d01603cbc640643da8a70ed9ff1b9499abf081e45089f7a66764f953050', '[\"*\"]', NULL, NULL, '2025-10-22 00:58:05', '2025-10-22 00:58:05'),
+(336, 'App\\Models\\User', 21, 'auth_token', '16e2c0e43bf61fc39f98b21be0248c949fa373c3459d47d5cc3eda342fb83032', '[\"*\"]', NULL, NULL, '2025-10-22 00:58:13', '2025-10-22 00:58:13'),
+(337, 'App\\Models\\User', 22, 'auth_token', '015bb06a4f7c3963c4ba445320a629fa686a1e838853c077dbaf0cf28cdb2e23', '[\"*\"]', NULL, NULL, '2025-10-22 00:59:29', '2025-10-22 00:59:29'),
+(338, 'App\\Models\\User', 22, 'auth_token', '3b50d31fb58841d317a6a60ca0a879258d50813efb7f7d1253a35cddcd189609', '[\"*\"]', NULL, NULL, '2025-10-22 00:59:36', '2025-10-22 00:59:36'),
+(339, 'App\\Models\\User', 22, 'auth_token', '95f04c1677a8a9faefd2de425c92ad30574c2c5ff9debc15d84fa1eedf16bf2a', '[\"*\"]', NULL, NULL, '2025-10-22 01:04:03', '2025-10-22 01:04:03'),
+(340, 'App\\Models\\User', 22, 'auth_token', 'f41a6bb7eb353a55763ad576b0c61d63f76529e74acfbe495437e05b69856ce6', '[\"*\"]', NULL, NULL, '2025-10-22 01:04:30', '2025-10-22 01:04:30'),
+(341, 'App\\Models\\User', 13, 'auth_token', '7150ae30436e0c49de5e45e969868e9a1d151e3994bd5cf7264cbfb031ffa570', '[\"*\"]', NULL, NULL, '2025-10-22 01:09:32', '2025-10-22 01:09:32'),
+(342, 'App\\Models\\User', 13, 'auth_token', 'a48a35c0bddbc0ef8038e80bf87c9ccafb0232fbb064d72a941e898f64c35b92', '[\"*\"]', NULL, NULL, '2025-10-22 01:10:07', '2025-10-22 01:10:07'),
+(343, 'App\\Models\\User', 23, 'auth_token', '5fc928ce3372fbce6545527ce5f02adebe16334e7af9ba48895f4ee6384660e8', '[\"*\"]', NULL, NULL, '2025-10-22 01:12:14', '2025-10-22 01:12:14'),
+(344, 'App\\Models\\User', 23, 'auth_token', '3865a1ea70b91c278cc2cc0947bd17465e2154e40844bad6ebd0961bb0049501', '[\"*\"]', NULL, NULL, '2025-10-22 01:12:23', '2025-10-22 01:12:23'),
+(345, 'App\\Models\\User', 13, 'auth_token', '83f4c5341cce124582cbee2cbc77dda44edda5c9fb2a31c61d0b9675d14b0fa6', '[\"*\"]', NULL, NULL, '2025-10-22 01:20:28', '2025-10-22 01:20:28'),
+(346, 'App\\Models\\User', 14, 'auth_token', '70c1129e3f708531289177a8cb858473cc75be8182e8128bc12789550e57be60', '[\"*\"]', NULL, NULL, '2025-10-22 01:20:45', '2025-10-22 01:20:45'),
+(347, 'App\\Models\\User', 13, 'auth_token', 'c94aad80900f2817c6f9173d6d1640dafb68a52a368a4c133055d2511b3437c3', '[\"*\"]', NULL, NULL, '2025-10-22 01:31:50', '2025-10-22 01:31:50'),
+(348, 'App\\Models\\User', 13, 'auth_token', 'd5b425470c093bc7e58dc20a2b3eccdfd4004e6e2a11ade174edf158b30c7ac4', '[\"*\"]', NULL, NULL, '2025-10-22 01:32:36', '2025-10-22 01:32:36'),
+(349, 'App\\Models\\User', 13, 'auth_token', '3c0a59c500a96ba5a22165e6d822c962055413bd31c3c65d2e42fbae7a317a63', '[\"*\"]', NULL, NULL, '2025-10-22 01:32:50', '2025-10-22 01:32:50'),
+(350, 'App\\Models\\User', 13, 'auth_token', 'bdb3b955caaecca5a249f3eb7a486e757e9fcd1984518620244476120719b76a', '[\"*\"]', NULL, NULL, '2025-10-22 08:41:52', '2025-10-22 08:41:52'),
+(351, 'App\\Models\\User', 24, 'auth_token', '561111836a82774ab564a6c3d64777e7a96acdcc3342eddaa1eab39731872c65', '[\"*\"]', NULL, NULL, '2025-10-22 08:42:24', '2025-10-22 08:42:24'),
+(352, 'App\\Models\\User', 24, 'auth_token', 'dfbefec9633b2f2bbc7cce76f7835f2594e5351c1ea06fa605d294c52262e915', '[\"*\"]', NULL, NULL, '2025-10-22 08:43:07', '2025-10-22 08:43:07'),
+(353, 'App\\Models\\User', 24, 'auth_token', 'db053a6db560ce1e1747b8f5070f565999f0dc63966cdad2fed5342c0e7dbc8f', '[\"*\"]', '2025-10-22 08:44:50', NULL, '2025-10-22 08:43:50', '2025-10-22 08:44:50'),
+(354, 'App\\Models\\User', 11, 'auth_token', 'd6b81067f354892dabd7795ff6647077ba14acbc748f7af61af3ffc4a6ac524b', '[\"*\"]', '2025-10-23 03:23:08', NULL, '2025-10-23 02:52:54', '2025-10-23 03:23:08'),
+(355, 'App\\Models\\User', 15, 'auth_token', 'd09dd6e4a97c647eaa8da1014a0f235a874719bd46814af5dded5a9a1fdfc0cd', '[\"*\"]', '2025-10-23 03:20:49', NULL, '2025-10-23 02:53:22', '2025-10-23 03:20:49'),
+(356, 'App\\Models\\User', 20, 'auth_token', 'a0a11dc3a7c5aa7e7cb4a388b2e68e3331da14583b91f2494cc9589062f45957', '[\"*\"]', '2025-10-23 05:25:02', NULL, '2025-10-23 03:10:41', '2025-10-23 05:25:02'),
+(357, 'App\\Models\\User', 13, 'auth_token', 'edff48afc9f2f62779bedaea4ca522dc40f971069dc57d5e810ee3f66e8afc3d', '[\"*\"]', NULL, NULL, '2025-10-23 05:25:23', '2025-10-23 05:25:23'),
+(358, 'App\\Models\\User', 15, 'auth_token', '3b69cf141c91b391a927a155a54d8986169108f27ae3595b169d9e8d57695437', '[\"*\"]', '2025-10-26 07:58:55', NULL, '2025-10-23 05:27:42', '2025-10-26 07:58:55'),
+(359, 'App\\Models\\User', 11, 'auth_token', '6088bbaec7f08633986176798907e88e30a07f9ba3fda2ec6aa55bc5fc7f175d', '[\"*\"]', '2025-10-23 05:34:10', NULL, '2025-10-23 05:27:53', '2025-10-23 05:34:10'),
+(360, 'App\\Models\\User', 16, 'auth_token', '86f8ddb5ac360eb286b6c9d54e069c03b3eaf1c6edd061f0bcd45e9ff66e1eb9', '[\"*\"]', '2025-10-26 07:59:06', NULL, '2025-10-26 07:59:05', '2025-10-26 07:59:06'),
+(361, 'App\\Models\\User', 15, 'auth_token', '67c1c4bed1ecb520889e3e5deeb948c500c2abb35378748e790c1e6e48155399', '[\"*\"]', '2025-11-07 01:56:13', NULL, '2025-10-26 07:59:17', '2025-11-07 01:56:13'),
+(362, 'App\\Models\\User', 11, 'auth_token', '243bc6a8a80ef72db7ca90f3ae2c6b7247812adbe501c1dc5973e17ac029def3', '[\"*\"]', '2025-11-07 01:56:08', NULL, '2025-11-07 01:55:05', '2025-11-07 01:56:08'),
+(363, 'App\\Models\\User', 15, 'auth_token', '6b06e317771189320ec05ab8daf8b1bfb1e5703a1cf3bb0c2e0e6f65d113f26b', '[\"*\"]', '2025-11-07 03:35:22', NULL, '2025-11-07 01:56:27', '2025-11-07 03:35:22'),
+(364, 'App\\Models\\User', 11, 'auth_token', '2713f5cc149b608c6f09ba6c7568a9c0e632ea3b1d51f07a8ef4a071bd6a56d9', '[\"*\"]', '2025-11-07 05:58:40', NULL, '2025-11-07 01:56:41', '2025-11-07 05:58:40'),
+(365, 'App\\Models\\User', 15, 'auth_token', '921a6b1bf4827ec3593a791bcf66865bb9d6d00726b13712f6f19a2d8a4eeea2', '[\"*\"]', '2025-11-07 05:25:01', NULL, '2025-11-07 04:05:36', '2025-11-07 05:25:01'),
+(366, 'App\\Models\\User', 20, 'auth_token', 'b12fa90e0532ec6ab682e337264bb9c5b2e5c4e100bbd85443f354328dd2d200', '[\"*\"]', '2025-11-07 05:25:59', NULL, '2025-11-07 05:25:33', '2025-11-07 05:25:59'),
+(367, 'App\\Models\\User', 20, 'auth_token', 'ec4f0366ed6fe1913826096759cad3e018b66f1733657f9a3188598d1e3a03b3', '[\"*\"]', '2025-11-07 05:58:35', NULL, '2025-11-07 05:47:03', '2025-11-07 05:58:35');
 
 -- --------------------------------------------------------
 
@@ -896,31 +1117,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('0nh5svYbB9bkMFxd66IEWMxC1QgNZphV7WCTss1n', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiWjA1UWh1QlgwUEJ3UzJ3WWlOYjNpbk9GNzVsc05DSEdOOFRhSUp3SyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760855625),
-('2OA41BOkgX0rIp82vz1J6qKCXZHROy2ewl9QkSGh', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiOXJPYjVOajN3bEp6WUhETDRxVGI5SU1RMnY4anpTbmxMZjNDV3FpMyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760865167),
-('3SnvRGNiDNt45U0Nb0alDSMre9mO39vrBhM0jQUh', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibmtxM1Z3TzFmWWhmMGNKZmVSenNNODhKZVFWNWVHaFR5cVFiZ0NKYyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760864646),
-('64bnxCsvxf5fu69zaQ5aM9AOzUb3Zxki0qiJgU1C', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiSlg1dzJvQTVQYnJVUll0VXVWanlaWnJSbEc5akx6aXQ5YlNwcUxLeCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760855276),
-('BYCuLG3Up7owp38dfsgvHQhyjutql3gmHXytotkG', 11, '192.168.100.7', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiblowR3JtY1pkS05sb1JQaTA1WnJsYk1iU3lnWmg3ajR1M3BkR3RCMCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760854884),
-('C1NjnLAzpTPM6RjCe8U3wS1iSBIy5nbY1TA2xX6j', 11, '192.168.100.7', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoicllmdjRWVDlPSE5LRTg0UkNYYUhmQ3dTNEhxWVZZd3JQTUM2R2FteCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760865756),
-('DhqsZOtQmRO2pSsKXnlqcaQ3tJe8t4VyD4TNRzz7', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiVWtMZFhMeWh1OElDbWJqNVVjT1FGZkJ1YXZmVjd0UEdtOWZPeGo3bCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760849906),
-('DrRLUDkCJ9YU1AtbE7rM8cJzOOrOIyFZ6vfXwXfS', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoib2FmbWs3clRyejZWR0lNa3V3TzN2YWlGa0E3MEVxUW11ZDQzbTlLRyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760854870),
-('DznFTtMgIS4D8vik3Oodry0oftltwtXzLeUMqM4p', 11, '192.168.100.7', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiQTUxcFowWXNsMnBqWXdDcURtbnJoUDhEN3doMmROZklNeFlrd3diYyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760855330),
-('enD596WJziG1VZbJkbjtSNlXbDHTrvlxby3vDV3H', NULL, '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidEpINzhhU0x6Y3QyNFliR1hvbm5KZDhoWWxZNWRiZXFCVXV4TWdSMiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMzo4MDAwL3BheW1lbnQvZmluaXNoIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1760874997),
-('EpL203F7xN0a7a0DEAABvjO4NG9Fn1dz8tQ2eWPk', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiTHM2ckFxRDhWendoVVpCQWpLeEptQWpJWW9oN1VxTVNmcFpoVkFKYyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760852867),
-('g8YPiTXH6IZ2WbrrhQnhgpaqTteBXn3bsKyhEZMp', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiREU3MEZNZ1BFRHlSTHVaUEV2dmp3czA4alJFU0tiSFZaa09sMU5CSyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760865377),
-('ihe13RDNZGcGCiVYPDPUSSGI8mZX1PTMulHhhihF', 11, '192.168.100.7', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiVWpvWHVFUk1lZVlNblZBNXh6bFhLWm41Z09GNzd4NjRVcVRpaDN4TyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760864973),
-('K9nh9naxcB3vZzCHuQh3GJ0V0jy04TdOpBdXTxSY', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiZ0syOHRqTTlwQk81WE1MZ3cxUzdpdWdYSHRqTVBaemUwcFR3azNYdSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760852300),
-('l6OzF84AkVJtjjrZ6Qq6pnU38RHeLHVCZDuOi0vt', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiaTFzZzRndUpnMTQ3dmlHWE1IVkhQSmZ1UWpkWUpMbFY4WUtCSG5DNSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760865745),
-('N3hSfwu5UzQTeWwHAtPNwxt6LQruXAHPwYoKxWsZ', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiMGZyTUIwNmdrQkpkSUl0N0p4WnJKd0V3cTRWeVNjWk1HTkdPSUZybyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760864760),
-('oVRJrpPbiikUAZSnZk9cjMDasY8qYyCSmpwZqoIV', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiOTloOUd0Q3M1aVJBWkVuYjhLVjB0Yk0wM29nMjk0QUFkaU9TaEhkWiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760856138),
-('pSkhDIjxXoDASlSaRtukbWyvkyrVEDEGhrko130H', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiYTVQRkxsRXk0OHhlanVTT1h4Y0NmZ25wRE4wd08zWW9RRFR6TXZvcCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760849084),
-('q2eDRrywXR4zuvgi0Osu1x2gBwisig9rXxmHF7E0', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiclZWTWZlOVVWN3J6YUFsQUZYaWZSOGxKMnBtR2ZBVTRJS1pIV2pHOCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760853356),
-('QDVEPQFtfEUsIlbtRVcjJLtFtNmiKSUHPsiNKTk0', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiYm9JYjdDWlpqZUtGMUNKM3RScFI3dEdvVlJ5c0wyOUk4MHdFT3RQdyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760850488),
-('SSKLFRnAvI6XrKEVybp15mSo1wL5jXSTWkMK5P1r', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiTGtRUmx1MGhqTDdzY3dGOU13eW9Nc3lGYWlobGdpeHRTdmFkMHIwQyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760856280),
-('Syji41uEhQjmRgNk3Z4B2oaO08hpwkpyhKeSkTEM', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoiVnVlejN4MXN3eDRBM20xdk1qbjQwYkhQRzRlTnc2ZFVIdUNBU3R4RyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760856683),
-('uGJ9trV51T06k87XgA0zI0wDxrdbAOwpVv8A7rhv', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoid3NHR0JhbFdvUEVMcEs2eDVqMUg3b2hGSm8yWmd2eGNrQXp1MGpjViI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760849566),
-('vQqWwRoRVx1hx7LDOY0fM0WC4LA0nUpVSwBd0E1E', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoia05rWmh4Q3JNSzEzV0JwQ1NFelcyQjI5S0VzbHl1UkxCN1ZTTTZZYiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760848910),
-('ypMNwUzN9Fo1tgUsZHV7hctObqS3OMYamfNHoGow', 20, '192.168.100.13', 'Dart/3.9 (dart:io)', 'YToyOntzOjY6Il90b2tlbiI7czo0MDoibDFLdnJHd0d4V0ZpeXNqSmYzSTlOWlgxMDZ5ajR3bjQ1QzVpVmFlMiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJuZXciO2E6MDp7fXM6Mzoib2xkIjthOjA6e319fQ==', 1760855445);
+('XMDehI4mRY7f5Q710UV5r7dTtxQxrzWpVrGisDqS', NULL, '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNW1laFlYUDg5MEQzQURqVzdBdDNZZWVXYTdOVnhxOHAzQ3RLcmdYbiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTI6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMzo4MDAwL21pZHRyYW5zL2NoZWNrb3V0P3NuYXBfdG9rZW49ZTE1YjQ1OWUtYjYwZC00Y2FiLTg0ZjktOTZlMDJhYjdkZGJjIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1762493112);
 
 -- --------------------------------------------------------
 
@@ -960,17 +1157,17 @@ INSERT INTO `therapist_availabilities` (`id`, `user_id`, `day_of_week`, `start_t
 (41, 17, 5, '09:00:00', '15:00:00', '2025-10-12 23:09:13', '2025-10-12 23:09:13'),
 (42, 17, 6, '09:00:00', '15:00:00', '2025-10-12 23:09:13', '2025-10-12 23:09:13'),
 (43, 17, 7, '09:00:00', '15:00:00', '2025-10-12 23:09:13', '2025-10-12 23:09:13'),
-(44, 15, 1, '09:00:00', '12:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(45, 15, 1, '13:00:00', '16:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(46, 15, 2, '09:00:00', '12:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(47, 15, 2, '13:00:00', '16:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(48, 15, 3, '09:00:00', '12:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(49, 15, 3, '13:00:00', '16:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(50, 15, 4, '09:00:00', '12:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(51, 15, 4, '13:00:00', '16:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(52, 15, 5, '09:00:00', '11:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(53, 15, 5, '14:00:00', '15:00:00', '2025-10-15 02:08:07', '2025-10-15 02:08:07'),
-(54, 19, 1, '09:00:00', '12:00:00', '2025-10-15 02:10:32', '2025-10-15 02:10:32');
+(54, 19, 1, '09:00:00', '12:00:00', '2025-10-15 02:10:32', '2025-10-15 02:10:32'),
+(55, 15, 1, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(56, 15, 1, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(57, 15, 2, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(58, 15, 2, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(59, 15, 3, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(60, 15, 3, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(61, 15, 4, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(62, 15, 4, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(63, 15, 5, '09:00:00', '11:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
+(64, 15, 5, '14:00:00', '15:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22');
 
 -- --------------------------------------------------------
 
@@ -1018,13 +1215,6 @@ CREATE TABLE `transactions` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `transactions`
---
-
-INSERT INTO `transactions` (`id`, `appointment_id`, `user_id`, `amount`, `status`, `payment_gateway_id`, `created_at`, `updated_at`) VALUES
-(17, 23, 20, '350000.00', 'paid', 'MINDSPACE-23-1760874968742', '2025-10-19 04:56:09', '2025-10-19 04:56:33');
-
 -- --------------------------------------------------------
 
 --
@@ -1057,13 +1247,17 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`, `full_name`, `email`, `email_verified_at`, `created_at`, `updated_at`, `birth_date`, `gender`, `phone_number`, `password`, `flyer`, `category`, `role`, `remember_token`, `profile_picture`) VALUES
 (11, 'castreld', 'Firaas Raihansyah Rizqullah', 'hulukotak@gmail.com', NULL, '2025-10-12 22:09:03', '2025-10-18 03:22:44', 'eyJpdiI6IkREUEpSRkpJSnVOZHVXRWhxeEdDQVE9PSIsInZhbHVlIjoiMVhNa1lpOEl1eFZicmtkK1NDQXArQT09IiwibWFjIjoiOWJmMWFiMGY4ZjZjMGMxYmFlNGYyMDY0MjNlNGY1MGQ4NTMxNWE3MTE1Njg5ODc0NzJjZTM4MTEyYjNiYzA5MSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IjVPR3Q3Y2FWRE1iTWRzL29yVEhmMkE9PSIsInZhbHVlIjoiSFJFYU0vQmdiUTB4M0FMVkJTdkpJQT09IiwibWFjIjoiNTQ5OGM2MmU1MjE5MWEzYmNiMDgyNGQzNzM3ODY1OGNmNTg2NWM2MWM1N2M4ZmRhYTBhNDgxNDZmZWZkYzA2MiIsInRhZyI6IiJ9', '$2y$12$FjZFkT.6hiIVCB9ikaDWwe.lDT6sPJVLwYxDoJc4p/YxL4tKYH4Fi', 'no', 'Umum', 'klien', NULL, 'storage/profilepictures/1760782964_11.jpg'),
 (12, 'wanitauser', 'Wanita User', 'wanitauser@gmail.com', NULL, '2025-10-12 22:10:17', '2025-10-12 22:10:17', 'eyJpdiI6IlpSa0J5bVJpSVlRVTBBRU91WXR2dlE9PSIsInZhbHVlIjoiVU5wZHltR20zNzdiOHNrN3daZlhOUT09IiwibWFjIjoiODMyZTI1ZGY2NjNjYjQ0ZjI4YjFjMjU3MmI1NmQyYjcwYTVhYjQ0ODFiMWZjZDRjNGZiZWRlMGE4MTMzNGZmZCIsInRhZyI6IiJ9', 'wanita', 'eyJpdiI6Ik9CNHhuaGUzS3JtWUwrRERRM3RqcHc9PSIsInZhbHVlIjoiY1pWazFaTjA4d0hMUTVEMkFyKzJIUT09IiwibWFjIjoiODZiYTFjNmQzOGU1MWNhZDhmYTk5YzY1ZGNjZDVhY2IzODJkYTJmOGUwMjZlNGEwMmIwNjQ4MTg4NGVjNDJmZCIsInRhZyI6IiJ9', '$2y$12$zeAXVuRiaHWAGSu9HhEiTe0T2YzmqynteSE6UOzvtQGq1jiWmdaBK', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/woman_placeholder.png'),
-(13, 'priauser', 'Pria User', 'priauser@gmail.com', NULL, '2025-10-12 22:11:03', '2025-10-12 22:11:03', 'eyJpdiI6ImwrZ3J0UmFZODhBNm5KWHJyQ0NwaXc9PSIsInZhbHVlIjoidHFBOWMwem5IcTYyOEcwM1d3UGtGZz09IiwibWFjIjoiOWM3NzI4M2NhZTMxYjAxYTgzZjRhZGVmMTM1MWU2YzVmMDU1YjU0OWM4ZGEyOTFjMGVlOGE0OTcxYzkzZjk4OCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IklPQmQvdFNsY0EyRmdNL2dIT1VoM2c9PSIsInZhbHVlIjoiY1FpaUFWWTREUzdhWWdoYnJoM0ltUT09IiwibWFjIjoiNTgyMzVjYjFlZDJhODZhNjFkMzBiMWEwN2MwMGYyNmM4ODdhZmZkOTE2M2IxMWM5YmY2MmE0ZGM1OTRmMDE3YiIsInRhZyI6IiJ9', '$2y$12$MYcJoSRM8ax2zMOVZOtBiOP7gHKSueFLNt2/s9fXMTwTySTXAe7c2', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/man_placeholder.png'),
+(13, 'priauser', 'Pria User', 'priauser@gmail.com', NULL, '2025-10-12 22:11:03', '2025-10-22 00:50:39', 'eyJpdiI6IjBDbTNnQkhJRHI5R0prVm0xVk90UUE9PSIsInZhbHVlIjoiQ1V2NWZBaEtvYWM2Ry9SUVpHTHhUZz09IiwibWFjIjoiOGFjNDljNmE1MjZmMzVkYjA1YzA5NjgyZjZmYmMwYjNiZjRhNTNlYTJmNmVhOTY4ZDM5ZGZiYzRiNGFlNDA2MCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IklPQmQvdFNsY0EyRmdNL2dIT1VoM2c9PSIsInZhbHVlIjoiY1FpaUFWWTREUzdhWWdoYnJoM0ltUT09IiwibWFjIjoiNTgyMzVjYjFlZDJhODZhNjFkMzBiMWEwN2MwMGYyNmM4ODdhZmZkOTE2M2IxMWM5YmY2MmE0ZGM1OTRmMDE3YiIsInRhZyI6IiJ9', '$2y$12$MYcJoSRM8ax2zMOVZOtBiOP7gHKSueFLNt2/s9fXMTwTySTXAe7c2', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/man_placeholder.png'),
 (14, 'admin', 'Admin', 'admin@gmail.com', NULL, '2025-10-12 22:11:43', '2025-10-12 23:10:26', 'eyJpdiI6ImF5bE9VRWZZMDdxV3h2MGtZTEVHYWc9PSIsInZhbHVlIjoiTFFGTldYSW8vbEhuMFBOV0dFVDB1QT09IiwibWFjIjoiNjFiYzRhNGM2N2Q2ZTRlNmM5ZDUzYmJkYzczODk1OWU1NmUxODhhMzQ1ZjA1N2QwNzFjZjU1OWE0OTMwMTRhMCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6ImQxVGVtUGd6UEpOOEZ1dlpvcFlqY2c9PSIsInZhbHVlIjoiclB5ZTJQbWsyaVgvRkQ5eUYwVS9hUT09IiwibWFjIjoiMjZhN2IxZTllOWRjMDUzMWFkMjY1M2E0MWU1ZjQwMmFjZmI4Y2RlM2JkNDdjZGY2YTViYWNkZTllN2Q5M2NmMSIsInRhZyI6IiJ9', '$2y$12$28mfa4KG3dNakr6vUiKw3uliCbiN/YA.fvtnvHXvuxW03lGF1aN8S', 'yes', 'Umum', 'admin', NULL, 'storage/profilepictures/1760335826_14.png'),
 (15, 'psikologuser1', 'Psikolog User 1', 'psikologuser1@gmail.com', NULL, '2025-10-12 22:49:04', '2025-10-12 23:09:38', 'eyJpdiI6IjVyaXNZNWxmZGJuUzYrb1N4OXhtU2c9PSIsInZhbHVlIjoiMlJUbFppcEoyVG9DSGhHSitHQzhTQT09IiwibWFjIjoiYTlhZGYxNWFjOGI1ZDdmMjdkZDQwMDY3MDA0MWRiNWE1OWMzNGQxZTYwNzcyN2E5YTNkMTE1ZmExOGM5NzhkNCIsInRhZyI6IiJ9', 'wanita', 'eyJpdiI6IklSMGE3c3IvaGVZamM4cGU2SENzeGc9PSIsInZhbHVlIjoiOHBjUXdiVGFuUFlLaXlhbS84clI5UT09IiwibWFjIjoiYTA5OWMyNWVhMjY4YjZkOTc5ZjNhOGViY2YxN2E2NzNhZGIxYmYwM2MwNTc4OGZlZjk1MDVjMmE1OWM4ZDdkNyIsInRhZyI6IiJ9', '$2y$12$i9MBbROyUf6cpKnmJDXaT.KCbr2E004s8fHjGp6bid3RjSCAJgXHy', 'yes', 'Dosen / Tenaga Kependidikan Unpad', 'psikolog', NULL, 'storage/profilepictures/woman_placeholder.png'),
 (16, 'psikologuser2', 'Psikolog User 2', 'psikologuser2@gmail.com', NULL, '2025-10-12 22:54:43', '2025-10-12 23:09:40', 'eyJpdiI6InhWK28vM1F0aURMbWdablVWU1JtMEE9PSIsInZhbHVlIjoicW0rVGZUL3pnWXRGTFVoS3MvV0swdz09IiwibWFjIjoiMWFjZGU3MGI5NjEzNDJjMWM4NDgzNWYwODhjMWU3YWI5ZTQwYzQ0Zjg2M2E2NzhmODRjYjUyOWJiMDRjZmY5ZSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IkhJTFllUjlMV2FFbEtzK25zSlNpYlE9PSIsInZhbHVlIjoiN0xRZnUvY1JKTkJ0d2U0eTkyVmNEZz09IiwibWFjIjoiZDk2NTFlZTQ5OWJhM2VhOGQwN2M4ZTcwYzFlNGMwOTc1Y2IzNzI4Mzc2MDg5OWNmZDNhMmM2ZmY5ZGYwZTNiZCIsInRhZyI6IiJ9', '$2y$12$kmTs3RwTIbTqSHRABtwxaeS5l3s49pAiIjmcAz7O7lyOiJobuSVmG', 'yes', 'Dosen / Tenaga Kependidikan Unpad', 'psikolog', NULL, 'storage/profilepictures/man_placeholder.png'),
 (17, 'psikologuser3', 'Psikolog User 3', 'psikologuser3@gmail.com', NULL, '2025-10-12 23:05:47', '2025-10-12 23:09:41', 'eyJpdiI6InQ5Vlg5V2kzWTdCM2N6QXg4ZmJJb2c9PSIsInZhbHVlIjoiOFBuNFBsa29QeURTcWUyT2RDSU9SZz09IiwibWFjIjoiMDA4ZDcyNjQ4MjA2MGRjMmRjNTk0YjgyMWE1MjcxMWY4NzZlODdkZTkxMDhmN2NjZmUwZjE0ZjYyZGY2NzgzOCIsInRhZyI6IiJ9', 'wanita', 'eyJpdiI6IjQybWN2Kys3enB1M0NiMkVlT3hwUnc9PSIsInZhbHVlIjoiZ1RkckhncXJjeU8rVmNZRWlKQzE4UT09IiwibWFjIjoiZTE2YTA1YTZkMzZlNTU2NGQ3M2Q2NWI0NGExM2UxZTlhODUzZmMyNjRhMGNhOWFlZmNhMmIxMGJjNTBlZTBjMiIsInRhZyI6IiJ9', '$2y$12$A9jvG2CZPjQ83t7QwXsLQOBE5srZq2YHpqRFFUms7xSpcZr0Gkqo6', 'yes', 'Dosen / Tenaga Kependidikan Unpad', 'psikolog', NULL, 'storage/profilepictures/woman_placeholder.png'),
 (19, 'usertesting', 'User Testing', 'usertesting@gmail.com', NULL, '2025-10-15 02:02:01', '2025-10-15 02:11:58', 'eyJpdiI6InpxeUp6SE5aTWR3OVBTbFMvUTNIVHc9PSIsInZhbHVlIjoiZjFraXc2VVhWSnZRUnhGa25rbUVqZz09IiwibWFjIjoiMDAxYTY5OTI0MTAzNjQzOTZkZjQ1OWE4Yzc5MjUxNTZhZWQ4NzAyZjAyNzc4NjM0NjE4YjE2NzVmNjdmOWE3OCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6ImM4N212MUlGNzBUNXVZUDNuRUNxT3c9PSIsInZhbHVlIjoiRVBMbjk2QVFlT3dDakR5bTREQldMQT09IiwibWFjIjoiODg2ZTQ5ZDBlNmVlMTc4NzlmNjdjZWFlNDg4NDM2Y2YxMjc5Yjk0NDc4Nzg5NWZiOWRjMDU4MzVhNjcwZTEzYiIsInRhZyI6IiJ9', '$2y$12$mtMIO44xE0tB57CYlXwRUuEOUEYFsk0VdDPcBft.Hsn7FbI5Yw/M.', 'yes', 'Umum', 'psikolog', NULL, 'storage/profilepictures/man_placeholder.png'),
-(20, 'chattesting', 'Chat Testing', 'chattesting@gmail.com', NULL, '2025-10-18 04:46:00', '2025-10-18 04:46:00', 'eyJpdiI6InBIWUlpWTJrRTZuMkRoWDY0SHljaXc9PSIsInZhbHVlIjoiT0ZhNEM1YWR2cVpvUldDSzlMeFRMdz09IiwibWFjIjoiMWNjNTM4M2M3MDY2OWFjNTFjZDY5NjY3YmM0YWJkYjQ2ODRhMTE2OTQyOTI1YzQ4ZWYzZGEzOGVjNjRlNjJlZCIsInRhZyI6IiJ9', 'wanita', 'eyJpdiI6Ink4dU1hNkFMOTVYOGhpWkNTekdYS0E9PSIsInZhbHVlIjoiUTlqOFl5R21keVRXQm9pQlU1M0t2Zz09IiwibWFjIjoiZmQzMTIxODFiODU5YThkYWM0ZTNjYjIzNTAyN2UyNWE0NzQ1YmY3NjBhMDU5YmQxN2U1ZjE1Y2EyNmNhNTY3YSIsInRhZyI6IiJ9', '$2y$12$y9E58kdOGStvKVVcUUoMtOjlM2GcqOsctPavF881wEOt2UWHMHaUK', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/woman_placeholder.png');
+(20, 'chattesting', 'Chat Testing', 'chattesting@gmail.com', NULL, '2025-10-18 04:46:00', '2025-10-18 04:46:00', 'eyJpdiI6InBIWUlpWTJrRTZuMkRoWDY0SHljaXc9PSIsInZhbHVlIjoiT0ZhNEM1YWR2cVpvUldDSzlMeFRMdz09IiwibWFjIjoiMWNjNTM4M2M3MDY2OWFjNTFjZDY5NjY3YmM0YWJkYjQ2ODRhMTE2OTQyOTI1YzQ4ZWYzZGEzOGVjNjRlNjJlZCIsInRhZyI6IiJ9', 'wanita', 'eyJpdiI6Ink4dU1hNkFMOTVYOGhpWkNTekdYS0E9PSIsInZhbHVlIjoiUTlqOFl5R21keVRXQm9pQlU1M0t2Zz09IiwibWFjIjoiZmQzMTIxODFiODU5YThkYWM0ZTNjYjIzNTAyN2UyNWE0NzQ1YmY3NjBhMDU5YmQxN2U1ZjE1Y2EyNmNhNTY3YSIsInRhZyI6IiJ9', '$2y$12$y9E58kdOGStvKVVcUUoMtOjlM2GcqOsctPavF881wEOt2UWHMHaUK', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/woman_placeholder.png'),
+(21, 'ss', 'ss', 'ss@gmail.com', NULL, '2025-10-22 00:56:59', '2025-10-22 00:56:59', 'eyJpdiI6IkxaNTFtK0pXL3pCU0VNZG9zaThpUVE9PSIsInZhbHVlIjoiMjd2aVRxNHZPTjlsYkRWQ3libW1iUT09IiwibWFjIjoiYmM2YWE3MTIwZjhiNDQ5NzFmZDZhNmI3YmQxMjVjMDk4MDJkMGFkYzkwMGFjYzNjMTU4Njc3ODJiNzhhZGNjOCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IlJFeGFZeFkrR1RYcHdWM3NVTENicWc9PSIsInZhbHVlIjoiOWZWUUhNSE1ZUGtzbzk0OVdtbW0vdz09IiwibWFjIjoiOWUwZTQzNzI0NmMwMTBlMDhkOThiZDhkYTJlZGE3NzdhMGQ4Yzk1ODFiZDgzNDAwYTUwNjU0YmJmYjI1OGNiYyIsInRhZyI6IiJ9', '$2y$12$xsCxStQDVQp083qKbLQ26.OV7QOz6xZUm.iiQNsHm4R91q1Vbkqtq', 'yes', 'Dosen / Tenaga Kependidikan Unpad', 'klien', NULL, 'storage/profilepictures/man_placeholder.png'),
+(22, 'aa', 'aa', 'aa@gmail.com', NULL, '2025-10-22 00:59:29', '2025-10-22 00:59:29', 'eyJpdiI6IitYWURTRmFpdFR0Q3BMSG05T2lhdFE9PSIsInZhbHVlIjoicElERTJrdzltYUlscUJhdUsySGV3QT09IiwibWFjIjoiZDU0NTI5MzA3YWVjZmU2ZmEyODYzNzI2NGE3MzI5ODFhMjc0NDcyMmQxYjc4YjdhOGEwMWE1YWZlZGU5ZDhiYSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6IllCMnMvQWpnU3RqU0JUNHBpbDd2Q2c9PSIsInZhbHVlIjoiMnFRdDNJZWJnWmx3VDZTYlZaOE85UT09IiwibWFjIjoiMDgxNjdhMmFlN2NhY2JmNzQ0YmFkMWQzNDE3ODc1ZmJiM2JiYmRhNTdkYmU4NjRiODY4ODk4YzYxNGIxYjUzNiIsInRhZyI6IiJ9', '$2y$12$AXhhrGRWNgCl3GQT41cyKeNEtjpzSq23oUobQLGUzlrjPdHeNnuJe', 'yes', 'Dosen / Tenaga Kependidikan Unpad', 'klien', NULL, 'storage/profilepictures/man_placeholder.png'),
+(23, 'qwerty', 'qwerty', 'qwerty@qwerty.com', NULL, '2025-10-22 01:12:14', '2025-10-22 01:12:14', 'eyJpdiI6InNWZnllNktCQ3FwUzhLbFhCeHo0YWc9PSIsInZhbHVlIjoiUVFWdU45NmZTdWNSbzhIZmZRbjVEUT09IiwibWFjIjoiOGQ0NmQzNDBiZjU2MzdhYjk1ODE2OGZjZjY0NjQ0OWRhMGFhOTYxM2QzMGE2MDUxNWE4OGY1MDRjZTk2ZTQ1NSIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6Ik45Ym9ZRGI1b09xU29tS2NrTDRwTmc9PSIsInZhbHVlIjoiV2JBQThGbFliY1NBb2QwVzBwbTNkZz09IiwibWFjIjoiYjMwMTAyOTA5MDA4YzZhYTZiYjA2NjIxZGU4YzlhMDIxMzUyOTI3Y2Q0YjA3NWI3M2E5OWY3ZDQwNGQxNDM4NCIsInRhZyI6IiJ9', '$2y$12$xEprKti3xaDY8MVNgTg/J.OhrjbzTj1l29tVtGxx.4fI/uJvEnvVS', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/man_placeholder.png'),
+(24, 'qq', 'qq', 'qq@qq.com', NULL, '2025-10-22 08:42:24', '2025-10-22 08:44:50', 'eyJpdiI6IkZIUEZpakJFR0pxdEFHWTQxdlM2Vmc9PSIsInZhbHVlIjoiNGNmQVVEMm8zb2ZFU2MzaDlPQVpQUT09IiwibWFjIjoiODc2OTk0ZjdkMmI2NDM5NDJlOTg2NGNhYzdmYjFiYjQ4MzYwZTFhNDMxNzdhYWQyZDA2Zjg5ZmMwNDMwMjM4MCIsInRhZyI6IiJ9', 'pria', 'eyJpdiI6InF6UWZ6eFNKV3pJOHVSTkhYR0MzSnc9PSIsInZhbHVlIjoiRGE0Z21YTFlkQk0xZDQ0WlhoNWRMZz09IiwibWFjIjoiMzM1OTFjMWE0MTQxOGZlMmJlZGRjNWRmYWRmZDMxMWExNWJmNjlhMDRlZTAyZmIzMmRjZjBmNTIyMGU4YWU2NCIsInRhZyI6IiJ9', '$2y$12$eHF2/fGtQ9tRHi.gfpQBE.OKbfcWU6PMbUMvNdmBBNJhJV9FQnnoK', 'yes', 'Umum', 'klien', NULL, 'storage/profilepictures/1761122690_24.jpg');
 
 --
 -- Indexes for dumped tables
@@ -1120,7 +1314,8 @@ ALTER TABLE `conversations`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `conversations_user_one_id_user_two_id_unique` (`user_one_id`,`user_two_id`),
   ADD KEY `conversations_user_two_id_foreign` (`user_two_id`),
-  ADD KEY `conversations_initiator_id_foreign` (`initiator_id`);
+  ADD KEY `conversations_initiator_id_foreign` (`initiator_id`),
+  ADD KEY `conversations_appointment_id_foreign` (`appointment_id`);
 
 --
 -- Indexes for table `migrations`
@@ -1192,13 +1387,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=551;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=683;
 
 --
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `availabilities`
@@ -1210,37 +1405,37 @@ ALTER TABLE `availabilities`
 -- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
 
 --
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=300;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=368;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `therapist_availabilities`
 --
 ALTER TABLE `therapist_availabilities`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT for table `therapist_profiles`
@@ -1252,13 +1447,13 @@ ALTER TABLE `therapist_profiles`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- Constraints for dumped tables
@@ -1296,6 +1491,7 @@ ALTER TABLE `chat_messages`
 -- Constraints for table `conversations`
 --
 ALTER TABLE `conversations`
+  ADD CONSTRAINT `conversations_appointment_id_foreign` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `conversations_initiator_id_foreign` FOREIGN KEY (`initiator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `conversations_user_one_id_foreign` FOREIGN KEY (`user_one_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `conversations_user_two_id_foreign` FOREIGN KEY (`user_two_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;

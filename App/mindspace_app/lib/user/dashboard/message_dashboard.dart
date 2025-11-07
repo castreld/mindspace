@@ -201,7 +201,7 @@ class _MessageDashboardState extends State<MessageDashboard> with SingleTickerPr
         
         Positioned(
           bottom: 20,
-          right: 20,
+          left: 20,
           child: FloatingActionButton(
             onPressed: _refreshData,
             tooltip: 'Refresh Lists',

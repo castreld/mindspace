@@ -1,5 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:mindspace_app/models/appointment.dart';
 import 'package:mindspace_app/models/conversation.dart';
 import 'package:mindspace_app/models/message_request.dart';
@@ -63,6 +67,41 @@ class ChatService {
       }
     } catch (e) {
       throw Exception('Error sending message: $e');
+    }
+  }
+
+  Future<ChatMessage> sendFileMessage(String token, int receiverId, FilePickerResult fileResult) async {
+    final url = Uri.parse('$baseUrl/api/messages/send-file');
+    var request = http.MultipartRequest('POST', url);
+
+    request.headers['Authorization'] = 'Bearer $token';
+    request.headers['Accept'] = 'application/json';
+
+    request.fields['receiver_id'] = receiverId.toString();
+    
+    final platformFile = fileResult.files.single;
+
+    if (kIsWeb) {
+      request.files.add(http.MultipartFile.fromBytes(
+        'file',
+        platformFile.bytes!,
+        filename: platformFile.name,
+      ));
+    } else {
+      request.files.add(await http.MultipartFile.fromPath(
+        'file',
+        platformFile.path!,
+        filename: platformFile.name,
+      ));
+    }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return ChatMessage.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to send file: ${response.body}');
     }
   }
 

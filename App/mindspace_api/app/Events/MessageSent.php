@@ -60,6 +60,10 @@ class MessageSent implements ShouldBroadcast
                 'created_at' => $this->message->created_at->toISOString(),
                 'updated_at' => $this->message->updated_at->toISOString(),
                 'sender' => $this->message->sender,
+                
+                'message_type' => $this->message->message_type,
+                'file_path' => $this->message->file_path,
+                'original_file_name' => $this->message->original_file_name,
             ]
         ];
     }

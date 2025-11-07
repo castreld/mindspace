@@ -35,8 +35,8 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   final ImagePicker _picker = ImagePicker();
 
   final Map<String, List<Map<String, TimeOfDay>>> _availabilities = {
-    'Monday': [], 'Tuesday': [], 'Wednesday': [], 'Thursday': [],
-    'Friday': [], 'Saturday': [], 'Sunday': [],
+    'Senin': [], 'Selasa': [], 'Rabu': [], 'Kamis': [],
+    'Jumat': [], 'Sabtu': [], 'Minggu': [],
   };
 
   @override
@@ -99,8 +99,8 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       if (response.statusCode == 200 && mounted) {
         List<dynamic> data = json.decode(response.body);
         final dayMapping = {
-          1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday',
-          5: 'Friday', 6: 'Saturday', 7: 'Sunday'
+          1: 'Senin', 2: 'Selasa', 3: 'Rabu', 4: 'Kamis',
+          5: 'Jumat', 6: 'Sabtu', 7: 'Minggu'
         };
         _availabilities.forEach((key, value) => value.clear());
 
@@ -118,7 +118,6 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         }
       }
     } catch (e) {
-      // Handle error
     } finally {
       if (mounted) setState(() => _isAvailabilityLoading = false);
     }
@@ -131,7 +130,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     final messenger = ScaffoldMessenger.of(context);
     
     List<Map<String, dynamic>> payload = [];
-    final dayMapping = {'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6, 'Sunday': 7};
+    final dayMapping = {'Senin': 1, 'Selasa': 2, 'Rabu': 3, 'Kamis': 4, 'Jumat': 5, 'Sabtu': 6, 'Minggu': 7};
     _availabilities.forEach((day, slots) {
       for (var slot in slots) {
         payload.add({
@@ -773,7 +772,8 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
       }
     } catch (e) {
       if (mounted) {
-        messenger.showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+        messenger.showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e'
+        )));
       }
     }
   }

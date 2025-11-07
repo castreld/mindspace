@@ -1,19 +1,27 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mindspace_app/models/appointment.dart';
 import 'package:mindspace_app/models/conversation.dart';
+import 'package:mindspace_app/services/booking_service.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/services/chat_service.dart';
 import 'package:mindspace_app/config.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:mindspace_app/user/dashboard/widgets/history_detail_dialog.dart';
+import 'package:mindspace_app/user/dashboard/widgets/therapist_notes_dialog.dart';
 import 'websocket_setup/websocket_channel_stub.dart'
     if (dart.library.html) 'websocket_setup/websocket_channel_html.dart'
     if (dart.library.io) 'websocket_setup/websocket_channel_io.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChatScreen extends StatefulWidget {
   final Conversation conversation;
@@ -38,6 +46,10 @@ class _ChatScreenState extends State<ChatScreen> {
   String _sessionStatus = 'pending';
   bool _isConsultation = false;
   bool _isChatLocked = false;
+  Appointment? _appointmentDetails;
+  bool _isLoadingDetails = false;
+  String? _detailsError;
+  bool _postSessionActionShown = false;
 
   WebSocketChannel? _channel;
   bool _isWebSocketConnected = false;
@@ -59,12 +71,11 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       final token = context.read<AuthService>().token;
       if (token == null) throw Exception('Authentication token not found.');
-      
+
       final details = await context.read<ChatService>().getMessagesByConversationId(
-        token, 
+        token,
         widget.conversation.id
       );
-      
       if (mounted) {
         setState(() {
           _messages = details.messages;
@@ -78,8 +89,11 @@ class _ChatScreenState extends State<ChatScreen> {
               DateTime.parse(details.conversation.sessionStartedAt!).toLocal(),
               details.conversation.sessionDurationMinutes ?? 60
             );
-          } else if (_isConsultation && _sessionStatus == 'ended') {
-            _updateChatLock();
+          } else if (_isConsultation && _sessionStatus == 'ended' && !_postSessionActionShown) {
+             _fetchAppointmentDetailsAfterSessionEnd();
+             _updateChatLock();
+          } else {
+             _updateChatLock();
           }
         });
         _scrollToBottom();
@@ -98,6 +112,57 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuka link: $url')),
+        );
+      }
+    }
+  }
+
+  Future<void> _fetchAppointmentDetailsAfterSessionEnd() async {
+     if (!mounted || !_isConsultation || widget.conversation.appointmentId == null) return;
+
+     _postSessionActionShown = true;
+
+     setState(() {
+       _isLoadingDetails = true;
+       _detailsError = null;
+     });
+
+     try {
+       final details = await context.read<BookingService>().getAppointmentDetails(widget.conversation.appointmentId!);
+       if (mounted) {
+         setState(() {
+           _appointmentDetails = details;
+           _isLoadingDetails = false;
+         });
+       }
+     } on ApiException catch (e) {
+       if (mounted) {
+         setState(() {
+           _detailsError = 'Gagal memuat detail sesi: ${e.statusCode}';
+           _isLoadingDetails = false;
+         });
+       }
+     } catch (e) {
+       if (mounted) {
+         setState(() {
+           _detailsError = 'Error: $e';
+           _isLoadingDetails = false;
+         });
+       }
+     }
+  }
+
+  void _refreshAppointmentDetails() {
+      _postSessionActionShown = false;
+      _fetchAppointmentDetailsAfterSessionEnd();
+  }
+
   void _initWebSocket() async {
     final token = context.read<AuthService>().token;
     final conversationId = widget.conversation.id;
@@ -109,10 +174,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       String wsUrl = 'ws://${AppConfig.webSocketHost}:8080/app/${AppConfig.webSocketPusherAppKey}';
-      
+
       debugPrint('🔌 Connecting to WebSocket: $wsUrl');
 
-      // Use the platform-specific function from conditional import
       _channel = createWebSocketChannel(wsUrl);
 
       _channel!.stream.listen(
@@ -120,7 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
           debugPrint('📨 Received: $message');
           try {
             final data = jsonDecode(message);
-            
+
             if (data['event'] == 'pusher:connection_established') {
               debugPrint('✓ WebSocket connected');
               if (mounted) {
@@ -131,12 +195,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
             } else if (data['event'] == 'pusher_internal:subscription_succeeded') {
               debugPrint('✓ Successfully subscribed to channel');
-              
+
             } else if (data['event'] == 'MessageSent') {
               debugPrint('📬 New message received!');
               try {
-                final messageData = data['data'] is String 
-                    ? jsonDecode(data['data']) 
+                final messageData = data['data'] is String
+                    ? jsonDecode(data['data'])
                     : data['data'];
                 final newMessage = ChatMessage.fromJson(messageData['message']);
 
@@ -154,12 +218,12 @@ class _ChatScreenState extends State<ChatScreen> {
             } else if (data['event'] == 'MessageDeleted') {
               debugPrint('🗑️ Message deletion event received!');
               try {
-                final messageData = data['data'] is String 
-                    ? jsonDecode(data['data']) 
+                final messageData = data['data'] is String
+                    ? jsonDecode(data['data'])
                     : data['data'];
-                
+
                 final int deletedMessageId = messageData['message_id'];
-                
+
                 if (mounted) {
                   setState(() {
                     _messages.removeWhere((msg) => msg.id == deletedMessageId);
@@ -236,16 +300,16 @@ class _ChatScreenState extends State<ChatScreen> {
     if (text.isEmpty) return;
 
     final String messageText = text;
-    
+
     _messageController.clear();
-    
+
     try {
       final token = context.read<AuthService>().token;
       if (token == null) throw Exception('Authentication token not found.');
-      
+
       final sentMessage = await context.read<ChatService>().sendMessage(
-        token, 
-        _otherUserId!, 
+        token,
+        _otherUserId!,
         messageText
       );
 
@@ -273,6 +337,30 @@ class _ChatScreenState extends State<ChatScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Gagal mengirim pesan: $e'), backgroundColor: Colors.red)
+          );
+        }
+      }
+    }
+  }
+
+  void _pickAndSendFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'pdf', 'doc', 'docx', 'txt'],
+    );
+
+    if (result != null) {
+      try {
+        final token = context.read<AuthService>().token!;
+        await context.read<ChatService>().sendFileMessage(
+          token,
+          _otherUserId!,
+          result,
+        );
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal mengirim file: $e'), backgroundColor: Colors.red),
           );
         }
       }
@@ -321,7 +409,7 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     }
   }
-  
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -378,7 +466,7 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollController.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -397,8 +485,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Text(
                   widget.conversation.name,
                   style: const TextStyle(
-                    fontSize: 16, 
-                    fontWeight: FontWeight.bold, 
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                     color: Colors.white
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -442,6 +530,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
         ),
+        if (_isConsultation && _sessionStatus == 'ended')
+           _buildPostSessionActions(),
         _buildMessageComposer(),
       ],
     );
@@ -453,14 +543,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
     return GestureDetector(
       onLongPress: () {
-        if (isMe) {
+        if (isMe && message.messageType == 'text') {
           setState(() {
             _selectedMessage = message;
           });
         }
       },
       onTap: () {
-        if (isMe) {
+        if (isMe && message.messageType == 'text') {
           setState(() {
             _selectedMessage = isSelected ? null : message;
           });
@@ -472,7 +562,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (isMe && isSelected)
+            if (isMe && isSelected && message.messageType == 'text')
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: IconButton(
@@ -481,7 +571,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   tooltip: 'Hapus Pesan',
                 ),
               ),
-            
+
             Flexible(
               child: Column(
                 crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -497,10 +587,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         bottomRight: isMe ? Radius.zero : const Radius.circular(18),
                       ),
                     ),
-                    child: Text(
-                      message.message,
-                      style: TextStyle(color: isMe ? Colors.white : Colors.black87),
-                    ),
+                    child: _buildMessageContent(message, isMe),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0),
@@ -518,7 +605,91 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-Widget _buildMessageComposer() {
+  Widget _buildMessageContent(ChatMessage message, bool isMe) {
+    Color textColor = isMe ? Colors.white : Colors.black87;
+    Color linkColor = isMe ? Colors.blue.shade200 : Colors.blue.shade800;
+
+    switch (message.messageType) {
+      case 'image':
+        if (message.filePath == null || message.filePath!.isEmpty) {
+          return Text('Gambar tidak tersedia', style: TextStyle(color: textColor));
+        }
+        String imageUrl = message.filePath!;
+        return GestureDetector(
+          onTap: () => _launchUrl(imageUrl),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.6,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.network(
+                imageUrl,
+                loadingBuilder: (context, child, progress) {
+                  if (progress == null) return child;
+                  return SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: progress.expectedTotalBytes != null
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stack) {
+                  debugPrint('Error loading image: $error');
+                  return Icon(Icons.broken_image, size: 50, color: textColor);
+                },
+              ),
+              ),
+            ),
+          );
+
+      case 'video':
+      case 'file':
+        if (message.filePath == null || message.filePath!.isEmpty) {
+          return Text('File tidak tersedia', style: TextStyle(color: textColor));
+        }
+        String fileUrl = message.filePath!;
+        IconData fileIcon = message.messageType == 'video'
+          ? FontAwesomeIcons.solidFileVideo
+          : FontAwesomeIcons.solidFilePdf;
+
+        return GestureDetector(
+          onTap: () => _launchUrl(fileUrl),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(fileIcon, color: textColor, size: 20),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  message.originalFileName ?? 'File',
+                  style: TextStyle(
+                    color: linkColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        );
+
+      case 'text':
+      default:
+        return Text(
+          message.message ?? '',
+          style: TextStyle(color: textColor),
+        );
+    }
+  }
+
+  Widget _buildMessageComposer() {
     _updateChatLock();
 
     return Container(
@@ -529,14 +700,19 @@ Widget _buildMessageComposer() {
       ),
       child: Row(
         children: [
+          IconButton(
+            icon: const Icon(Icons.attach_file),
+            onPressed: _isChatLocked ? null : _pickAndSendFile,
+            color: Colors.grey.shade700,
+          ),
           Expanded(
             child: TextField(
               controller: _messageController,
               enabled: !_isChatLocked,
               maxLines: null,
               decoration: InputDecoration(
-                hintText: _isChatLocked 
-                    ? 'Sesi telah berakhir' 
+                hintText: _isChatLocked
+                    ? 'Sesi telah berakhir'
                     : 'Ketik pesan...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -563,7 +739,7 @@ Widget _buildMessageComposer() {
     );
   }
 
-  void _startSessionTimer(DateTime startTime, int durationMinutes) {
+void _startSessionTimer(DateTime startTime, int durationMinutes) {
     final int overtimeMinutes = 10;
     final endTime = startTime.add(Duration(minutes: durationMinutes));
     final overtimeEndTime = endTime.add(Duration(minutes: overtimeMinutes));
@@ -571,44 +747,50 @@ Widget _buildMessageComposer() {
     _sessionTimer?.cancel();
     _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final now = DateTime.now();
+      String newStatus = _sessionStatus;
 
       if (now.isAfter(overtimeEndTime)) {
-        if (mounted) {
-          setState(() {
-            _timeRemaining = Duration.zero;
-            _sessionStatus = 'ended';
-            _updateChatLock();
-          });
+        if (_sessionStatus != 'ended') {
+          newStatus = 'ended';
           timer.cancel();
+          if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
         }
       } else if (now.isAfter(endTime)) {
-        if (mounted) {
-          setState(() {
-            _timeRemaining = overtimeEndTime.difference(now);
-            _sessionStatus = 'overtime';
-            _updateChatLock();
-          });
-        }
+           if (_sessionStatus != 'overtime' && _sessionStatus != 'ended') newStatus = 'overtime';
+
       } else {
-        if (mounted) {
-          setState(() {
-            _timeRemaining = endTime.difference(now);
-            _sessionStatus = 'active';
-            _updateChatLock();
-          });
-        }
+           if (_sessionStatus != 'active' && _sessionStatus != 'ended') newStatus = 'active';
       }
+
+        if (mounted && (newStatus != _sessionStatus || newStatus != 'ended')) {
+            setState(() {
+               if (newStatus == 'ended') {
+                 _timeRemaining = Duration.zero;
+               } else if (newStatus == 'overtime') {
+                 _timeRemaining = overtimeEndTime.difference(now);
+               } else {
+                 _timeRemaining = endTime.difference(now);
+               }
+               _sessionStatus = newStatus;
+               _updateChatLock();
+            });
+        } else if (mounted && newStatus == 'ended' && _sessionStatus != 'ended') {
+         setState(() {
+               _timeRemaining = Duration.zero;
+               _sessionStatus = newStatus;
+               _updateChatLock();
+            });
+            if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
+            timer.cancel();
+        }
     });
   }
 
   void _updateChatLock() {
     setState(() {
       _isChatLocked = _isConsultation &&
-                      _currentUser?.role == 'klien' &&
-                      (_sessionStatus == 'ended' || _sessionStatus == 'overtime');
-      _isChatLocked = _isConsultation &&
-                      _currentUser?.role == 'klien' &&
-                      _sessionStatus == 'ended';
+                       _currentUser?.role == 'klien' &&
+                       _sessionStatus == 'ended';
     });
   }
 
@@ -646,12 +828,12 @@ Widget _buildMessageComposer() {
           });
         }
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Gagal menghentikan sesi: $e'), backgroundColor: Colors.red),
-          );
-        }
-      }
+         if (mounted) {
+           ScaffoldMessenger.of(context).showSnackBar(
+             SnackBar(content: Text('Gagal menghentikan sesi: $e'), backgroundColor: Colors.red),
+           );
+         }
+       }
     }
   }
 
@@ -689,12 +871,82 @@ Widget _buildMessageComposer() {
           Text(text, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
           const Spacer(),
           if (_currentUser?.role == 'klien' && (_sessionStatus == 'active' || _sessionStatus == 'overtime'))
-            TextButton(
+           TextButton(
               onPressed: _handleStopSesi,
               child: const Text('Stop Sesi', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
             ),
         ],
       ),
     );
+  }
+
+  Widget _buildPostSessionActions() {
+    if (_isLoadingDetails) {
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+        );
+    }
+    if (_detailsError != null) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Text(_detailsError!, style: const TextStyle(color: Colors.red)),
+        );
+    }
+    if (_appointmentDetails == null) {
+        return const SizedBox.shrink();
+    }
+
+    Widget? actionButton;
+    bool alreadyReviewed = _appointmentDetails!.rating != null;
+    bool therapistHasNoted = _appointmentDetails!.therapistNotes != null && _appointmentDetails!.therapistNotes!.isNotEmpty;
+
+
+    if (_currentUser?.role == 'klien' && !alreadyReviewed) {
+        actionButton = ElevatedButton.icon(
+           icon: const Icon(Icons.rate_review_outlined),
+           label: const Text('Berikan Review'),
+           onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => HistoryDetailDialog(
+                   appointment: _appointmentDetails!,
+                   onReviewSubmitted: _refreshAppointmentDetails,
+                   currentUserRole: _currentUser?.role ?? 'klien',
+                ),
+              );
+           },
+           style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber.shade700,
+              foregroundColor: Colors.white,
+           ),
+        );
+    } else if (_currentUser?.role == 'psikolog' && !therapistHasNoted) {
+      actionButton = ElevatedButton.icon(
+           icon: const Icon(Icons.note_add_outlined),
+           label: const Text('Berikan Catatan'),
+           onPressed: () {
+              showDialog(
+                 context: context,
+                 builder: (context) => TherapistNotesDialog(
+                    appointment: _appointmentDetails!,
+                    onNotesSubmitted: _refreshAppointmentDetails,
+                 ),
+              );
+           },
+           style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade700,
+              foregroundColor: Colors.white,
+           ),
+        );
+    }
+
+    return actionButton != null
+        ? Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            color: Colors.grey.shade200,
+            child: Center(child: actionButton),
+          )
+        : const SizedBox.shrink();
   }
 }

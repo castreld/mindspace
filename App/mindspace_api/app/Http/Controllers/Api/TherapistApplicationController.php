@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 use App\Models\TherapistAvailability;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -78,7 +79,6 @@ class TherapistApplicationController extends Controller
     } catch (\Exception $e) {
         DB::rollBack();
         
-        \Log::error('Therapist application error: ' . $e->getMessage());
         return response()->json(['message' => 'An unexpected error occurred. Please try again later.'], 500);
     }
 }

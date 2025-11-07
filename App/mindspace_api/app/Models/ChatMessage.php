@@ -10,10 +10,14 @@ class ChatMessage extends Model
     use HasFactory;
 
     protected $fillable = [
+        'conversation_id',
         'sender_id',
         'receiver_id',
+        'message_type',       
         'message',
-        'conversation_id',
+        'file_path',          
+        'original_file_name', 
+        'read_at',
     ];
 
     public function sender()

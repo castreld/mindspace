@@ -1,4 +1,5 @@
 import 'package:mindspace_app/config.dart';
+import 'package:intl/intl.dart';
 
 class Client {
   final int id;
@@ -82,6 +83,8 @@ class Appointment {
   final String? therapistNotes;
   final Client? client;
   final Therapist? therapist;
+  final int? rating;
+  final String? reviewComment;
 
   Appointment({
     required this.id,
@@ -92,46 +95,102 @@ class Appointment {
     this.therapistNotes,
     this.client,
     this.therapist,
+    this.rating,
+    this.reviewComment,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
+    int? rating;
+    String? reviewComment;
+    if (json['review'] != null) {
+      rating = json['review']['rating'];
+      reviewComment = json['review']['comment'];
+    }
+
+    String displayStatus;
+    switch(json['status']) {
+        case 'completed':
+            displayStatus = 'Selesai';
+            break;
+        case 'cancelled':
+            displayStatus = 'Dibatalkan';
+            break;
+        case 'scheduled':
+            displayStatus = 'Terjadwal';
+            break;
+        case 'pending_payment':
+            displayStatus = 'Menunggu Pembayaran';
+            break;
+        case 'payment_failed':
+            displayStatus = 'Pembayaran Gagal';
+            break;
+        case 'pending_confirmation':
+            displayStatus = 'Menunggu Konfirmasi';
+            break;
+        case 'no_show':
+            displayStatus = 'Tidak Hadir';
+            break;
+        default:
+            displayStatus = 'Tidak Diketahui';
+    }
+
     return Appointment(
       id: json['id'],
-      appointmentTime: DateTime.parse(json['appointment_time']),
+      appointmentTime: DateTime.parse(json['appointment_time']).toLocal(),
       durationMinutes: json['duration_minutes'],
-      status: json['status'] ?? 'unknown',
+      status: displayStatus,
       clientNotes: json['client_notes'],
       therapistNotes: json['therapist_notes'],
       client: json['client'] != null ? Client.fromJson(json['client']) : null,
       therapist: json['therapist'] != null
           ? Therapist.fromJson(json['therapist'])
           : null,
+      rating: rating,
+      reviewComment: reviewComment,
     );
   }
+
+  String get formattedDateTime {
+    final DateFormat formatter = DateFormat('dd MMMM yyyy, HH:mm', 'id_ID');
+    final DateTime endTime = appointmentTime.add(Duration(minutes: durationMinutes));
+    return '${formatter.format(appointmentTime)} - ${DateFormat('HH:mm').format(endTime)}';
+  }
+  String get topic => clientNotes ?? 'Tidak ada topik';
 }
 
 class ChatMessage {
   final int id;
   final int senderId;
   final int receiverId;
-  final String message;
+  final String? message;
   final DateTime createdAt;
+  final String messageType;
+  final String? filePath;
+  final String? originalFileName;
 
   ChatMessage({
     required this.id,
     required this.senderId,
     required this.receiverId,
-    required this.message,
+    this.message,
     required this.createdAt,
+    required this.messageType,
+    this.filePath,
+    this.originalFileName,
   });
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['id'],
-      senderId: json['sender_id'],
-      receiverId: json['receiver_id'],
-      message: json['message'] ?? '',
+      id: int.parse(json['id'].toString()),
+      senderId: int.parse(json['sender_id'].toString()),
+      receiverId: int.parse(json['receiver_id'].toString()),
+      message: json['message'],
       createdAt: DateTime.parse(json['created_at']),
+      messageType: json['message_type'] ?? 'text',
+      
+      filePath: json['file_path'],
+      
+      originalFileName: json['original_file_name'],
     );
   }
 }

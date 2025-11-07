@@ -42,7 +42,7 @@ class BookingService {
     if (resp.statusCode >= 200 && resp.statusCode < 300) {
       return resp.body.isNotEmpty ? json.decode(resp.body) : <String, dynamic>{};
     }
-    
+
     dynamic parsed;
     try {
       parsed = json.decode(resp.body);
@@ -68,7 +68,45 @@ class BookingService {
       final List<dynamic> data = json.decode(resp.body);
       return data.map((json) => Appointment.fromJson(json)).toList();
     }
-    
+
+    dynamic parsed;
+    try {
+      parsed = json.decode(resp.body);
+    } catch (_) {
+      parsed = resp.body;
+    }
+    throw ApiException(resp.statusCode, parsed);
+  }
+
+  Future<List<Appointment>> getAppointmentHistory({
+    String? status,
+    String? searchQuery,
+  }) async {
+    final token = await AuthService().getToken();
+    if (token == null) {
+      throw ApiException(401, {'message': 'Not authenticated'});
+    }
+
+    final Map<String, String> queryParams = {};
+    if (status != null && status != 'Semua') {
+      queryParams['status'] = status;
+    }
+    if (searchQuery != null && searchQuery.isNotEmpty) {
+      queryParams['search'] = searchQuery;
+    }
+
+    final url = Uri.parse('$baseUrl/api/appointments/history').replace(queryParameters: queryParams);
+
+    final resp = await http.get(url, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (resp.statusCode == 200) {
+      final List<dynamic> data = json.decode(resp.body);
+      return data.map((json) => Appointment.fromJson(json)).toList();
+    }
+
     dynamic parsed;
     try {
       parsed = json.decode(resp.body);
@@ -106,7 +144,7 @@ class BookingService {
   Future<Appointment> approveAppointment(int appointmentId) async {
     final token = await AuthService().getToken();
     final url = Uri.parse('$baseUrl/api/psikolog/appointments/$appointmentId/approve');
-    
+
     final resp = await http.post(url, headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer $token',
@@ -208,5 +246,92 @@ class BookingService {
       parsed = resp.body;
     }
     throw ApiException(resp.statusCode, parsed);
+  }
+
+  Future<Appointment> getAppointmentDetails(int appointmentId) async {
+    final token = await AuthService().getToken();
+    if (token == null) {
+      throw ApiException(401, {'message': 'Not authenticated'});
+    }
+
+    final url = Uri.parse('$baseUrl/api/appointments/$appointmentId');
+    final resp = await http.get(url, headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (resp.statusCode == 200) {
+      return Appointment.fromJson(json.decode(resp.body));
+    }
+
+    dynamic parsed;
+    try {
+      parsed = json.decode(resp.body);
+    } catch (_) {
+      parsed = resp.body;
+    }
+    throw ApiException(resp.statusCode, parsed);
+  }
+
+  Future<void> submitReview({
+    required int appointmentId,
+    required int rating,
+    String? comment,
+  }) async {
+    final token = await AuthService().getToken();
+    if (token == null) {
+      throw ApiException(401, {'message': 'Not authenticated'});
+    }
+
+    final url = Uri.parse('$baseUrl/api/appointments/$appointmentId/reviews');
+    final body = json.encode({
+      'rating': rating,
+      if (comment != null && comment.isNotEmpty) 'comment': comment,
+    });
+
+    final resp = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    }, body: body);
+
+    if (resp.statusCode != 201) {
+      dynamic parsed;
+      try {
+        parsed = json.decode(resp.body);
+      } catch (_) {
+        parsed = resp.body;
+      }
+      throw ApiException(resp.statusCode, parsed);
+    }
+  }
+
+  Future<void> addTherapistNotes({
+    required int appointmentId,
+    required String notes,
+  }) async {
+    final token = await AuthService().getToken();
+    if (token == null) {
+      throw ApiException(401, {'message': 'Not authenticated'});
+    }
+
+    final url = Uri.parse('$baseUrl/api/psikolog/appointments/$appointmentId/notes');
+    final body = json.encode({'notes': notes});
+
+    final resp = await http.post(url, headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    }, body: body);
+
+    if (resp.statusCode != 200) {
+      dynamic parsed;
+      try {
+        parsed = json.decode(resp.body);
+      } catch (_) {
+        parsed = resp.body;
+      }
+      throw ApiException(resp.statusCode, parsed);
+    }
   }
 }
