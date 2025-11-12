@@ -77,6 +77,13 @@ class _TherapistPageState extends State<TherapistPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    // Add suspension check on page load
+    context.read<AuthService>().refreshUserFromServer();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isRouteInitialized) {
@@ -120,8 +127,8 @@ class _TherapistPageState extends State<TherapistPage> {
         ],
       ),
       bottomNavigationBar: isMobile
-        ? AppBottomNavigationBar(currentRoute: _currentRoute)
-        : null,
+      ? AppBottomNavigationBar(currentRoute: _currentRoute)
+      : null,
     );
   }
 }
@@ -185,7 +192,7 @@ class _TherapistSectionState extends State<TherapistSection> {
               therapistData.map((data) => Therapist.fromJson(data)).toList();
         });
       } else {
-        throw Exception('Gagal memuat daftar terapis');
+        throw Exception('Gagal memuat daftar psikolog');
       }
     } catch (e) {
       setState(() {
@@ -367,7 +374,7 @@ class FilterSidebar extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         const SizedBox(height: 16),
         _FilterGroup(
-          title: 'Kategori Terapis',
+          title: 'Kategori Psikolog',
           children: [
             _CheckboxFilterItem(
                 title: 'Klinis Dewasa',
@@ -531,7 +538,7 @@ class TherapistContent extends StatelessWidget {
         TextField(
           controller: searchController,
           decoration: InputDecoration(
-            hintText: 'Cari Terapis berdasarkan nama...',
+            hintText: 'Cari Psikolog berdasarkan nama...',
             prefixIcon: const Icon(Icons.search),
             filled: true,
             fillColor: Colors.white,
@@ -548,7 +555,7 @@ class TherapistContent extends StatelessWidget {
           Center(child: Text(error!, style: const TextStyle(color: Colors.red)))
         else if (therapists.isEmpty)
           const Center(
-              child: Text('Tidak ada terapis yang cocok dengan kriteria.'))
+              child: Text('Tidak ada psikolog yang cocok dengan kriteria.'))
         else
           LayoutBuilder(builder: (context, constraints) {
             final double cardWidth = 180;
@@ -684,7 +691,7 @@ class _AppDrawer extends StatelessWidget {
           _DrawerItem('Home', Icons.home, () {
             Navigator.pushNamed(context, '/');
           }),
-          _DrawerItem('Terapis', Icons.people, () {}),
+          _DrawerItem('Psikolog', Icons.people, () {}),
           _DrawerItem('Jadwal', Icons.calendar_today, () {}),
           _DrawerItem('Kontak', Icons.contact_phone, () {}),
         ],

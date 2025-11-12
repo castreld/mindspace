@@ -210,7 +210,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
               'Home', () => Navigator.pushNamed(context, AppRoutes.home)),
           _AppBarTextButton('Psikolog',
               () => Navigator.pushNamed(context, AppRoutes.therapistPage)),
-          _AppBarTextButton('Kontak', () {}),
+          _AppBarTextButton('Kontak', 
+          () => Navigator.pushNamed(context, AppRoutes.kontak)),
           const SizedBox(width: 20),
         ],
         widget.user != null

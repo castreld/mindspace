@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 07, 2025 at 06:02 AM
+-- Generation Time: Nov 08, 2025 at 06:14 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -571,7 +571,21 @@ INSERT INTO `activity_logs` (`id`, `user_id`, `activity_type`, `ip_address`, `us
 (679, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:25:33', '2025-11-07 05:25:33'),
 (680, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:25:33', '2025-11-07 05:25:33'),
 (681, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:47:03', '2025-11-07 05:47:03'),
-(682, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:47:03', '2025-11-07 05:47:03');
+(682, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 05:47:03', '2025-11-07 05:47:03'),
+(683, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 06:47:31', '2025-11-07 06:47:31'),
+(684, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 06:47:31', '2025-11-07 06:47:31'),
+(685, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 07:00:08', '2025-11-07 07:00:08'),
+(686, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 07:00:08', '2025-11-07 07:00:08'),
+(687, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 07:29:09', '2025-11-07 07:29:09'),
+(688, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 07:29:09', '2025-11-07 07:29:09'),
+(689, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 08:06:46', '2025-11-07 08:06:46'),
+(690, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 08:06:46', '2025-11-07 08:06:46'),
+(691, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 08:28:14', '2025-11-07 08:28:14'),
+(692, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-07 08:28:14', '2025-11-07 08:28:14'),
+(693, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-08 03:27:50', '2025-11-08 03:27:50'),
+(694, 20, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-08 03:27:50', '2025-11-08 03:27:50'),
+(695, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-08 03:54:46', '2025-11-08 03:54:46'),
+(696, 15, 'login', '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', '2025-11-08 03:54:46', '2025-11-08 03:54:46');
 
 -- --------------------------------------------------------
 
@@ -658,11 +672,34 @@ CREATE TABLE `chat_messages` (
 --
 
 INSERT INTO `chat_messages` (`id`, `conversation_id`, `sender_id`, `receiver_id`, `message_type`, `message`, `file_path`, `original_file_name`, `read_at`, `created_at`, `updated_at`) VALUES
-(165, 23, 20, 11, 'text', 'Halo, saya ingin memulai percakapan dengan Anda.', NULL, NULL, NULL, '2025-11-07 05:25:38', '2025-11-07 05:25:38'),
-(166, 23, 11, 20, 'text', 'hai', NULL, NULL, NULL, '2025-11-07 05:25:51', '2025-11-07 05:25:51'),
-(167, 23, 20, 11, 'text', 'halooo', NULL, NULL, NULL, '2025-11-07 05:25:59', '2025-11-07 05:25:59'),
-(170, 23, 11, 20, 'text', 'nerd.png', NULL, NULL, NULL, '2025-11-07 05:47:51', '2025-11-07 05:47:51'),
-(171, 23, 11, 20, 'text', 'nerd.png', NULL, NULL, NULL, '2025-11-07 05:58:40', '2025-11-07 05:58:40');
+(218, 25, 20, 11, 'text', 'Halo, saya ingin memulai percakapan dengan Anda.', NULL, NULL, NULL, '2025-11-08 03:28:01', '2025-11-08 03:28:01'),
+(219, 25, 20, 11, 'text', 'tes', NULL, NULL, NULL, '2025-11-08 03:28:12', '2025-11-08 03:28:12'),
+(220, 25, 11, 20, 'text', 'ya', NULL, NULL, NULL, '2025-11-08 03:28:17', '2025-11-08 03:28:17'),
+(221, 25, 20, 11, 'text', 'heeeeeemmmmmmmm', NULL, NULL, NULL, '2025-11-08 03:28:22', '2025-11-08 03:28:22'),
+(222, 25, 11, 20, 'video', NULL, 'http://192.168.100.13:8000/api/storage/chat_files/ZXUAlZI2RzQeoxN3tD1433e3dV8aAWzHVjRLKuPR.mp4', 'final_duet_finish.mp4', NULL, '2025-11-08 03:29:00', '2025-11-08 03:29:00'),
+(223, 25, 20, 11, 'text', 'a', NULL, NULL, NULL, '2025-11-08 03:42:43', '2025-11-08 03:42:43'),
+(224, 25, 11, 20, 'text', 'halooo', NULL, NULL, NULL, '2025-11-08 03:42:47', '2025-11-08 03:42:47'),
+(225, 25, 11, 20, 'text', 'yaa', NULL, NULL, NULL, '2025-11-08 03:42:50', '2025-11-08 03:42:50'),
+(226, 25, 11, 20, 'text', 'a', NULL, NULL, NULL, '2025-11-08 03:42:53', '2025-11-08 03:42:53'),
+(227, 25, 20, 11, 'text', 'a', NULL, NULL, NULL, '2025-11-08 03:47:46', '2025-11-08 03:47:46'),
+(228, 25, 20, 11, 'text', 'A\nA\nA\nA\nA', NULL, NULL, NULL, '2025-11-08 03:47:49', '2025-11-08 03:47:49'),
+(229, 25, 20, 11, 'text', 'iyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, NULL, NULL, '2025-11-08 03:48:14', '2025-11-08 03:48:14'),
+(230, 25, 20, 11, 'text', 'iyaaaaaaaaaaaaaaaaaaaaaaa\n\naaaaaaaaaaaaaaaaaaaaaaaa\nAAAAAAAAAAAA', NULL, NULL, NULL, '2025-11-08 03:48:20', '2025-11-08 03:48:20'),
+(231, 25, 20, 11, 'text', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', NULL, NULL, NULL, '2025-11-08 03:48:27', '2025-11-08 03:48:27'),
+(232, 25, 20, 11, 'text', 'test', NULL, NULL, NULL, '2025-11-08 03:52:23', '2025-11-08 03:52:23'),
+(233, 25, 20, 11, 'text', 'okee', NULL, NULL, NULL, '2025-11-08 03:52:24', '2025-11-08 03:52:24'),
+(234, 25, 20, 11, 'text', 'cekkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk', NULL, NULL, NULL, '2025-11-08 03:52:33', '2025-11-08 03:52:33'),
+(235, 25, 20, 11, 'text', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', NULL, NULL, NULL, '2025-11-08 03:52:52', '2025-11-08 03:52:52'),
+(236, 25, 11, 20, 'text', 'ttttttttttttAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', NULL, NULL, NULL, '2025-11-08 03:53:04', '2025-11-08 03:53:04'),
+(237, 25, 11, 20, 'text', 'a', NULL, NULL, NULL, '2025-11-08 03:53:40', '2025-11-08 03:53:40'),
+(238, 26, 15, 11, 'text', 'Halo, saya ingin memulai percakapan dengan Anda.', NULL, NULL, NULL, '2025-11-08 04:00:08', '2025-11-08 04:00:08'),
+(239, 26, 11, 15, 'text', 'gasin', NULL, NULL, NULL, '2025-11-08 04:00:20', '2025-11-08 04:00:20'),
+(240, 26, 15, 11, 'text', 'wkwkwk', NULL, NULL, NULL, '2025-11-08 04:00:24', '2025-11-08 04:00:24'),
+(241, 26, 15, 11, 'text', 'gimananiuh', NULL, NULL, NULL, '2025-11-08 04:00:26', '2025-11-08 04:00:26'),
+(242, 26, 15, 11, 'text', 'aowkaowkao', NULL, NULL, NULL, '2025-11-08 04:00:27', '2025-11-08 04:00:27'),
+(243, 26, 15, 11, 'text', 'owifdjweiogujhewoifguerwjhg', NULL, NULL, NULL, '2025-11-08 04:00:28', '2025-11-08 04:00:28'),
+(244, 26, 11, 15, 'text', 'IYAYAYAYEWSIHUJGBREWIGUHIUREGH', NULL, NULL, NULL, '2025-11-08 04:00:32', '2025-11-08 04:00:32'),
+(245, 26, 11, 15, 'image', NULL, 'http://192.168.100.13:8000/api/storage/chat_files/fUjNpcoCm18dpxbkpmr0Hl30qjRd7ATpCBIMc7rN.png', 'Screenshot 2024-07-14 200053.png', NULL, '2025-11-08 04:00:39', '2025-11-08 04:00:39');
 
 -- --------------------------------------------------------
 
@@ -689,7 +726,8 @@ CREATE TABLE `conversations` (
 --
 
 INSERT INTO `conversations` (`id`, `appointment_id`, `user_one_id`, `user_two_id`, `status`, `session_status`, `session_started_at`, `session_duration_minutes`, `initiator_id`, `created_at`, `updated_at`) VALUES
-(23, NULL, 11, 20, 'accepted', 'pending', NULL, NULL, 20, '2025-11-07 05:25:38', '2025-11-07 05:25:46');
+(25, NULL, 11, 20, 'accepted', 'pending', NULL, NULL, 20, '2025-11-08 03:28:01', '2025-11-08 03:28:05'),
+(26, NULL, 11, 15, 'accepted', 'ended', '2025-11-08 04:00:08', 60, 15, '2025-11-08 04:00:08', '2025-11-08 04:00:54');
 
 -- --------------------------------------------------------
 
@@ -1075,10 +1113,17 @@ INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `n
 (361, 'App\\Models\\User', 15, 'auth_token', '67c1c4bed1ecb520889e3e5deeb948c500c2abb35378748e790c1e6e48155399', '[\"*\"]', '2025-11-07 01:56:13', NULL, '2025-10-26 07:59:17', '2025-11-07 01:56:13'),
 (362, 'App\\Models\\User', 11, 'auth_token', '243bc6a8a80ef72db7ca90f3ae2c6b7247812adbe501c1dc5973e17ac029def3', '[\"*\"]', '2025-11-07 01:56:08', NULL, '2025-11-07 01:55:05', '2025-11-07 01:56:08'),
 (363, 'App\\Models\\User', 15, 'auth_token', '6b06e317771189320ec05ab8daf8b1bfb1e5703a1cf3bb0c2e0e6f65d113f26b', '[\"*\"]', '2025-11-07 03:35:22', NULL, '2025-11-07 01:56:27', '2025-11-07 03:35:22'),
-(364, 'App\\Models\\User', 11, 'auth_token', '2713f5cc149b608c6f09ba6c7568a9c0e632ea3b1d51f07a8ef4a071bd6a56d9', '[\"*\"]', '2025-11-07 05:58:40', NULL, '2025-11-07 01:56:41', '2025-11-07 05:58:40'),
+(364, 'App\\Models\\User', 11, 'auth_token', '2713f5cc149b608c6f09ba6c7568a9c0e632ea3b1d51f07a8ef4a071bd6a56d9', '[\"*\"]', '2025-11-08 04:01:30', NULL, '2025-11-07 01:56:41', '2025-11-08 04:01:30'),
 (365, 'App\\Models\\User', 15, 'auth_token', '921a6b1bf4827ec3593a791bcf66865bb9d6d00726b13712f6f19a2d8a4eeea2', '[\"*\"]', '2025-11-07 05:25:01', NULL, '2025-11-07 04:05:36', '2025-11-07 05:25:01'),
 (366, 'App\\Models\\User', 20, 'auth_token', 'b12fa90e0532ec6ab682e337264bb9c5b2e5c4e100bbd85443f354328dd2d200', '[\"*\"]', '2025-11-07 05:25:59', NULL, '2025-11-07 05:25:33', '2025-11-07 05:25:59'),
-(367, 'App\\Models\\User', 20, 'auth_token', 'ec4f0366ed6fe1913826096759cad3e018b66f1733657f9a3188598d1e3a03b3', '[\"*\"]', '2025-11-07 05:58:35', NULL, '2025-11-07 05:47:03', '2025-11-07 05:58:35');
+(367, 'App\\Models\\User', 20, 'auth_token', 'ec4f0366ed6fe1913826096759cad3e018b66f1733657f9a3188598d1e3a03b3', '[\"*\"]', '2025-11-07 06:43:28', NULL, '2025-11-07 05:47:03', '2025-11-07 06:43:28'),
+(368, 'App\\Models\\User', 20, 'auth_token', '54a5cbd316aba653fca42aab118cdc3394f42e12de57ed41ce6261c079910c11', '[\"*\"]', '2025-11-07 06:53:51', NULL, '2025-11-07 06:47:31', '2025-11-07 06:53:51'),
+(369, 'App\\Models\\User', 20, 'auth_token', '189d9d20e1254202c0e7b6ce82d6d6e547a4f846d5c693a43622a25b26f20761', '[\"*\"]', '2025-11-07 07:04:26', NULL, '2025-11-07 07:00:08', '2025-11-07 07:04:26'),
+(370, 'App\\Models\\User', 20, 'auth_token', 'af698fbeb91f9ca95f7fe85f23306d97dab35ffa152508225514ca1cf100c45e', '[\"*\"]', '2025-11-07 07:45:26', NULL, '2025-11-07 07:29:09', '2025-11-07 07:45:26'),
+(371, 'App\\Models\\User', 20, 'auth_token', 'ddeb4d9699b913e9ed9a0616ee2f7728114c6f5de1cfaf1456cd11b07c68b86d', '[\"*\"]', '2025-11-07 08:11:16', NULL, '2025-11-07 08:06:46', '2025-11-07 08:11:16'),
+(372, 'App\\Models\\User', 15, 'auth_token', 'dee858db054a3578dbf3cf2c8b830323b99efc997ec7c281bd06baff46ea5b31', '[\"*\"]', '2025-11-07 08:42:40', NULL, '2025-11-07 08:28:14', '2025-11-07 08:42:40'),
+(373, 'App\\Models\\User', 20, 'auth_token', '337a3191480a84838c22e148f7d92c7393cd313522ddece06a6834e83bf19b52', '[\"*\"]', '2025-11-08 03:53:36', NULL, '2025-11-08 03:27:50', '2025-11-08 03:53:36'),
+(374, 'App\\Models\\User', 15, 'auth_token', '8420da1bf43305074744cd6a227505b97e934014317e0e2698f999fadcc7212c', '[\"*\"]', '2025-11-08 04:02:18', NULL, '2025-11-08 03:54:46', '2025-11-08 04:02:18');
 
 -- --------------------------------------------------------
 
@@ -1117,6 +1162,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
+('LmFSd9BM1MVQEVZoseoPMNr2ectlNK0SqqHnOHJM', NULL, '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiY1hyUWdCbk5qYncxcG1nNjFydmxQQm9UNHE5aTE3YVhlUVl4czJtMSI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMzo4MDAwL3BheW1lbnQvZmluaXNoIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1762504138),
+('M8lz3lB7Y6skiD0xnD5QdSugpfcc6UYqJZvroFhR', NULL, '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiczl3c012d0pGQkNBRXkzWVVuVmZialh6eUJwTklNU29PRmZUS2gxWCI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6NDE6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMzo4MDAwL3BheW1lbnQvZmluaXNoIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1762574320),
 ('XMDehI4mRY7f5Q710UV5r7dTtxQxrzWpVrGisDqS', NULL, '192.168.100.13', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNW1laFlYUDg5MEQzQURqVzdBdDNZZWVXYTdOVnhxOHAzQ3RLcmdYbiI7czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6OTI6Imh0dHA6Ly8xOTIuMTY4LjEwMC4xMzo4MDAwL21pZHRyYW5zL2NoZWNrb3V0P3NuYXBfdG9rZW49ZTE1YjQ1OWUtYjYwZC00Y2FiLTg0ZjktOTZlMDJhYjdkZGJjIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1762493112);
 
 -- --------------------------------------------------------
@@ -1158,16 +1205,16 @@ INSERT INTO `therapist_availabilities` (`id`, `user_id`, `day_of_week`, `start_t
 (42, 17, 6, '09:00:00', '15:00:00', '2025-10-12 23:09:13', '2025-10-12 23:09:13'),
 (43, 17, 7, '09:00:00', '15:00:00', '2025-10-12 23:09:13', '2025-10-12 23:09:13'),
 (54, 19, 1, '09:00:00', '12:00:00', '2025-10-15 02:10:32', '2025-10-15 02:10:32'),
-(55, 15, 1, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(56, 15, 1, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(57, 15, 2, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(58, 15, 2, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(59, 15, 3, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(60, 15, 3, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(61, 15, 4, '09:00:00', '12:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(62, 15, 4, '13:00:00', '16:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(63, 15, 5, '09:00:00', '11:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22'),
-(64, 15, 5, '14:00:00', '15:00:00', '2025-10-23 05:30:22', '2025-10-23 05:30:22');
+(65, 15, 1, '09:00:00', '12:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(66, 15, 1, '13:00:00', '16:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(67, 15, 2, '09:00:00', '12:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(68, 15, 2, '13:00:00', '16:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(69, 15, 3, '09:00:00', '12:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(70, 15, 3, '13:00:00', '16:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(71, 15, 4, '09:00:00', '12:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(72, 15, 4, '13:00:00', '16:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(73, 15, 5, '09:00:00', '11:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17'),
+(74, 15, 5, '14:00:00', '15:00:00', '2025-11-08 04:02:17', '2025-11-08 04:02:17');
 
 -- --------------------------------------------------------
 
@@ -1387,13 +1434,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=683;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=697;
 
 --
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `availabilities`
@@ -1405,13 +1452,13 @@ ALTER TABLE `availabilities`
 -- AUTO_INCREMENT for table `chat_messages`
 --
 ALTER TABLE `chat_messages`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=172;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=246;
 
 --
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -1423,19 +1470,19 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=368;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=375;
 
 --
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `therapist_availabilities`
 --
 ALTER TABLE `therapist_availabilities`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `therapist_profiles`
@@ -1447,7 +1494,7 @@ ALTER TABLE `therapist_profiles`
 -- AUTO_INCREMENT for table `transactions`
 --
 ALTER TABLE `transactions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `users`

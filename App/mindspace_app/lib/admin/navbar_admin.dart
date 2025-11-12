@@ -55,7 +55,7 @@ class NavbarAdmin extends StatelessWidget implements PreferredSizeWidget {
                     CircleAvatar(
                       radius: 16,
                       backgroundImage: user.profilePicture != null
-                          ? NetworkImage('${AppConfig.backendBaseUrl}/${user.profilePicture!}')
+                          ? NetworkImage('${AppConfig.backendBaseUrl}/api/${user.profilePicture!}')
                           : null,
                       child: user.profilePicture == null
                           ? Text(

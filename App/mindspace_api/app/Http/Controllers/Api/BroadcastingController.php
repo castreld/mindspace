@@ -14,6 +14,7 @@ class BroadcastingController extends Controller
         $user = $request->user();
         $socketId = $request->input('socket_id');
         $channelName = $request->input('channel_name');
+        $currentUserId = (int) $user->id;
 
         Log::info('Broadcasting Auth Request', [
             'user_id' => $user?->id,
@@ -34,48 +35,41 @@ class BroadcastingController extends Controller
             return response()->json(['error' => 'Missing required fields'], 400);
         }
 
-        // Parse the channel name: private-chat.{conversationId}
-        $parts = explode('.', $channelName);
-        
-        if (count($parts) !== 2 || $parts[0] !== 'private-chat') {
-            Log::error('Invalid channel name format', ['channel_name' => $channelName]);
+        $authorized = false;
+
+        if (str_starts_with($channelName, 'private-chat.')) {
+            $conversationId = (int) str_replace('private-chat.', '', $channelName);
+            $conversation = Conversation::find($conversationId);
+
+            if ($conversation && ($currentUserId === $conversation->user_one_id || $currentUserId === $conversation->user_two_id)) {
+                $authorized = true;
+            } else {
+                Log::warning('User not authorized for chat channel', [
+                    'user_id' => $currentUserId,
+                    'channel' => $channelName,
+                ]);
+                return response()->json(['error' => 'Unauthorized for chat'], 403);
+            }
+        } 
+        else if (str_starts_with($channelName, 'App.Models.User.')) {
+            $channelUserId = (int) str_replace('App.Models.User.', '', $channelName);
+
+            if ($currentUserId === $channelUserId) {
+                $authorized = true;
+            } else {
+                Log::warning('User not authorized for user channel', [
+                    'user_id' => $currentUserId,
+                    'channel' => $channelName,
+                ]);
+                return response()->json(['error' => 'Unauthorized for user channel'], 403);
+            }
+        }
+
+        if (!$authorized) {
+            Log::error('Invalid channel name format or unhandled channel', ['channel_name' => $channelName]);
             return response()->json(['error' => 'Invalid channel format'], 400);
         }
 
-        // Get the conversation ID from channel name
-        $conversationId = (int) $parts[1];
-        $currentUserId = (int) $user->id;
-
-        Log::info('Channel Authorization Check', [
-            'current_user' => $currentUserId,
-            'conversation_id' => $conversationId,
-        ]);
-
-        // Check if the user is part of this conversation
-        $conversation = Conversation::find($conversationId);
-
-        if (!$conversation) {
-            Log::warning('Conversation not found', [
-                'conversation_id' => $conversationId,
-            ]);
-            return response()->json(['error' => 'Conversation not found'], 404);
-        }
-
-        // Authorize: user must be either user_one_id or user_two_id in the conversation
-        $authorized = $currentUserId === $conversation->user_one_id || 
-                     $currentUserId === $conversation->user_two_id;
-
-        if (!$authorized) {
-            Log::warning('User not authorized for channel', [
-                'user_id' => $currentUserId,
-                'channel' => $channelName,
-                'conversation_user_one_id' => $conversation->user_one_id,
-                'conversation_user_two_id' => $conversation->user_two_id,
-            ]);
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        // Generate the auth signature manually for Reverb (Pusher protocol)
         try {
             $appKey = config('broadcasting.connections.reverb.key');
             $appSecret = config('broadcasting.connections.reverb.secret');
@@ -85,13 +79,10 @@ class BroadcastingController extends Controller
                 return response()->json(['error' => 'Server configuration error'], 500);
             }
 
-            // Create the string to sign: socket_id:channel_name
             $stringToSign = $socketId . ':' . $channelName;
-            
-            // Generate the auth signature using HMAC SHA256
+
             $authSignature = hash_hmac('sha256', $stringToSign, $appSecret);
             
-            // Format: app_key:signature
             $auth = $appKey . ':' . $authSignature;
             
             Log::info('Broadcasting auth successful', [

@@ -9,6 +9,8 @@ class User {
   final String? gender;
   final String? flyer;
   final String role;
+  final DateTime? suspendedUntil;
+  final String? suspendedReason;
 
   User({
     required this.id,
@@ -21,6 +23,8 @@ class User {
     this.gender,
     this.flyer,
     required this.role,
+    this.suspendedUntil,
+    this.suspendedReason,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,10 @@ class User {
       gender: json['gender'] as String?,
       flyer: json['flyer'] as String?,
       role: json['role'] as String? ?? 'klien',
+      suspendedUntil: json['suspended_until'] != null
+          ? DateTime.parse(json['suspended_until'])
+          : null,
+      suspendedReason: json['suspended_reason'] as String?,
     );
   }
 
@@ -50,6 +58,8 @@ class User {
       'gender': gender,
       'flyer': flyer,
       'role': role,
+      'suspended_until': suspendedUntil?.toIso8601String(),
+      'suspended_reason': suspendedReason,
     };
   }
 }

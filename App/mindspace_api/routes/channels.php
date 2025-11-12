@@ -5,6 +5,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Log;
 
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
 Broadcast::channel('chat.{conversation}', function (User $user, Conversation $conversation) {
     Log::info("--- Broadcasting Auth Check for chat.{$conversation->id} ---");
     Log::info("Authenticated User ID: {$user->id}");

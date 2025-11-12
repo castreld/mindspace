@@ -209,8 +209,8 @@ class ChatService {
     final response = await http.delete(
         url,
         headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
         },
     );
 
@@ -224,8 +224,8 @@ class ChatService {
     final response = await http.delete(
         url,
         headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
         },
     );
 
@@ -248,6 +248,56 @@ class ChatService {
       }
     } catch (e) {
       throw Exception('Error stopping session: $e');
+    }
+  }
+
+  Future<void> reportConversation(String token, int conversationId, String reason) async {
+    try {
+      final url = Uri.parse('$baseUrl/api/reports/conversation');
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'conversation_id': conversationId,
+          'reason': reason,
+        }),
+      );
+
+      if (response.statusCode != 201) {
+        final error = json.decode(response.body)['message'] ?? 'Failed to submit report';
+        throw Exception(error);
+      }
+    } catch (e) {
+      throw Exception('Error submitting report: $e');
+    }
+  }
+
+  Future<void> reportUser(String token, int reportedUserId, String reason) async {
+    try {
+      final url = Uri.parse('$baseUrl/api/reports/user');
+      final response = await http.post(
+        url,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'reported_user_id': reportedUserId,
+          'reason': reason,
+        }),
+      );
+
+      if (response.statusCode != 201) {
+        final error = json.decode(response.body)['message'] ?? 'Failed to submit report';
+        throw Exception(error);
+      }
+    } catch (e) {
+      throw Exception('Error submitting report: $e');
     }
   }
 }

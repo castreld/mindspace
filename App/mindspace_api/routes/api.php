@@ -20,6 +20,12 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\ConversationController;
 use App\Http\Controllers\Api\MessageRequestController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Api\AppealController;
+use App\Http\Controllers\Admin\AppealController as AdminAppealController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -66,10 +72,36 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/users/search-clients', [UserController::class, 'searchClients']);
 
+    Route::prefix('reports')->group(function () {
+        Route::post('/user', [ReportController::class, 'storeUserReport']);
+        Route::post('/conversation', [ReportController::class, 'storeConversationReport']);
+    });
+
+    Route::post('/appeals', [AppealController::class, 'store']);
+
     Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/dashboard-stats', [AdminDashboardController::class, 'getStats']);
+
         Route::get('/therapist-applications', [TherapistManagementController::class, 'index']);
         Route::post('/therapist-applications/{user}/approve', [TherapistManagementController::class, 'approve']);
         Route::post('/therapist-applications/{user}/reject', [TherapistManagementController::class, 'reject']);
+        Route::post('/therapists/{user}/suspend', [TherapistManagementController::class, 'suspend']);
+        Route::post('/therapists/{user}/unsuspend', [TherapistManagementController::class, 'unsuspend']);
+
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::post('/users/{user}/suspend', [AdminUserController::class, 'suspend']);
+        Route::post('/users/{user}/unsuspend', [AdminUserController::class, 'unsuspend']);
+
+        Route::get('/conversations/{conversation}/messages', [ConversationController::class, 'getMessagesForAdmin']);
+        Route::prefix('reports')->group(function () {
+            Route::get('/user', [AdminReportController::class, 'indexUserReports']);
+            Route::get('/conversation', [AdminReportController::class, 'indexConversationReports']);
+            Route::put('/user/{userReport}', [AdminReportController::class, 'updateUserReport']);
+            Route::put('/conversation/{conversationReport}', [AdminReportController::class, 'updateConversationReport']);
+        });
+
+        Route::get('/appeals', [AdminAppealController::class, 'index']);
+        Route::put('/appeals/{appeal}', [AdminAppealController::class, 'update']);
     });
 
     Route::prefix('psikolog')->middleware('auth:sanctum')->group(function () {

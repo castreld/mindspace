@@ -36,11 +36,22 @@ class _MainDashboardState extends State<MainDashboard> {
   DashboardSection _selectedSection = DashboardSection.dashboard;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  @override
+  void initState() {
+    super.initState();
+    // Check user status every time the dashboard is loaded
+    context.read<AuthService>().refreshUserFromServer();
+  }
+
   void _onSectionSelected(DashboardSection section) {
+    // Also check status on every navigation click
+    context.read<AuthService>().refreshUserFromServer();
+    
     setState(() {
       _selectedSection = section;
     });
-    if (MediaQuery.of(context).size.width < 900) {
+    if (MediaQuery.of(context).size.width < 900 && 
+        _scaffoldKey.currentState?.isDrawerOpen == true) {
       Navigator.of(context).pop();
     }
   }
@@ -48,7 +59,7 @@ class _MainDashboardState extends State<MainDashboard> {
   Widget _getSectionWidget() {
     switch (_selectedSection) {
       case DashboardSection.dashboard:
-        return const LandingDashboard();
+        return LandingDashboard(onNavigate: _onSectionSelected);
       case DashboardSection.schedule:
         return const ScheduleDashboard();
       case DashboardSection.history:
@@ -60,14 +71,12 @@ class _MainDashboardState extends State<MainDashboard> {
       case DashboardSection.manageAppointments:
         return const TherapistDashboard();
       default:
-        return const LandingDashboard();
+        return LandingDashboard(onNavigate: _onSectionSelected);
     }
   }
 
-  // Widget to show background - animated on desktop/web, static on mobile
   Widget _buildBackground(bool isMobile) {
     if (isMobile && !kIsWeb) {
-      // Static gradient for mobile apps
       return Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -82,7 +91,6 @@ class _MainDashboardState extends State<MainDashboard> {
         ),
       );
     } else {
-      // Animated background for web or desktop
       return const AnimatedGradientBackgroundDark();
     }
   }

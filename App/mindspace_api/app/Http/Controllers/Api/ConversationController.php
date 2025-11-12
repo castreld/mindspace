@@ -152,4 +152,18 @@ class ConversationController extends Controller
             return response()->json(['message' => 'Failed to stop session.', 'error' => $e->getMessage()], 500);
         }
     }
+
+    public function getMessagesForAdmin(Conversation $conversation)
+    {
+        $messages = $conversation->messages()
+            ->orderBy('created_at', 'asc')
+            ->get();
+        
+        $conversation->load('userOne:id,full_name', 'userTwo:id,full_name');
+
+        return response()->json([
+            'conversation' => $conversation,
+            'messages' => $messages,
+        ]);
+    }
 }

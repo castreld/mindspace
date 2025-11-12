@@ -28,6 +28,8 @@ class User extends Authenticatable
         'category',
         'role',
         'profile_picture',
+        'suspended_until',
+        'suspended_reason',
     ];
 
     /**
@@ -52,6 +54,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'encrypted',
             'phone_number' => 'encrypted',
+            'suspended_until' => 'datetime',
         ];
     }
 

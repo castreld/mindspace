@@ -5,9 +5,11 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/config.dart';
+import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/services/booking_service.dart';
+import 'package:mindspace_app/services/chat_service.dart';
 import 'package:mindspace_app/widgets/bottom_nav_bar.dart';
 import 'package:mindspace_app/widgets/custom_app_bar.dart';
 import 'package:mindspace_app/widgets/footer.dart';
@@ -30,6 +32,8 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
   @override
   void initState() {
     super.initState();
+    // Add suspension check on page load
+    context.read<AuthService>().refreshUserFromServer();
     _fetchDetail();
   }
 
@@ -71,6 +75,102 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
         _isLoading = false;
       });
     }
+  }
+
+  Future<void> _showReportUserDialog() async {
+    final reportController = TextEditingController();
+    bool isSendingReport = false;
+
+    if (_therapist == null) return;
+    final therapistName = _therapist!.name;
+    final therapistId = _therapist!.id;
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return AlertDialog(
+              title: Text('Laporkan $therapistName?'),
+              content: isSendingReport
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : TextField(
+                      controller: reportController,
+                      decoration: const InputDecoration(
+                        hintText: 'Alasan Anda melaporkan...',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                    ),
+              actions: [
+                TextButton(
+                  onPressed: isSendingReport ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Batal'),
+                ),
+                ElevatedButton(
+                  onPressed: isSendingReport
+                      ? null
+                      : () async {
+                          final reason = reportController.text.trim();
+                          if (reason.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Alasan tidak boleh kosong.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          dialogSetState(() {
+                            isSendingReport = true;
+                          });
+
+                          try {
+                            final chatService = context.read<ChatService>();
+                            final token = context.read<AuthService>().token;
+                            await chatService.reportUser(
+                              token!,
+                              therapistId,
+                              reason,
+                            );
+
+                            if (mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Laporan berhasil dikirim.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            dialogSetState(() {
+                              isSendingReport = false;
+                            });
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Gagal mengirim laporan: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: const Text('Kirim'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -117,9 +217,9 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
                               : LayoutBuilder(
                                   builder: (context, constraints) {
                                     if (constraints.maxWidth < 900) {
-                                      return _buildMobileLayout();
+                                      return _buildMobileLayout(currentUser);
                                     } else {
-                                      return _buildDesktopLayout();
+                                      return _buildDesktopLayout(currentUser);
                                     }
                                   },
                                 ),
@@ -135,12 +235,12 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
     );
   }
 
-  Widget _buildMobileLayout() {
+  Widget _buildMobileLayout(User currentUser) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          _buildProfileOverviewCard(),
+          _buildProfileOverviewCard(currentUser),
           const SizedBox(height: 16),
           _buildDetailsCard(),
         ],
@@ -148,7 +248,7 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
     );
   }
 
-  Widget _buildDesktopLayout() {
+  Widget _buildDesktopLayout(User currentUser) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Row(
@@ -156,7 +256,7 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
         children: [
           Expanded(
             flex: 1,
-            child: _buildProfileOverviewCard(),
+            child: _buildProfileOverviewCard(currentUser),
           ),
           const SizedBox(width: 24),
           Expanded(
@@ -168,7 +268,7 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
     );
   }
 
-  Widget _buildProfileOverviewCard() {
+  Widget _buildProfileOverviewCard(User currentUser) {
     final formatter =
         NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
     return Card(
@@ -238,7 +338,20 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
                         side: BorderSide.none,
                       ))
                   .toList(),
-            )
+            ),
+            if (currentUser.role == 'klien') ...[
+              const Divider(height: 32),
+              Center(
+                child: TextButton.icon(
+                  icon: const Icon(Icons.report_problem_outlined, color: Colors.red),
+                  label: const Text(
+                    'Laporkan Psikolog Ini',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                  onPressed: _showReportUserDialog,
+                ),
+              ),
+            ],
           ],
         ),
       ),

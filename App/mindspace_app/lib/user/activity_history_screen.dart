@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart'; 
+import 'package:mindspace_app/config.dart';
+import 'package:mindspace_app/services/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class ActivityHistoryScreen extends StatefulWidget {
   const ActivityHistoryScreen({super.key});
@@ -21,11 +23,13 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
   }
 
   Future<List<dynamic>> _fetchActivityHistory() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    final token = context.read<AuthService>().token;
+    if (token == null) {
+      throw Exception('Token otentikasi tidak ditemukan.');
+    }
 
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8000/api/activity-history'),
+      Uri.parse('${AppConfig.backendBaseUrl}/api/activity-history'),
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
@@ -49,7 +53,7 @@ class _ActivityHistoryScreenState extends State<ActivityHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  title: const Text('Riwayat Aktivitas'),
+        title: const Text('Riwayat Aktivitas'),
         backgroundColor: const Color(0xFF5B3F5B),
       ),
       body: FutureBuilder<List<dynamic>>(

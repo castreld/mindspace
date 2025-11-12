@@ -6,8 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/auth/login.dart';
+import 'package:mindspace_app/auth/splash_screen.dart';
+import 'package:mindspace_app/auth/suspended_page.dart';
+import 'package:mindspace_app/kontak_page.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:mindspace_app/services/admin_service.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/services/booking_service.dart';
 import 'package:mindspace_app/services/chat_service.dart';
@@ -16,6 +20,7 @@ import 'package:mindspace_app/therapist/therapist_detail.dart';
 import 'package:mindspace_app/therapist_dashboard/register.dart';
 import 'package:mindspace_app/widgets/bottom_nav_bar.dart';
 import 'package:mindspace_app/admin/dashboard_adminn.dart';
+import 'package:mindspace_app/admin/admin_mobile_block.dart';
 import 'package:mindspace_app/user/dashboard.dart';
 import 'package:provider/provider.dart';
 import 'widgets/custom_app_bar.dart';
@@ -43,6 +48,7 @@ Future<void> main() async {
           ChangeNotifierProvider(create: (context) => AuthService()),
           Provider(create: (context) => BookingService()),
           Provider(create: (context) => ChatService()),
+          Provider(create: (context) => AdminService()),
         ],
         child: const MyApp(),
       ),
@@ -72,32 +78,36 @@ class MyApp extends StatelessWidget {
       title: 'Mindspace',
       home: const AuthGate(),
       onGenerateRoute: (settings) {
-            switch (settings.name) {
-              case AppRoutes.home:
-                return MaterialPageRoute(builder: (_) => const HomePage());
-              case AppRoutes.register:
-                return MaterialPageRoute(builder: (_) => const RegisterForm());
-              case AppRoutes.login:
+          switch (settings.name) {
+            case AppRoutes.home:
+              return MaterialPageRoute(builder: (_) => const HomePage());
+            case AppRoutes.register:
+              return MaterialPageRoute(builder: (_) => const RegisterForm());
+            case AppRoutes.login:
+              return MaterialPageRoute(builder: (_) => const LoginForm());
+            case AppRoutes.dashboard:
+              return MaterialPageRoute(builder: (_) => const MainDashboard());
+            case AppRoutes.therapistPage:
+              if (AuthService().isLoggedIn) {
+                return MaterialPageRoute(builder: (_) => const TherapistPage());
+              } else {
                 return MaterialPageRoute(builder: (_) => const LoginForm());
-              case AppRoutes.dashboard:
-                return MaterialPageRoute(builder: (_) => const MainDashboard());
-              case AppRoutes.therapistPage:
-                if (AuthService().isLoggedIn) {
-                  return MaterialPageRoute(builder: (_) => const TherapistPage());
-                } else {
-                  return MaterialPageRoute(builder: (_) => const LoginForm());
-                }
-              case AppRoutes.adminDashboard:
-                return MaterialPageRoute(
-                    builder: (_) => const DashboardAdminPage());
-              case AppRoutes.therapistDetail:
-                final therapistId = settings.arguments as int;
-                return MaterialPageRoute(
-                  builder: (_) => TherapistDetailPage(therapistId: therapistId),
-                );
-              default:
-                return MaterialPageRoute(builder: (_) => const HomePage());
-            }
+              }
+            case AppRoutes.adminDashboard:
+              return MaterialPageRoute(
+                  builder: (_) => const DashboardAdminPage());
+            case AppRoutes.suspended:
+              return MaterialPageRoute(builder: (_) => const SuspendedPage());
+            case AppRoutes.kontak:
+              return MaterialPageRoute(builder: (_) => const KontakPage());
+            case AppRoutes.therapistDetail:
+              final therapistId = settings.arguments as int;
+              return MaterialPageRoute(
+                builder: (_) => TherapistDetailPage(therapistId: therapistId),
+              );
+            default:
+              return MaterialPageRoute(builder: (_) => const HomePage());
+          }
       },
       scrollBehavior: MyCustomScrollBehavior(),
       theme: ThemeData(
@@ -147,24 +157,60 @@ class _AuthGateState extends State<AuthGate> {
   Widget build(BuildContext context) {
     final authService = context.watch<AuthService>();
     debugPrint(
-        'AuthGate.build: building, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
+        'AuthGate.build: building, isLoading=${authService.isLoading}, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
 
-      if (authService.isLoggedIn) {
-        final user = authService.currentUser;
-        if (user != null) {
-          if (user.role == 'admin') {
-            return const DashboardAdminPage();
-          } else {
-            return const MainDashboard();
-          }
-        } else {
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+    // 1. Show splash screen while Auth-Service is initializing
+    if (authService.isLoading) {
+      return const SplashScreen();
+    }
+
+    // 2. Auth-Service is done, check if user is logged in
+    if (authService.isLoggedIn) {
+      final user = authService.currentUser;
+      
+      // This 'else' (user == null) should rarely happen, but SplashScreen is safer
+      if (user == null) { 
+         return const SplashScreen(); 
       }
-    } else {
+
+      // 3. Check for suspension
+      if (user.suspendedUntil != null && 
+          user.suspendedUntil!.isAfter(DateTime.now())) {
+        
+        if (ModalRoute.of(context)?.settings.name == AppRoutes.suspended) {
+          return const SuspendedPage();
+        }
+        
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          navigatorKey.currentState?.pushNamedAndRemoveUntil(
+            AppRoutes.suspended, 
+            (route) => false
+          );
+        });
+        
+        return const SplashScreen(); // Show splash while redirecting
+      }
+  
+      // 4. Check for Admin role and platform
+      if (user.role == 'admin') {
+        // Check if on a mobile device (not web)
+        final bool isMobile = !kIsWeb && (Theme.of(context).platform == TargetPlatform.android || Theme.of(context).platform == TargetPlatform.iOS);
+        
+        if (isMobile) {
+          return const AdminMobileBlockPage();
+        } else {
+          return const DashboardAdminPage();
+        }
+      } 
+      
+      // 5. Normal user
+      else {
+        return const MainDashboard();
+      }
+    } 
+    
+    // 6. Not logged in
+    else {
       return const HomePage();
     }
   }
@@ -219,8 +265,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: isMobile 
-        ? AppBottomNavigationBar(currentRoute: _currentRoute)
-        : null,
+      ? AppBottomNavigationBar(currentRoute: _currentRoute)
+      : null,
     );
   }
 }
@@ -245,10 +291,18 @@ class _AppDrawer extends StatelessWidget {
               ),
             ),
           ),
-          _DrawerItem('Beranda', Icons.home, () {}),
-          _DrawerItem('Terapis', Icons.people, () {}),
-          _DrawerItem('Jadwal', Icons.calendar_today, () {}),
-          _DrawerItem('Kontak', Icons.contact_phone, () {}),
+          _DrawerItem('Beranda', Icons.home, () {
+            Navigator.pushNamed(context, AppRoutes.home);
+          }),
+          _DrawerItem('Terapis', Icons.people, () {
+            Navigator.pushNamed(context, AppRoutes.therapistPage);
+          }),
+          _DrawerItem('Jadwal', Icons.calendar_today, () {
+            Navigator.pushNamed(context, AppRoutes.dashboard);
+          }),
+          _DrawerItem('Kontak', Icons.contact_phone, () {
+            Navigator.pushNamed(context, AppRoutes.kontak);
+          }),
         ],
       ),
     );

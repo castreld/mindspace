@@ -291,9 +291,7 @@ class _AppDrawer extends StatelessWidget {
           _DrawerItem('Home', Icons.home, () {
             Navigator.pushNamed(context, '/');
           }),
-          _DrawerItem('Terapis', Icons.people, () {}),
-          _DrawerItem('Jadwal', Icons.calendar_today, () {}),
-          _DrawerItem('Kontak', Icons.contact_phone, () {}),
+
         ],
       ),
     );

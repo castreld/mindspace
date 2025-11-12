@@ -11,8 +11,9 @@ class AppBottomNavigationBar extends StatelessWidget {
       return 0;
     } else if (routeName == AppRoutes.therapistPage) {
       return 1;
+    } else if (routeName == AppRoutes.kontak) {
+      return 2;
     }
-    // Add other routes here if needed
     return 0;
   }
 
@@ -25,7 +26,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.therapistPage, (route) => false);
         break;
       case 2:
-        // Handle Kontak navigation
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.kontak, (route) => false);
         break;
     }
   }

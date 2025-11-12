@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mindspace_app/models/appointment.dart';
@@ -73,8 +74,8 @@ class _ChatScreenState extends State<ChatScreen> {
       if (token == null) throw Exception('Authentication token not found.');
 
       final details = await context.read<ChatService>().getMessagesByConversationId(
-        token,
-        widget.conversation.id
+          token,
+          widget.conversation.id
       );
       if (mounted) {
         setState(() {
@@ -86,8 +87,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
           if (_isConsultation && details.conversation.sessionStartedAt != null && _sessionStatus != 'ended') {
             _startSessionTimer(
-              DateTime.parse(details.conversation.sessionStartedAt!).toLocal(),
-              details.conversation.sessionDurationMinutes ?? 60
+                DateTime.parse(details.conversation.sessionStartedAt!).toLocal(),
+                details.conversation.sessionDurationMinutes ?? 60
             );
           } else if (_isConsultation && _sessionStatus == 'ended' && !_postSessionActionShown) {
              _fetchAppointmentDetailsAfterSessionEnd();
@@ -156,11 +157,11 @@ class _ChatScreenState extends State<ChatScreen> {
          });
        }
      }
-  }
+   }
 
   void _refreshAppointmentDetails() {
-      _postSessionActionShown = false;
-      _fetchAppointmentDetailsAfterSessionEnd();
+     _postSessionActionShown = false;
+     _fetchAppointmentDetailsAfterSessionEnd();
   }
 
   void _initWebSocket() async {
@@ -308,9 +309,9 @@ class _ChatScreenState extends State<ChatScreen> {
       if (token == null) throw Exception('Authentication token not found.');
 
       final sentMessage = await context.read<ChatService>().sendMessage(
-        token,
-        _otherUserId!,
-        messageText
+          token,
+          _otherUserId!,
+          messageText
       );
 
       final isDuplicate = _messages.any((msg) => msg.id == sentMessage.id);
@@ -458,6 +459,224 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Future<void> _showReportDialog() async {
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return SimpleDialog(
+          title: const Text('Laporkan'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); 
+                _showReportConversationDialog();
+              },
+              child: const ListTile(
+                leading: Icon(Icons.chat_bubble_outline),
+                title: Text('Laporkan Percakapan Ini'),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); 
+                _showReportUserDialog();
+              },
+              child: const ListTile(
+                leading: Icon(Icons.person_outline),
+                title: Text('Laporkan Pengguna Ini'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showReportConversationDialog() async {
+    final reportController = TextEditingController();
+    bool isSendingReport = false;
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return AlertDialog(
+              title: const Text('Laporkan Percakapan'),
+              content: isSendingReport
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : TextField(
+                      controller: reportController,
+                      decoration: const InputDecoration(
+                        hintText: 'Alasan Anda melaporkan...',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                    ),
+              actions: [
+                TextButton(
+                  onPressed: isSendingReport ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Batal'),
+                ),
+                ElevatedButton(
+                  onPressed: isSendingReport
+                      ? null
+                      : () async {
+                          final reason = reportController.text.trim();
+                          if (reason.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Alasan tidak boleh kosong.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          dialogSetState(() {
+                            isSendingReport = true;
+                          });
+
+                          try {
+                            final chatService = context.read<ChatService>();
+                            final token = context.read<AuthService>().token;
+                            await chatService.reportConversation(
+                              token!,
+                              widget.conversation.id,
+                              reason,
+                            );
+
+                            if (mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Laporan percakapan berhasil dikirim.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            dialogSetState(() {
+                              isSendingReport = false;
+                            });
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Gagal mengirim laporan: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: const Text('Kirim'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showReportUserDialog() async {
+    final reportController = TextEditingController();
+    bool isSendingReport = false;
+    final otherUserName = widget.conversation.name;
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return AlertDialog(
+              title: Text('Laporkan $otherUserName?'),
+              content: isSendingReport
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : TextField(
+                      controller: reportController,
+                      decoration: const InputDecoration(
+                        hintText: 'Alasan Anda melaporkan...',
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 4,
+                    ),
+              actions: [
+                TextButton(
+                  onPressed: isSendingReport ? null : () => Navigator.of(context).pop(),
+                  child: const Text('Batal'),
+                ),
+                ElevatedButton(
+                  onPressed: isSendingReport
+                      ? null
+                      : () async {
+                          final reason = reportController.text.trim();
+                          if (reason.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Alasan tidak boleh kosong.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
+                          }
+
+                          dialogSetState(() {
+                            isSendingReport = true;
+                          });
+
+                          try {
+                            final chatService = context.read<ChatService>();
+                            final token = context.read<AuthService>().token;
+                            await chatService.reportUser(
+                              token!,
+                              _otherUserId!,
+                              reason,
+                            );
+
+                            if (mounted) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Laporan pengguna berhasil dikirim.'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            dialogSetState(() {
+                              isSendingReport = false;
+                            });
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Gagal mengirim laporan: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: const Text('Kirim'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
     _sessionTimer?.cancel();
@@ -485,12 +704,17 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Text(
                   widget.conversation.name,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.report_problem_outlined, color: Colors.white),
+                onPressed: _showReportDialog,
+                tooltip: 'Laporkan...',
               ),
               if (_isWebSocketConnected)
                 const Padding(
@@ -619,12 +843,16 @@ class _ChatScreenState extends State<ChatScreen> {
           onTap: () => _launchUrl(imageUrl),
           child: ConstrainedBox(
             constraints: BoxConstraints(
+              minWidth: 100.0,
+              minHeight: 100.0,
               maxWidth: MediaQuery.of(context).size.width * 0.6,
+              maxHeight: MediaQuery.of(context).size.height * 0.4,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8.0),
               child: Image.network(
                 imageUrl,
+                fit: BoxFit.cover,
                 loadingBuilder: (context, child, progress) {
                   if (progress == null) return child;
                   return SizedBox(
@@ -642,12 +870,18 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
                 errorBuilder: (context, error, stack) {
                   debugPrint('Error loading image: $error');
-                  return Icon(Icons.broken_image, size: 50, color: textColor);
+                  return SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: Center(
+                      child: Icon(Icons.broken_image, size: 50, color: textColor),
+                    ),
+                  );
                 },
               ),
-              ),
             ),
-          );
+          ),
+        );
 
       case 'video':
       case 'file':
@@ -656,8 +890,8 @@ class _ChatScreenState extends State<ChatScreen> {
         }
         String fileUrl = message.filePath!;
         IconData fileIcon = message.messageType == 'video'
-          ? FontAwesomeIcons.solidFileVideo
-          : FontAwesomeIcons.solidFilePdf;
+            ? FontAwesomeIcons.solidFileVideo
+            : FontAwesomeIcons.solidFilePdf;
 
         return GestureDetector(
           onTap: () => _launchUrl(fileUrl),
@@ -690,8 +924,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessageComposer() {
-    _updateChatLock();
-
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: const BoxDecoration(
@@ -706,21 +938,40 @@ class _ChatScreenState extends State<ChatScreen> {
             color: Colors.grey.shade700,
           ),
           Expanded(
-            child: TextField(
-              controller: _messageController,
-              enabled: !_isChatLocked,
-              maxLines: null,
-              decoration: InputDecoration(
-                hintText: _isChatLocked
-                    ? 'Sesi telah berakhir'
-                    : 'Ketik pesan...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.grey),
+            child: CallbackShortcuts(
+              bindings: <ShortcutActivator, VoidCallback>{
+                const SingleActivator(LogicalKeyboardKey.enter, shift: false): () {
+                  if (!_isChatLocked) {
+                    _sendMessage();
+                  }
+                },
+              },
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxHeight: 120,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: TextField(
+                  controller: _messageController,
+                  enabled: !_isChatLocked,
+                  maxLines: null,
+                  maxLength: 1000,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    hintText: _isChatLocked
+                        ? 'Sesi telah berakhir'
+                        : 'Ketik pesan...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16, 
+                      vertical: 12
+                    ),
+                    counterText: '',
+                  ),
+                ),
               ),
-              onSubmitted: _isChatLocked ? null : (_) => _sendMessage(),
             ),
           ),
           const SizedBox(width: 12),
@@ -729,8 +980,13 @@ class _ChatScreenState extends State<ChatScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange.shade300,
               foregroundColor: Colors.black87,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24, 
+                vertical: 16
+              ),
             ),
             child: const Text('Kirim'),
           ),
@@ -739,7 +995,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-void _startSessionTimer(DateTime startTime, int durationMinutes) {
+  void _startSessionTimer(DateTime startTime, int durationMinutes) {
     final int overtimeMinutes = 10;
     final endTime = startTime.add(Duration(minutes: durationMinutes));
     final overtimeEndTime = endTime.add(Duration(minutes: overtimeMinutes));
@@ -762,35 +1018,35 @@ void _startSessionTimer(DateTime startTime, int durationMinutes) {
            if (_sessionStatus != 'active' && _sessionStatus != 'ended') newStatus = 'active';
       }
 
-        if (mounted && (newStatus != _sessionStatus || newStatus != 'ended')) {
-            setState(() {
-               if (newStatus == 'ended') {
+         if (mounted && (newStatus != _sessionStatus || newStatus != 'ended')) {
+             setState(() {
+                 if (newStatus == 'ended') {
+                   _timeRemaining = Duration.zero;
+                 } else if (newStatus == 'overtime') {
+                   _timeRemaining = overtimeEndTime.difference(now);
+                 } else {
+                   _timeRemaining = endTime.difference(now);
+                 }
+                 _sessionStatus = newStatus;
+                 _updateChatLock();
+             });
+         } else if (mounted && newStatus == 'ended' && _sessionStatus != 'ended') {
+           setState(() {
                  _timeRemaining = Duration.zero;
-               } else if (newStatus == 'overtime') {
-                 _timeRemaining = overtimeEndTime.difference(now);
-               } else {
-                 _timeRemaining = endTime.difference(now);
-               }
-               _sessionStatus = newStatus;
-               _updateChatLock();
-            });
-        } else if (mounted && newStatus == 'ended' && _sessionStatus != 'ended') {
-         setState(() {
-               _timeRemaining = Duration.zero;
-               _sessionStatus = newStatus;
-               _updateChatLock();
-            });
-            if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
-            timer.cancel();
-        }
+                 _sessionStatus = newStatus;
+                 _updateChatLock();
+             });
+             if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
+             timer.cancel();
+         }
     });
   }
 
   void _updateChatLock() {
     setState(() {
       _isChatLocked = _isConsultation &&
-                       _currentUser?.role == 'klien' &&
-                       _sessionStatus == 'ended';
+                          _currentUser?.role == 'klien' &&
+                          _sessionStatus == 'ended';
     });
   }
 
@@ -907,18 +1163,18 @@ void _startSessionTimer(DateTime startTime, int durationMinutes) {
            icon: const Icon(Icons.rate_review_outlined),
            label: const Text('Berikan Review'),
            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => HistoryDetailDialog(
-                   appointment: _appointmentDetails!,
-                   onReviewSubmitted: _refreshAppointmentDetails,
-                   currentUserRole: _currentUser?.role ?? 'klien',
-                ),
-              );
+             showDialog(
+               context: context,
+               builder: (context) => HistoryDetailDialog(
+                  appointment: _appointmentDetails!,
+                  onReviewSubmitted: _refreshAppointmentDetails,
+                  currentUserRole: _currentUser?.role ?? 'klien',
+               ),
+             );
            },
            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.amber.shade700,
-              foregroundColor: Colors.white,
+             backgroundColor: Colors.amber.shade700,
+             foregroundColor: Colors.white,
            ),
         );
     } else if (_currentUser?.role == 'psikolog' && !therapistHasNoted) {
@@ -926,17 +1182,17 @@ void _startSessionTimer(DateTime startTime, int durationMinutes) {
            icon: const Icon(Icons.note_add_outlined),
            label: const Text('Berikan Catatan'),
            onPressed: () {
-              showDialog(
-                 context: context,
-                 builder: (context) => TherapistNotesDialog(
-                    appointment: _appointmentDetails!,
-                    onNotesSubmitted: _refreshAppointmentDetails,
-                 ),
-              );
+             showDialog(
+                context: context,
+                builder: (context) => TherapistNotesDialog(
+                   appointment: _appointmentDetails!,
+                   onNotesSubmitted: _refreshAppointmentDetails,
+                ),
+             );
            },
            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue.shade700,
-              foregroundColor: Colors.white,
+             backgroundColor: Colors.blue.shade700,
+             foregroundColor: Colors.white,
            ),
         );
     }

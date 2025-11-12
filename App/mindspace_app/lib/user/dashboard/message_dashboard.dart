@@ -235,7 +235,11 @@ class _MessageDashboardState extends State<MessageDashboard> with SingleTickerPr
                 SizedBox(width: 300, child: _buildConversationList(conversations, isTwoPaneView: true)),
                 const VerticalDivider(width: 1, color: Color(0xFFF9EBC8)),
                 Expanded(child: _selectedConversationIndex >= 0
-                    ? ChatScreen(conversation: conversations[_selectedConversationIndex], isTwoPane: true)
+                    ? ChatScreen(
+                        key: ValueKey<int>(conversations[_selectedConversationIndex].id), 
+                        conversation: conversations[_selectedConversationIndex], 
+                        isTwoPane: true
+                      )
                     : const Center(child: Text("Pilih percakapan untuk memulai."))),
               ])
             : _buildConversationList(conversations, isTwoPaneView: false);

@@ -1,4 +1,3 @@
-// lib/admin/application_detail_dialog.dart
 import 'package:flutter/material.dart';
 import 'package:mindspace_app/models/therapist_application.dart';
 

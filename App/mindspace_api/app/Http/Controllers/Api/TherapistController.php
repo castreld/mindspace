@@ -16,7 +16,11 @@ class TherapistController extends Controller
         
         $query = User::query()
             ->where('role', 'psikolog')
-            ->has('therapistProfile');
+            ->has('therapistProfile')
+            ->where(function ($q) {
+                $q->whereNull('suspended_until')
+                  ->orWhere('suspended_until', '<=', now());
+            });
 
         
         $query->with(['therapistProfile'])
@@ -84,6 +88,10 @@ class TherapistController extends Controller
     {
         
         if ($user->role !== 'psikolog' || !$user->therapistProfile) {
+            return response()->json(['message' => 'Therapist not found.'], 404);
+        }
+        
+        if ($user->suspended_until && $user->suspended_until > now()) {
             return response()->json(['message' => 'Therapist not found.'], 404);
         }
 

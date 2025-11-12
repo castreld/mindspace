@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -9,9 +8,19 @@ use Illuminate\Support\Facades\Storage;
 
 class TherapistManagementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $applications = User::whereHas('therapistProfile')->with('therapistProfile')->get();
+        $query = User::whereHas('therapistProfile')->with('therapistProfile');
+
+        // Add search functionality
+        $query->when($request->search, function ($q, $search) {
+            $q->where(function ($subQuery) use ($search) {
+                $subQuery->where('full_name', 'like', "%{$search}%")
+                         ->orWhere('email', 'like', "%{$search}%");
+            });
+        });
+
+        $applications = $query->get();
         return response()->json($applications);
     }
 
@@ -35,5 +44,42 @@ class TherapistManagementController extends Controller
             return response()->json(['message' => 'Application rejected successfully.']);
         }
         return response()->json(['message' => 'No application found for this user.'], 404);
+    }
+
+    public function suspend(Request $request, User $user)
+    {
+        if ($user->role !== 'psikolog') {
+            return response()->json(['message' => 'This user is not a psychologist.'], 400);
+        }
+
+        $validated = $request->validate([
+            'days' => 'required|integer|min:1',
+            'reason' => 'required|string|max:1000',
+        ]);
+
+        $user->suspended_until = now()->addDays($validated['days']);
+        $user->suspended_reason = $validated['reason'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'User suspended successfully until ' . $user->suspended_until->toFormattedDateString(),
+            'user' => $user
+        ]);
+    }
+
+    public function unsuspend(User $user)
+    {
+        if ($user->role !== 'psikolog') {
+            return response()->json(['message' => 'This user is not a psychologist.'], 400);
+        }
+
+        $user->suspended_until = null;
+        $user->suspended_reason = null;
+        $user->save();
+
+        return response()->json([
+            'message' => 'User suspension lifted successfully.',
+            'user' => $user
+        ]);
     }
 }

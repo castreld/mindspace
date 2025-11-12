@@ -18,18 +18,11 @@ class SidebarAdmin extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const DrawerHeader(
-          //   decoration: BoxDecoration(color: Color(0xFF1E88E5)),
-          //   child: Center(
-          //     child: Text(
-          //       "Mind Space Admin",
-          //       style: TextStyle(color: Colors.white, fontSize: 18),
-          //     ),
-          //   ),
-          // ),
           buildMenuItem("Dashboard Utama", Icons.dashboard),
-          buildMenuItem("Kelola Psikolog", Icons.people),
-          buildMenuItem("Laporan", Icons.insert_chart),
+          buildMenuItem("Kelola Psikolog", Icons.people_outline),
+          buildMenuItem("Kelola Pengguna", Icons.person_outline),
+          buildMenuItem("Laporan", Icons.insert_chart_outlined),
+          buildMenuItem("Kelola Banding", Icons.gavel_rounded),
         ],
       ),
     );

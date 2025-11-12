@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mindspace_app/admin/admin_landing_dashboard.dart';
+import 'package:mindspace_app/admin/kelola_banding.dart';
+import 'package:mindspace_app/admin/kelola_pengguna.dart';
+import 'package:mindspace_app/admin/report_management_page.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 import 'package:mindspace_app/routes.dart'; 
@@ -23,10 +27,16 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
     AuthService().clearSession();
     if (mounted) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-          
-          navigatorKey.currentState?.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+         
+         navigatorKey.currentState?.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
       });
     }
+  }
+  
+  void _onMenuSelected(String menu) {
+    setState(() {
+      _selectedMenu = menu;
+    });
   }
 
   @override
@@ -38,9 +48,7 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
       body: Row(
         children: [
           SidebarAdmin(
-            onMenuSelected: (menu) {
-              setState(() => _selectedMenu = menu);
-            },
+            onMenuSelected: _onMenuSelected,
             selectedMenu: _selectedMenu,
           ),
 
@@ -56,35 +64,22 @@ class _DashboardAdminPageState extends State<DashboardAdminPage> {
     );
   }
 
-  // Menentukan halaman berdasarkan menu aktif
   Widget _buildPageContent() {
     switch (_selectedMenu) {
       case "Dashboard Utama":
-        return const Center(
-          child: Text(
-            "Ini halaman Dashboard Utama",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        );
+        return AdminLandingDashboard(onMenuSelected: _onMenuSelected);
 
       case "Kelola Psikolog":
         return const KelolaPsikologPage();
 
       case "Kelola Pengguna":
-        return const Center(
-          child: Text(
-            "Halaman Kelola Pengguna (dalam pengembangan)",
-            style: TextStyle(fontSize: 16),
-          ),
-        );
+        return const KelolaPenggunaPage();
 
       case "Laporan":
-        return const Center(
-          child: Text(
-            "Halaman Laporan (dalam pengembangan)",
-            style: TextStyle(fontSize: 16),
-          ),
-        );
+        return const ReportManagementPage();
+      
+      case "Kelola Banding":
+        return const KelolaBandingPage();
 
       default:
         return Center(
