@@ -56,14 +56,99 @@ class _FormSectionState extends State<FormSection> {
   bool _isLoading = false;
   bool _rememberMe = false;
   bool _obscurePassword = true;
+  bool _canCheckBiometrics = false;
+  bool _isBiometricAvailable = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthService>().debugBiometricStorage();
+    _checkBiometrics();
+    _checkForAuthCallback();
+  }
+
+  Future<void> _checkForAuthCallback() async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    if (!mounted) return;
+    
+    final uri = Uri.base;
+    debugPrint('Current URL: $uri');
+    debugPrint('Path: ${uri.path}');
+    debugPrint('Query params: ${uri.queryParameters}');
+
+    if (uri.path.contains('/auth/callback')) {
+      final token = uri.queryParameters['token'];
+      final userDataEncoded = uri.queryParameters['user'];
+      
+      debugPrint('Detected auth callback!');
+      debugPrint('Token present: ${token != null}');
+      debugPrint('User data present: ${userDataEncoded != null}');
+      
+      if (token != null && userDataEncoded != null) {
+        try {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+
+          final userJsonString = utf8.decode(base64.decode(userDataEncoded));
+          final userJson = json.decode(userJsonString);
+          final user = User.fromJson(userJson);
+          
+          debugPrint('User decoded: ${user.email}');
+
+          await context.read<AuthService>().saveSession(user, token);
+          
+          debugPrint('Session saved, navigating to dashboard');
+
+          if (mounted) {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              AppRoutes.dashboard,
+              (route) => false,
+            );
+          }
+        } catch (e) {
+          debugPrint('Error processing callback: $e');
+          if (mounted) {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Login gagal: ${e.toString()}')),
+            );
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> _checkBiometrics() async {
+    final authService = context.read<AuthService>();
+    final isEnabled = await authService.isBiometricsEnabled;
+    final canCheck = await authService.canCheckBiometrics();
+
+    setState(() {
+      _isBiometricAvailable = canCheck;
+    });
+
+    if (isEnabled && canCheck && mounted) {
+       final success = await authService.loginWithBiometrics();
+       if (success && mounted) {
+         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashboard, (route) => false);
+       }
+    }
+  }
+
 
   Future<void> _showErrorDialog(String title, String content) {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
               const Icon(Icons.error_outline, color: Colors.red),
@@ -94,6 +179,7 @@ class _FormSectionState extends State<FormSection> {
     });
 
     final url = Uri.parse('${AppConfig.backendBaseUrl}/api/login');
+    final authService = context.read<AuthService>();
 
     try {
       final response = await http.post(
@@ -116,18 +202,23 @@ class _FormSectionState extends State<FormSection> {
         final user = User.fromJson(responseData['user']);
         final token = responseData['access_token'];
 
-        await context.read<AuthService>().saveSession(user, token);
+        await authService.saveSession(user, token);
+
+        if (_isBiometricAvailable && mounted) {
+          final isAlreadyEnabled = await authService.isBiometricsEnabled;
+          if (!isAlreadyEnabled) {
+            await _showEnableBiometricsDialog(token);
+          }
+        }
 
         if (mounted) {
-          Navigator.of(context).pop();
+          Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.dashboard, (route) => false);
         }
       } else {
-        _showErrorDialog('Login Gagal',
-            'Username atau password salah. Mohon periksa kembali detail Anda.');
+        _showErrorDialog('Login Gagal', 'Username atau password salah. Mohon periksa kembali detail Anda.');
       }
     } catch (e) {
-      _showErrorDialog('Koneksi Gagal',
-          'Tidak dapat terhubung ke server. Mohon periksa koneksi internet Anda.');
+      _showErrorDialog('Koneksi Gagal', 'Tidak dapat terhubung ke server. Mohon periksa koneksi internet Anda.');
     } finally {
       if (mounted) {
         setState(() {
@@ -135,6 +226,66 @@ class _FormSectionState extends State<FormSection> {
         });
       }
     }
+  }
+
+  Future<void> _showEnableBiometricsDialog(String token) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Aktifkan Login Biometrik?'),
+          content: const Text(
+            'Gunakan sidik jari atau wajah Anda untuk login lebih cepat di kemudian hari. '
+            'Anda akan diminta untuk memverifikasi biometrik Anda sekarang.'
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Lain Kali'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Aktifkan'),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+
+                final success = await context.read<AuthService>().enableBiometrics(token);
+                
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login Biometrik berhasil diaktifkan!'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Gagal mengaktifkan login biometrik. Pastikan Anda telah mengatur biometrik di perangkat Anda.'),
+                        backgroundColor: Colors.orange,
+                      ),
+                    );
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -255,6 +406,52 @@ class _FormSectionState extends State<FormSection> {
                     child: _isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : const Text("Masuk"),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(children: [
+                     Expanded(child: Divider(color: Colors.grey.shade300)),
+                     Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Text("ATAU", style: TextStyle(color: Colors.grey.shade600))),
+                     Expanded(child: Divider(color: Colors.grey.shade300)),
+                  ]),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                       InkWell(
+                        onTap: () => context.read<AuthService>().loginWithGoogle(),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Image.asset('assets/google_logo.png', width: 40, height: 40),
+                        ),
+                       ),
+                       if (_isBiometricAvailable) ...[
+                         const SizedBox(width: 20),
+                         InkWell(
+                           onTap: () async {
+                             final success = await context.read<AuthService>().loginWithBiometrics();
+                             if (success && mounted) {
+                                Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.dashboard, (route) => false);
+                             } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Verifikasi Biometrik Gagal"))
+                                );
+                             }
+                           },
+                           child: Container(
+                             padding: const EdgeInsets.all(8),
+                             decoration: BoxDecoration(
+                               border: Border.all(color: Colors.grey.shade300),
+                               borderRadius: BorderRadius.circular(50),
+                             ),
+                             child: const Icon(Icons.fingerprint, size: 40, color: Color(0xFFC89E25)),
+                           ),
+                         ),
+                       ],
+                    ],
                   )
                 ],
               ),
@@ -291,7 +488,6 @@ class _AppDrawer extends StatelessWidget {
           _DrawerItem('Home', Icons.home, () {
             Navigator.pushNamed(context, '/');
           }),
-
         ],
       ),
     );

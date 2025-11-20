@@ -14,7 +14,6 @@ class SuspendedPage extends StatelessWidget {
     final User? user = authService.currentUser;
 
     if (user == null) {
-      // This should technically not be reachable if AuthGate is correct
       return const Scaffold(
         body: Center(child: Text("Error: Pengguna tidak ditemukan.")),
       );

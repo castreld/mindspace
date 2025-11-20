@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../models/user.dart';
 import '../../routes.dart';
 import '../../services/auth_service.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb; 
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 
@@ -21,6 +23,9 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   bool _isEditing = false;
   bool _isLoading = false;
   bool _isAvailabilityLoading = false;
+  
+  bool _biometricsEnabled = false;
+  bool _isBiometricAvailable = false;
 
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
@@ -47,6 +52,22 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
     _birthDateController = TextEditingController();
+    
+    context.read<AuthService>().refreshUserFromServer();
+    _loadBiometricSettings();
+  }
+
+  Future<void> _loadBiometricSettings() async {
+    final authService = context.read<AuthService>();
+    final canCheck = await authService.canCheckBiometrics();
+    final isEnabled = await authService.isBiometricsEnabled;
+    
+    if (mounted) {
+      setState(() {
+        _isBiometricAvailable = canCheck;
+        _biometricsEnabled = isEnabled;
+      });
+    }
   }
 
   @override
@@ -118,6 +139,7 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
         }
       }
     } catch (e) {
+      // Hehe
     } finally {
       if (mounted) setState(() => _isAvailabilityLoading = false);
     }
@@ -312,7 +334,6 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
 
   Widget _buildProfileSection(User user) {
     final isMobile = MediaQuery.of(context).size.width < 600;
-    final displayName = user.username ?? user.fullName;
 
     return Card(
       color: const Color(0xFFFFF8F0),
@@ -468,6 +489,57 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
     );
   }
 
+  Future<void> _handleBiometricToggle(bool newValue) async {
+    final authService = context.read<AuthService>();
+    final token = authService.token; 
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (newValue == true) {
+      
+      if (token == null) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Error: Token tidak ditemukan, silakan login ulang.'), backgroundColor: Colors.red),
+        );
+        return;
+      }
+      try {
+        await authService.enableBiometrics(token);
+        if (mounted) {
+          setState(() {
+            _biometricsEnabled = true;
+          });
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Login Biometrik Diaktifkan!'), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(content: Text('Gagal mengaktifkan: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    } else {
+      try {
+        await authService.disableBiometrics();
+        if (mounted) {
+          setState(() {
+            _biometricsEnabled = false;
+          });
+          messenger.showSnackBar(
+            const SnackBar(content: Text('Login Biometrik Dinonaktifkan.'), backgroundColor: Colors.grey),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          messenger.showSnackBar(
+            SnackBar(content: Text('Gagal menonaktifkan: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+  }
+
   Widget _buildSecuritySection() {
     return Card(
       color: const Color(0xFFFFF8F0),
@@ -500,6 +572,8 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
   }
 
   Widget _buildPreferencesSection() {
+    bool showBiometricSwitch = !kIsWeb && _isBiometricAvailable;
+
     return Card(
       color: const Color(0xFFFFF8F0),
       elevation: 4,
@@ -518,6 +592,36 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
               value: _flyerPreference,
               onChanged: _isEditing ? (value) => setState(() => _flyerPreference = value) : null,
             ),
+
+            if (showBiometricSwitch) ...[
+              const Divider(),
+              SwitchListTile(
+                title: const Text('Login Biometrik'),
+                subtitle: Text(
+                  _biometricsEnabled 
+                    ? 'Login cepat menggunakan biometrik diaktifkan' 
+                    : 'Gunakan sidik jari/wajah untuk login cepat'
+                ),
+                secondary: const Icon(Icons.fingerprint),
+                value: _biometricsEnabled,
+                onChanged: (val) => _handleBiometricToggle(val),
+              ),
+            ],
+            
+            if (!kIsWeb && !_isBiometricAvailable) ...[
+              const Divider(),
+              ListTile(
+                leading: Icon(Icons.fingerprint, color: Colors.grey.shade400),
+                title: Text(
+                  'Login Biometrik Tidak Tersedia',
+                  style: TextStyle(color: Colors.grey.shade600),
+                ),
+                subtitle: Text(
+                  'Perangkat Anda tidak mendukung atau belum mengatur biometrik',
+                  style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                ),
+              ),
+            ],
           ],
         ),
       ),
@@ -573,10 +677,14 @@ class _SettingsDashboardState extends State<SettingsDashboard> {
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   ),
                 ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TherapistForm()),
-                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TherapistForm(),
+                    ),
+                  );
+                },
                 child: const Text('Daftar di Sini!'),
               ),
             ),

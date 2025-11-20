@@ -55,7 +55,7 @@ class _SuspendDialogState extends State<SuspendDialog> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.of(context).pop(true); // Return true to indicate success
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

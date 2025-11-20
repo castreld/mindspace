@@ -8,31 +8,104 @@
     The path provided below has to start and end with a slash "/" in order for
     it to work correctly.
 
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+    For more details, see:
+    https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
     This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
+    the `--base-href` argument provided to `flutter build web`.
   -->
   <base href="$FLUTTER_BASE_HREF">
 
+  <meta name="google-signin-client_id" content="184905350714-gods0v5maqc4s8dtotep3l07kpvkntmt.apps.googleusercontent.com">
+
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Mindspace - Your Safe Place To Be Heard.">
 
   <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="mindspace_app">
+  <meta name="apple-mobile-web-app-title" content="MindSpace">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>mindspace_app</title>
+  <title>MindSpace</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // The value below is injected by flutter build, do not touch.
+    var serviceWorkerVersion = null;
+  </script>
+  <!-- This script adds the flutter initialization JS code -->
+  <script src="flutter.js" defer></script>
+
+  <style>
+    body {
+      background-color: #F4F6FA;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+    }
+    
+    .loader {
+      border: 8px solid #f3f3f3;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+
+  <!-- Custom Splash Screen -->
+  <div id="loading_indicator" class="loading">
+    <!-- Ini akan menampilkan logo Anda (dari folder web/icons/ yang dibuat oleh flutter_launcher_icons) -->
+    <img src="icons/icon-192.png" alt="Loading..." style="width: 100px; height: 100px;" />
+    
+    <!-- Animasi loading spinner di atas gambar -->
+    <div class="loader" style="position: absolute; width: 100px; height: 100px; border-top-color: #5B3F5B30; border-width: 6px;"></div>
+    <div class="loader" style="position: absolute; width: 100px; height: 100px; border-bottom-color: #C89E2530; border-width: 6px; animation-direction: reverse;"></div>
+  </div>
+  <!-- End of Custom Splash Screen -->
+
+  <script>
+    window.addEventListener('load', function(ev) {
+      // Download main.dart.js
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine().then(function(appRunner) {
+            appRunner.runApp().then(function(app) {
+              // Sembunyikan splash screen setelah Flutter siap
+              var loadingIndicator = document.getElementById("loading_indicator");
+              if (loadingIndicator) {
+                loadingIndicator.remove();
+              }
+            });
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>

@@ -19,7 +19,7 @@ class KontakPage extends StatefulWidget {
 }
 
 class _KontakPageState extends State<KontakPage> {
-  String _currentRoute = AppRoutes.kontak; // Set the correct route
+  String _currentRoute = AppRoutes.kontak;
   bool _isRouteInitialized = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -50,20 +50,13 @@ class _KontakPageState extends State<KontakPage> {
     const double mobileBreakpoint = 850;
     final bool isMobile = MediaQuery.of(context).size.width < mobileBreakpoint;
 
-    // This check was causing the infinite loop. CustomAppBar handles null users.
-    // if (currentUser == null) {
-    //   return const Scaffold(
-    //     body: Center(child: CircularProgressIndicator()),
-    //   );
-    // }
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(
         user: currentUser,
         showNavButtonsAsActions: !isMobile,
       ),
-      drawer: isMobile ? const _AppDrawer() : null, // Use the shared drawer
+      drawer: isMobile ? const _AppDrawer() : null, 
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
@@ -79,7 +72,6 @@ class _KontakPageState extends State<KontakPage> {
                   ),
                 ),
               ),
-              if (kIsWeb) SliverToBoxAdapter(child: FooterSection()),
             ],
           ),
         ],
@@ -190,7 +182,6 @@ class _KontakPageState extends State<KontakPage> {
   }
 }
 
-// Re-using the corrected _AppDrawer from main.dart
 class _AppDrawer extends StatelessWidget {
   const _AppDrawer();
 
@@ -218,7 +209,6 @@ class _AppDrawer extends StatelessWidget {
             Navigator.pushNamed(context, AppRoutes.therapistPage);
           }),
           _DrawerItem('Jadwal', Icons.calendar_today, () {
-            // Assuming dashboard is the correct place for 'Jadwal'
              Navigator.pushNamed(context, AppRoutes.dashboard);
           }),
           _DrawerItem('Kontak', Icons.contact_phone, () {

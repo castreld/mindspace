@@ -33,6 +33,14 @@ class Conversation {
     this.userTwo,
   });
 
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    if (value is num) return value.toInt();
+    return null;
+  }
+
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       id: json['id'],
@@ -43,7 +51,7 @@ class Conversation {
       profilePicture: json['profile_picture'],
       lastMessage: json['last_message_text'] ?? '',
       lastMessageTime: DateTime.parse(json['last_message_time']),
-      appointmentId: json['appointment_id'],
+      appointmentId: _parseInt(json['appointment_id']),
       sessionStartedAt: json['session_started_at'],
       sessionDurationMinutes: json['session_duration_minutes'],
       sessionStatus: json['session_status'] ?? json['status'] ?? 'pending',
@@ -81,7 +89,7 @@ class Conversation {
       profilePicture: null, 
       lastMessage: '', 
       lastMessageTime: DateTime.now(), 
-      appointmentId: json['appointment_id'],
+      appointmentId: _parseInt(json['appointment_id']),
       sessionStartedAt: json['session_started_at'],
       sessionDurationMinutes: json['session_duration_minutes'],
       sessionStatus: json['session_status'] ?? json['status'] ?? 'pending',

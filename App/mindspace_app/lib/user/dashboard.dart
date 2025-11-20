@@ -39,12 +39,10 @@ class _MainDashboardState extends State<MainDashboard> {
   @override
   void initState() {
     super.initState();
-    // Check user status every time the dashboard is loaded
     context.read<AuthService>().refreshUserFromServer();
   }
 
   void _onSectionSelected(DashboardSection section) {
-    // Also check status on every navigation click
     context.read<AuthService>().refreshUserFromServer();
     
     setState(() {

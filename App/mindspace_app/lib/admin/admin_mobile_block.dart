@@ -11,7 +11,7 @@ class AdminMobileBlockPage extends StatelessWidget {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text('Akses Ditolak'),
-        backgroundColor: const Color(0xFF1E88E5), // Admin app bar color
+        backgroundColor: const Color(0xFF1E88E5),
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/routes.dart';
 
 import 'widgets/custom_app_bar.dart';
@@ -87,7 +88,7 @@ class _FormSectionState extends State<FormSection> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8000/api/register'),
+        Uri.parse('${AppConfig.backendBaseUrl}/api/register'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: jsonEncode(data),
       );

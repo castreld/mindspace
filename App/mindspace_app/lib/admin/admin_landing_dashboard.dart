@@ -70,7 +70,6 @@ class _AdminLandingDashboardState extends State<AdminLandingDashboard> {
   }
 
   Widget _buildSummaryCards(SummaryStats summary) {
-    // Cast Colors to MaterialColor to allow access to shades
     const blueMaterial = Colors.blue;
     const greenMaterial = Colors.green;
     const redMaterial = Colors.red;
@@ -195,7 +194,6 @@ class _SummaryCard extends StatelessWidget {
   final String title;
   final String count;
   final IconData icon;
-  // FIX: Change type from Color to MaterialColor to access .shade900
   final MaterialColor color; 
 
   const _SummaryCard({
@@ -211,7 +209,6 @@ class _SummaryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        // Accessing the default color property which is Color(0xFF2196F3) for Colors.blue
         border: Border.all(color: color, width: 1), 
       ),
       padding: const EdgeInsets.all(16),
@@ -227,7 +224,6 @@ class _SummaryCard extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    // FIX: .shade900 is now accessible because color is MaterialColor
                     color: color.shade900), 
               ),
               Icon(icon, color: color, size: 24),
@@ -239,7 +235,6 @@ class _SummaryCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              // FIX: .shade900 is now accessible
               color: color.shade900, 
             ),
           ),

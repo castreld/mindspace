@@ -20,7 +20,8 @@ class ImageController extends Controller
         }
 
         $file = Storage::disk('public')->get($imagePath);
-        $type = Storage::disk('public')->mimeType($imagePath);
+        $fullPath = Storage::disk('public')->path($imagePath);
+        $type = mime_content_type($fullPath) ?: 'application/octet-stream';
 
         $response = Response::make($file, 200);
         $response->header("Content-Type", $type);

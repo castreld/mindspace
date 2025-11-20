@@ -9,4 +9,5 @@ class AppRoutes {
   static const therapistPage = '/therapist';
   static const therapistDetail = '/therapist/detail';
   static const kontak = "/kontak_page";
+  static const String authCallback = '/auth/callback';
 }

@@ -1,8 +1,20 @@
 class AppConfig {
-  static String backendBaseUrl = 'http://172.31.222.214:8000';
-  static const String webSocketHost = '172.31.222.214'; 
+  static String backendBaseUrl = 'https://api.mindspace.asia';
+  static const String webSocketHost = 'api.mindspace.asia'; 
   static const String webSocketPusherAppKey = 'l1kxgzsfajfdudiywfit';
-  static String reverbHost = '172.31.222.214';
-  static int reverbPort = 8080;
-  static String reverbScheme = 'http';
+  static String reverbHost = 'api.mindspace.asia';
+  static int reverbPort = 443;
+  static String reverbScheme = 'https';
+
+  static String getWebSocketUrl() {
+    String host = AppConfig.reverbHost;
+    String key = AppConfig.webSocketPusherAppKey;
+
+    if (AppConfig.reverbScheme == 'https') {
+      return 'wss://$host/app/$key';
+    } 
+
+    String port = AppConfig.reverbPort.toString();
+    return 'ws://$host:$port/app/$key';
+  }
 }

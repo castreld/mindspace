@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:mindspace_app/routes.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:mindspace_app/services/auth_service.dart';
 
@@ -25,6 +27,18 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   AuthService? _authService;
 
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      debugPrint('Could not launch $url');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal membuka link: $url')),
+        );
+      }
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -36,13 +50,48 @@ class _CustomAppBarState extends State<CustomAppBar> {
   void _handleLogout() {
     final authService = _authService;
     if (authService != null) {
-      // Close any open popups first
       Navigator.of(context).popUntil((route) => route is! PopupRoute);
-      // Then logout after a brief delay to ensure popup is closed
       Future.delayed(const Duration(milliseconds: 100), () {
         authService.clearSession();
       });
     }
+  }
+
+  Widget _buildDownloadButton() {
+    if (!kIsWeb) {
+      return const SizedBox.shrink();
+    }
+
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.download_for_offline, color: Colors.white),
+      tooltip: 'Download Aplikasi',
+      offset: const Offset(0, 50),
+      onSelected: (value) {
+        if (value == 'android') {
+          _launchURL('https://mindspace.asia/downloads/mindspace.apk');
+        } else if (value == 'windows') {
+          _launchURL('https://mindspace.asia/downloads/mindspace_installer.exe');
+        }
+      },
+      itemBuilder: (BuildContext popupContext) {
+        return [
+          const PopupMenuItem<String>(
+            value: 'android',
+            child: ListTile(
+              leading: Icon(Icons.android),
+              title: Text('Download .apk (Android)'),
+            ),
+          ),
+          const PopupMenuItem<String>(
+            value: 'windows',
+            child: ListTile(
+              leading: Icon(Icons.window),
+              title: Text('Download .exe (Windows)'),
+            ),
+          ),
+        ];
+      },
+    );
   }
 
   @override
@@ -189,6 +238,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
             )
           : null,
       actions: <Widget>[
+        _buildDownloadButton(),
         widget.user != null
             ? _buildUserProfileDropdown(context, isMobile: true)
             : _buildAuthButtons(context),
@@ -214,6 +264,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           () => Navigator.pushNamed(context, AppRoutes.kontak)),
           const SizedBox(width: 20),
         ],
+        _buildDownloadButton(),
         widget.user != null
             ? _buildUserProfileDropdown(context)
             : _buildAuthButtons(context),

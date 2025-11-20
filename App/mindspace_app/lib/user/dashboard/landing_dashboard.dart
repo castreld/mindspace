@@ -249,7 +249,6 @@ class LandingDashboardState extends State<LandingDashboard> {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 700) {
-          // Mobile View (Stacked)
           return Column(
             children: [
               summaryCards[0],
@@ -260,7 +259,6 @@ class LandingDashboardState extends State<LandingDashboard> {
             ],
           );
         } else {
-          // Desktop View (Row)
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 
 import '../widgets/custom_app_bar.dart';
@@ -125,7 +126,6 @@ class _FormSectionState extends State<FormSection> {
 
     if (endTime == null) return;
 
-    // Basic validation
     final startMinutes = startTime.hour * 60 + startTime.minute;
     final endMinutes = endTime.hour * 60 + endTime.minute;
 
@@ -179,7 +179,7 @@ class _FormSectionState extends State<FormSection> {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/therapist-applications');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/therapist-applications');
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Accept': 'application/json',
@@ -503,7 +503,7 @@ class _FormSectionState extends State<FormSection> {
                 ),
 
                 const SizedBox(height: 24),
-                const Divider(), // --- ADD DIVIDER ---
+                const Divider(), 
                 const SizedBox(height: 24),
 
                 _buildAvailabilitySection(),

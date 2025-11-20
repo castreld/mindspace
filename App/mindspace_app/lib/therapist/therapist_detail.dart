@@ -32,7 +32,7 @@ class _TherapistDetailPageState extends State<TherapistDetailPage> {
   @override
   void initState() {
     super.initState();
-    // Add suspension check on page load
+
     context.read<AuthService>().refreshUserFromServer();
     _fetchDetail();
   }
@@ -673,6 +673,43 @@ class _BookingDialogState extends State<BookingDialog> {
     super.dispose();
   }
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          icon: Icon(Icons.error_outline, color: Colors.red.shade700, size: 48),
+          title: const Text(
+            'Gagal Melakukan Booking',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red.shade100,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: Text(
+                'Mengerti',
+                style: TextStyle(color: Colors.red.shade800, fontWeight: FontWeight.bold),
+              ),
+              onPressed: () => Navigator.of(dialogContext).pop(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final firstSelectableDate = DateTime(now.year, now.month, now.day);
@@ -706,9 +743,7 @@ class _BookingDialogState extends State<BookingDialog> {
 
   Future<void> _pickTime() async {
     if (_selectedDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Silakan pilih tanggal terlebih dahulu')),
-      );
+      _showErrorDialog('Silakan pilih tanggal terlebih dahulu');
       return;
     }
 
@@ -745,8 +780,7 @@ class _BookingDialogState extends State<BookingDialog> {
 
     final dt = _combined();
     if (dt == null || _selectedAvailability == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Silakan pilih tanggal dan waktu')));
+      _showErrorDialog('Silakan pilih tanggal dan waktu');
       return;
     }
 
@@ -789,16 +823,14 @@ class _BookingDialogState extends State<BookingDialog> {
         if (await canLaunchUrl(checkoutUrl)) {
           await launchUrl(checkoutUrl, mode: LaunchMode.externalApplication);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Gagal membuka browser. URL: $checkoutUrl')));
+          _showErrorDialog('Gagal membuka browser. URL: $checkoutUrl');
         }
       } else {
         throw Exception('Token transaksi tidak diterima.');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString().replaceFirst("Exception: ", ""))));
+        _showErrorDialog(e.toString().replaceFirst("Exception: ", ""));
       }
     } finally {
       if (mounted) {

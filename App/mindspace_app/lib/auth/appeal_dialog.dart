@@ -42,7 +42,7 @@ class _AppealDialogState extends State<AppealDialog> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.of(context).pop(); // Close the dialog
+        Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {

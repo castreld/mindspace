@@ -32,7 +32,7 @@ class _ReportManagementPageState extends State<ReportManagementPage>
 
   void _refreshData() {
     setState(() {
-      // This will cause the active _ReportList to rebuild and refetch
+      
     });
   }
 

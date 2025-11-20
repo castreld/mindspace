@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/auth/auth_callback_page.dart';
 import 'package:mindspace_app/auth/login.dart';
 import 'package:mindspace_app/auth/splash_screen.dart';
 import 'package:mindspace_app/auth/suspended_page.dart';
@@ -78,6 +79,12 @@ class MyApp extends StatelessWidget {
       title: 'Mindspace',
       home: const AuthGate(),
       onGenerateRoute: (settings) {
+          debugPrint('Navigating to: ${settings.name}');
+          if (settings.name == '/auth/callback') {
+            return MaterialPageRoute(
+              builder: (context) => const AuthCallbackPage(),
+            );
+          }
           switch (settings.name) {
             case AppRoutes.home:
               return MaterialPageRoute(builder: (_) => const HomePage());
@@ -159,21 +166,17 @@ class _AuthGateState extends State<AuthGate> {
     debugPrint(
         'AuthGate.build: building, isLoading=${authService.isLoading}, isLoggedIn=${authService.isLoggedIn}, currentUser=${authService.currentUser?.username}');
 
-    // 1. Show splash screen while Auth-Service is initializing
     if (authService.isLoading) {
       return const SplashScreen();
     }
 
-    // 2. Auth-Service is done, check if user is logged in
     if (authService.isLoggedIn) {
       final user = authService.currentUser;
-      
-      // This 'else' (user == null) should rarely happen, but SplashScreen is safer
+
       if (user == null) { 
          return const SplashScreen(); 
       }
 
-      // 3. Check for suspension
       if (user.suspendedUntil != null && 
           user.suspendedUntil!.isAfter(DateTime.now())) {
         
@@ -188,12 +191,10 @@ class _AuthGateState extends State<AuthGate> {
           );
         });
         
-        return const SplashScreen(); // Show splash while redirecting
+        return const SplashScreen();
       }
-  
-      // 4. Check for Admin role and platform
+
       if (user.role == 'admin') {
-        // Check if on a mobile device (not web)
         final bool isMobile = !kIsWeb && (Theme.of(context).platform == TargetPlatform.android || Theme.of(context).platform == TargetPlatform.iOS);
         
         if (isMobile) {
@@ -202,15 +203,27 @@ class _AuthGateState extends State<AuthGate> {
           return const DashboardAdminPage();
         }
       } 
-      
-      // 5. Normal user
+
       else {
         return const MainDashboard();
       }
     } 
-    
-    // 6. Not logged in
+
     else {
+      final uri = Uri.base;
+      debugPrint('AuthGate: Checking current path: ${uri.path}');
+      
+      if (uri.path.contains('/auth/callback') || uri.path == '/auth/callback') {
+        final token = uri.queryParameters['token'];
+        final userData = uri.queryParameters['user'];
+        
+        debugPrint('AuthGate: Detected auth callback! Token present: ${token != null}, User present: ${userData != null}');
+        
+        if (token != null && userData != null) {
+          return const AuthCallbackPage();
+        }
+      }
+
       return const HomePage();
     }
   }

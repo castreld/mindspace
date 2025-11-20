@@ -43,9 +43,12 @@ dependencies:
   pusher_channels_flutter: ^2.5.0
   web_socket_channel: ^3.0.2
   flutter_rating_bar: ^4.0.1
-  file_picker: ^10.3.3
+  file_picker: ^8.0.7
   http_parser: ^4.1.2
   font_awesome_flutter: ^10.12.0
+  flutter_secure_storage: ^9.2.2
+  local_auth: ^2.2.0
+  app_links: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -103,13 +106,22 @@ flutter:
 
 flutter_launcher_icons:
   android: true
+
   ios: true
+  
   windows:
     generate: true
     image_path: "assets/logo.png"
     icon_size: 256
   image_path: "assets/logo.png"
+  
+  web:
+    generate: true
+    image_path: "assets/logo.png"
 
 inno_bundle:
   id: 197fc850-bfa1-11f0-bf91-f3bec1001908
   publisher: Lenovo
+
+dependency_overrides:
+  js: ^0.7.1

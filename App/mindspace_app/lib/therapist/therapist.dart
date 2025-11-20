@@ -79,7 +79,6 @@ class _TherapistPageState extends State<TherapistPage> {
   @override
   void initState() {
     super.initState();
-    // Add suspension check on page load
     context.read<AuthService>().refreshUserFromServer();
   }
 

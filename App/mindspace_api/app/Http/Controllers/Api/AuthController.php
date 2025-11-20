@@ -9,12 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Illuminate\Auth\Events\Login; // Import the Login event
-use Illuminate\Auth\Events\Logout; // Import the Logout event
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -33,7 +36,7 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $defaultProfilePicture = $request->gender === 'pria' 
+        $defaultProfilePicture = $request->gender === 'pria'
             ? 'storage/profilepictures/man_placeholder.png'
             : 'storage/profilepictures/woman_placeholder.png';
 
@@ -87,11 +90,90 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-           'message' => 'Login successful',
-           'access_token' => $token,
-           'token_type' => 'Bearer',
-           'user' => $user,
+            'message' => 'Login successful',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user,
         ]);
+    }
+
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback(Request $request)
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            
+            $user = User::where('google_id', $googleUser->getId())->first();
+
+            if (!$user) {
+                $user = User::where('email', $googleUser->getEmail())->first();
+
+                if (!$user) {
+                    $baseUsername = Str::before($googleUser->getEmail(), '@');
+                    $username = $baseUsername;
+                    $counter = 1;
+
+                    while (User::where('username', $username)->exists()) {
+                        $username = $baseUsername . $counter;
+                        $counter++;
+                    }
+
+                    $user = User::create([
+                        'google_id' => $googleUser->getId(),
+                        'full_name' => $googleUser->getName(),
+                        'username' => $username,
+                        'email' => $googleUser->getEmail(),
+                        'profile_picture' => $googleUser->getAvatar() ?? 'storage/profilepictures/man_placeholder.png',
+                        'password' => null,
+                        'birth_date' => '-',
+                        'gender' => 'pria',
+                        'phone_number' => '-',
+                        'flyer' => 'no',
+                        'category' => 'Umum',
+                        'role' => 'klien',
+                    ]);
+                } else {
+                    $user->google_id = $googleUser->getId();
+                    if (empty($user->profile_picture) || str_contains($user->profile_picture, 'placeholder.png')) {
+                        $user->profile_picture = $googleUser->getAvatar();
+                    }
+                    $user->save();
+                }
+            }
+
+            $updateData = ['google_token' => $googleUser->token];
+            if ($googleUser->refreshToken) {
+                $updateData['google_refresh_token'] = $googleUser->refreshToken;
+            }
+            $user->update($updateData);
+
+            Log::info('About to create token for user: ' . $user->id);
+            $token = $user->createToken('auth_token')->plainTextToken;
+            Log::info('Token created successfully');
+
+            $userData = base64_encode(json_encode($user));
+            
+            $platform = $request->query('platform', 'web');
+            
+            if ($platform === 'mobile' || $platform === 'desktop') {
+                return redirect("mindspace://auth/callback?token={$token}&user={$userData}");
+            } else {
+                $frontendUrl = config('app.frontend_url', 'https://mindspace.asia');
+                return redirect("{$frontendUrl}/auth/callback?token={$token}&user={$userData}");
+            }
+            
+        } catch (Exception $e) {
+            Log::error('Google Callback Error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Line: ' . $e->getLine());
+            
+            $frontendUrl = config('app.frontend_url', 'https://mindspace.asia');
+            return redirect("{$frontendUrl}/login?error=google_failed");
+        }
     }
 
     public function logout(Request $request)

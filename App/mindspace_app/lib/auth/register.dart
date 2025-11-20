@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:mindspace_app/animated_background.dart';
 import 'package:mindspace_app/routes.dart';
 import 'package:mindspace_app/config.dart';
+import 'package:provider/provider.dart';
+import 'package:mindspace_app/services/auth_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/footer.dart';
 
@@ -505,7 +507,27 @@ class _FormSectionState extends State<FormSection> {
                           ),
                         ),
                         child: _isLoading ? const CircularProgressIndicator(color: Colors.white,) : const Text("Daftar!"),
-                      )
+                      ),
+                      const SizedBox(height: 20),
+                      Row(children: [
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                        Padding(padding: const EdgeInsets.symmetric(horizontal: 10), child: Text("ATAU", style: TextStyle(color: Colors.grey.shade600))),
+                        Expanded(child: Divider(color: Colors.grey.shade300)),
+                      ]),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: InkWell(
+                          onTap: () => context.read<AuthService>().loginWithGoogle(),
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade300),
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            child: Image.asset('assets/google_logo.png', width: 40, height: 40),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),

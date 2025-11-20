@@ -86,8 +86,13 @@ class _ChatScreenState extends State<ChatScreen> {
           _sessionStatus = details.conversation.sessionStatus;
 
           if (_isConsultation && details.conversation.sessionStartedAt != null && _sessionStatus != 'ended') {
+            String utcTimestamp = details.conversation.sessionStartedAt!;
+            if (!utcTimestamp.endsWith('Z')) {
+              utcTimestamp = '${utcTimestamp}Z';
+            }
+
             _startSessionTimer(
-                DateTime.parse(details.conversation.sessionStartedAt!).toLocal(),
+                DateTime.parse(utcTimestamp),
                 details.conversation.sessionDurationMinutes ?? 60
             );
           } else if (_isConsultation && _sessionStatus == 'ended' && !_postSessionActionShown) {
@@ -174,7 +179,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
 
     try {
-      String wsUrl = 'ws://${AppConfig.webSocketHost}:8080/app/${AppConfig.webSocketPusherAppKey}';
+      String wsUrl = AppConfig.getWebSocketUrl();
 
       debugPrint('🔌 Connecting to WebSocket: $wsUrl');
 
@@ -351,6 +356,21 @@ class _ChatScreenState extends State<ChatScreen> {
     );
 
     if (result != null) {
+      const int maxFileSize = 10 * 1024 * 1024;
+      final int fileSizeInBytes = result.files.single.size;
+
+      if (fileSizeInBytes > maxFileSize) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('File terlalu besar. Maksimal ukuran file adalah 10MB. Ukuran file Anda: ${(fileSizeInBytes / (1024 * 1024)).toStringAsFixed(2)}MB'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return;
+      }
+
       try {
         final token = context.read<AuthService>().token!;
         await context.read<ChatService>().sendFileMessage(
@@ -995,50 +1015,47 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  void _startSessionTimer(DateTime startTime, int durationMinutes) {
+  void _startSessionTimer(DateTime startTimeUtc, int durationMinutes) {
     final int overtimeMinutes = 10;
-    final endTime = startTime.add(Duration(minutes: durationMinutes));
-    final overtimeEndTime = endTime.add(Duration(minutes: overtimeMinutes));
+    final endTimeUtc = startTimeUtc.add(Duration(minutes: durationMinutes));
+    final overtimeEndTimeUtc = endTimeUtc.add(Duration(minutes: overtimeMinutes));
 
     _sessionTimer?.cancel();
     _sessionTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final now = DateTime.now();
+      final nowUtc = DateTime.now().toUtc();
       String newStatus = _sessionStatus;
+      Duration newTimeRemaining = Duration.zero;
 
-      if (now.isAfter(overtimeEndTime)) {
+      if (nowUtc.isAfter(overtimeEndTimeUtc)) {
         if (_sessionStatus != 'ended') {
           newStatus = 'ended';
           timer.cancel();
           if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
         }
-      } else if (now.isAfter(endTime)) {
-           if (_sessionStatus != 'overtime' && _sessionStatus != 'ended') newStatus = 'overtime';
+        newTimeRemaining = Duration.zero;
+
+      } else if (nowUtc.isAfter(endTimeUtc)) {
+        if (_sessionStatus != 'overtime' && _sessionStatus != 'ended') newStatus = 'overtime';
+        newTimeRemaining = overtimeEndTimeUtc.difference(nowUtc);
 
       } else {
-           if (_sessionStatus != 'active' && _sessionStatus != 'ended') newStatus = 'active';
+        if (_sessionStatus != 'active' && _sessionStatus != 'ended') newStatus = 'active';
+        newTimeRemaining = endTimeUtc.difference(nowUtc);
       }
 
-         if (mounted && (newStatus != _sessionStatus || newStatus != 'ended')) {
-             setState(() {
-                 if (newStatus == 'ended') {
-                   _timeRemaining = Duration.zero;
-                 } else if (newStatus == 'overtime') {
-                   _timeRemaining = overtimeEndTime.difference(now);
-                 } else {
-                   _timeRemaining = endTime.difference(now);
-                 }
-                 _sessionStatus = newStatus;
-                 _updateChatLock();
-             });
-         } else if (mounted && newStatus == 'ended' && _sessionStatus != 'ended') {
-           setState(() {
-                 _timeRemaining = Duration.zero;
-                 _sessionStatus = newStatus;
-                 _updateChatLock();
-             });
-             if (!_postSessionActionShown) _fetchAppointmentDetailsAfterSessionEnd();
-             timer.cancel();
-         }
+      if (mounted) {
+        setState(() {
+          _timeRemaining = newTimeRemaining;
+          if (_sessionStatus != newStatus) {
+            _sessionStatus = newStatus;
+            _updateChatLock();
+          }
+        });
+
+        if (newStatus == 'ended' && timer.isActive) {
+          timer.cancel();
+        }
+      }
     });
   }
 

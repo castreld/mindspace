@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mindspace_app/animated_background.dart';
+import 'package:mindspace_app/config.dart';
 import 'package:mindspace_app/models/user.dart';
 import 'package:provider/provider.dart';
 import '../services/auth_service.dart';
@@ -176,7 +177,7 @@ class _FormSectionState extends State<FormSection> {
       return;
     }
 
-    final url = Uri.parse('http://127.0.0.1:8000/api/therapist-applications');
+    final url = Uri.parse('${AppConfig.backendBaseUrl}/api/therapist-applications');
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Accept': 'application/json',
